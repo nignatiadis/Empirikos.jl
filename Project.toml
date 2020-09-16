@@ -1,0 +1,13 @@
+name = "Empirikos"
+uuid = "cab608d6-c565-4ea1-96d6-ce5441ba21b0"
+authors = ["Nikos Ignatiadis <nikos.ignatiadis01@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.5"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
