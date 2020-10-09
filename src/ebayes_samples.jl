@@ -3,94 +3,95 @@
 #---------------------------------------
 abstract type EBayesSample{T} end
 
-function likelihood_distribution end 
-likelihood(Z::EBayesSample, param) = pdf(likelihood_distribution(Z, param), response(Z))
-loglikelihood(Z::EBayesSample, param) = logpdf(likelihood_distribution(Z, param), response(Z))
+function likelihood_distribution end
+function  response end
+function  nuisance_parameter end
+
+# trait
+abstract type Skedasticity end
+struct Homoskedastic <: Skedasticity end
+struct Heteroskedastic <: Skedasticity end
+
+function skedasticity(Zs::AbstractVector{EB}) where EB <: EBayesSample
+    length(unique(nuisance_parameter.(Zs))) == 1 ? Homoskedastic() : Heteroskedastic()
+end
+
+# avoid piracy
+likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), response(Z)) # maybe dispatch to Z first, then can deal with discretized sample
+loglikelihood(Z::EBayesSample, param) = _logpdf(likelihood_distribution(Z, param), response(Z))
+
+_pdf(dbn, z) = pdf(dbn, z)
+_logpdf(dbn, z) = logpdf(dbn, z)
+
+#const EBInterval{T} = Union{[Interval{T, S, R} for S in [Open, Closed, Unbounded], R in [Open, Closed, Unbounded]]...} where T
+
+const EBInterval{T} = Union{Interval{T, Unbounded, Unbounded},
+                            Interval{T, Unbounded, Closed},
+                            Interval{T, Open, Unbounded},
+                            Interval{T, Open, Closed}} where T
 
 
-# basic interface 
+function _pdf(dbn, interval::Interval{T, Unbounded, Unbounded}) where T
+    one(eltype(interval))
+end
+
+function _logpdf(dbn, interval::Interval{T, Unbounded, Unbounded}) where T
+    zero(eltype(interval))
+end
+
+# need better handling if (Unbounded, Open)
+function _pdf(dbn, interval::Interval{T, Unbounded, Closed}) where T
+    cdf(dbn, last(interval))
+end
+
+function _logpdf(dbn, interval::Interval{T, Unbounded, Closed}) where T
+    logcdf(dbn, last(interval))
+end
+
+function _pdf(dbn, interval::Interval{T, Open, Unbounded}) where T
+    ccdf(dbn, first(interval))
+end
+
+function _logpdf(dbn, interval::Interval{T, Open, Unbounded}) where T
+    logccdf(dbn, first(interval))
+end
+
+function _pdf(dbn, interval::Interval{T, Open, Closed}) where T
+    cdf(dbn, last(interval)) - cdf(dbn, first(interval))
+end
+
+function _logpdf(dbn, interval::Interval{T, Open, Closed}) where T
+    logdiffcdf(dbn, last(interval), first(interval))
+end
+
+#isdiscretized() = ...
+
+
+# Discretized{EBS, Interval}
+
+
+
+"""
+	marginalize(Z, prior)
+
+Given a `prior` distribution ``G`` and  `EBayesSample` ``Z``,
+return that marginal distribution of ``Z``.
+"""
+function marginalize end
+
+
+
+# basic interface
 # pdf(Z, NormalSample()) -> marginalization ...
-# posterior(sample , prior) -> Distribution...  
+# posterior(sample , prior) -> Distribution...
 # marginal()
 
-# target(Z)(prior) -> 
-# target(Z)(μ) = μ # dirac mass prior type of computation 
-
-abstract type AbstractNormalSample{T} <: EBayesSample{T} end
-
-for NS in [:NormalSample, :HomoskedasticNormalSample]
-	@eval begin
-		struct $NS{T,S} <: AbstractNormalSample{T}
-			Z::T
- 	        σ::S
-		end
-		
-		function $NS(Z::T) where {T}
-		    $NS(Z, one(T))
-		end
-	end
-end
-
-@doc """
-    NormalSample(Z,σ)
-    HomoskedasticNormalSample(Z,σ)
-
-A observed sample ``Z`` drawn from a Normal distribution with known variance ``\\sigma^2 > 0``.
-
-```math
-Z \\sim \\mathcal{N}(\\mu, \\sigma^2)
-```
-
-``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
-The two types behave identically on scalars, however they allow for distinct dispatch when working with
-`AbstractArray{T} where T<:NormalSample`, resp. `T<:HomoskedasticNormalSample`.
-
-```julia
-NormalSample(0.5, 1.0)          #Z=0.5, σ=1
-HomoskedasticNormalSample(0.5, 1.0)          #Z=0.5, σ=1
-```
-""" NormalSample, HomoskedasticNormalSample
+# target(Z)(prior) ->
+# target(Z)(μ) = μ # dirac mass prior type of computation
 
 
-"""
-    StandardNormalSample(Z)
 
-A observed sample ``Z`` drawn from a Normal distribution with known variance ``\\sigma^2 =1``.
-
-```math
-Z \\sim \\mathcal{N}(\\mu, 1)
-```
-
-``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
-
-```julia
-StandardNormalSample(0.5)          #Z=0.5
-```
-"""
-struct StandardNormalSample{T} <: AbstractNormalSample{T}
-    Z::T
-end
-
-
-eltype(Z::AbstractNormalSample{T}) where {T} = T
-zero(Z::AbstractNormalSample{T}) where {T} = zero(T)  #debatable?
-support(Z::AbstractNormalSample) = RealInterval(-Inf, +Inf)
-
-
-response(Z::AbstractNormalSample) = Z.Z
-var(Z::AbstractNormalSample) = Z.σ^2
-var(Z::StandardNormalSample) = one(eltype(Z))
-
-std(Z::AbstractNormalSample) = Z.σ
-std(Z::StandardNormalSample) = one(eltype(Z))
-
-	
-#zeos(ss::AbstractNormalSamples) = zeros(eltype(response(ss)), length(ss))
-
-likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
-
-
-# 
+#
 
 
 
@@ -102,3 +103,4 @@ likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 # Binomial
 
 # Replicated , ReplicatedArray
+#
