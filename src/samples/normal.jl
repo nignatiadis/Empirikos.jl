@@ -1,6 +1,7 @@
 abstract type AbstractNormalSample{T} <: EBayesSample{T} end
 
 
+
 """
     NormalSample(Z,σ)
 
@@ -62,3 +63,11 @@ nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
+
+function marginalize(Z::AbstractNormalSample, prior::Normal)
+    prior_var = var(prior)
+    prior_μ = mean(prior)
+    likelihood_var = var(Z)
+    marginal_σ = sqrt(likelihood_var + prior_var)
+    Normal(prior_μ, marginal_σ)
+end
