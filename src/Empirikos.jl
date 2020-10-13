@@ -2,19 +2,20 @@ module Empirikos
 
 using Reexport
 
-import Base:eltype, zero
+import Base: eltype, zero
 using DataStructures
 @reexport using Distributions
-import Distributions:ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf
+import Distributions:
+    ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf
 
 @reexport using Intervals
 using JuMP
 using LinearAlgebra
 using Optim
 using Statistics
-import Statistics:std,var
+import Statistics: std, var
 @reexport using StatsBase
-import StatsBase:loglikelihood, response, fit, nobs
+import StatsBase: loglikelihood, response, fit, nobs
 
 using UnPack
 
@@ -30,24 +31,24 @@ include("samples/normal.jl")
 
 
 export EBayesSample,
-       summarize,
-       NormalSample,
-       StandardNormalSample,
-       BinomialSample,
-       marginalize,
-       summarize,
-       likelihood,
-       likelihood_distribution,
-       EBInterval,
-       nuisance_parameter,
-       skedasticity,
-       MethodOfMoments,
-       ParametricMLE,
-       PosteriorMean,
-       PosteriorVariance,
-       MarginalDensity,
-       DiscretePriorClass,
-       DvoretzkyKieferWolfowitz,
-       linear_functional
+    summarize,
+    NormalSample,
+    StandardNormalSample,
+    BinomialSample,
+    marginalize,
+    summarize,
+    likelihood,
+    likelihood_distribution,
+    EBInterval,
+    nuisance_parameter,
+    skedasticity,
+    MethodOfMoments,
+    ParametricMLE,
+    PosteriorMean,
+    PosteriorVariance,
+    MarginalDensity,
+    DiscretePriorClass,
+    DvoretzkyKieferWolfowitz,
+    linear_functional
 
 end

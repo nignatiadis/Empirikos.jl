@@ -1,7 +1,11 @@
 #  Mixture of Conjugates functionality
 
 
-function default_target_computation(::AbstractPosteriorTarget, ::EBayesSample, ::DiscreteNonParametric)
+function default_target_computation(
+    ::AbstractPosteriorTarget,
+    ::EBayesSample,
+    ::DiscreteNonParametric,
+)
     Conjugate()
 end
 

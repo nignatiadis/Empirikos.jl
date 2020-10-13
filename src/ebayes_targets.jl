@@ -23,7 +23,7 @@ function (target::AbstractPosteriorTarget)(prior::Distribution)
 end
 
 function (targets::AbstractVector{<:EBayesTarget})(prior)
-	[target(prior) for target in targets]
+    [target(prior) for target in targets]
 end
 
 location(target::AbstractPosteriorTarget) = target.Z
@@ -90,14 +90,14 @@ PriorDensity(2.0)
 This is the evaluation functional of the density of ``G`` at `z`, i.e.,
 ``L(G) = G'(z) = g(z)`` or in Julia code `L(G) = pdf(G, z)`.
 """
-struct PriorDensity{T <: Real} <: LinearEBayesTarget
+struct PriorDensity{T<:Real} <: LinearEBayesTarget
     μ::T
 end
 
 location(target::PriorDensity) = target.μ
 
 function cf(target::PriorDensity, t)
-    exp(im*location(target)*t)
+    exp(im * location(target) * t)
 end
 
 function (target::PriorDensity)(prior::Distribution)

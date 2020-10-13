@@ -5,10 +5,10 @@ Abstract type representing convex classes of probability distributions ``\\mathc
 """
 abstract type ConvexPriorClass end
 
-struct PriorVariable{C <: ConvexPriorClass, V}
+struct PriorVariable{C<:ConvexPriorClass,V}
     convexclass::C
     finite_param::V
-    model
+    model::Any
 end
 
 Base.broadcastable(prior::PriorVariable) = Ref(prior)
@@ -30,7 +30,7 @@ nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
 
 function prior_variable!(model, convexclass::DiscretePriorClass; var_name = "π") # adds constraints
     n = nparams(convexclass)
-    tmp_vars = @variable(model, [i=1:n])
+    tmp_vars = @variable(model, [i = 1:n])
     model[Symbol(var_name)] = tmp_vars
     set_lower_bound.(tmp_vars, 0.0)
     con = @constraint(model, sum(tmp_vars) == 1.0)

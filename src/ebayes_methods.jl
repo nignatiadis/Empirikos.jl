@@ -4,16 +4,16 @@ function StatsBase.fit(mom::EBayesMethod, Zs)
     StatsBase.fit(mom, Zs, skedasticity(Zs))
 end
 
-struct MethodOfMoments{O} <:EBayesMethod
+struct MethodOfMoments{O} <: EBayesMethod
     object::O
-    params
+    params::Any
 end
 
 MethodOfMoments(o) = MethodOfMoments(o, nothing)
 
-struct ParametricMLE{O} <:EBayesMethod
+struct ParametricMLE{O} <: EBayesMethod
     object::O
-    params
+    params::Any
 end
 
 ParametricMLE(o) = ParametricMLE(o, nothing)

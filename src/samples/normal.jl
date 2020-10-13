@@ -16,12 +16,12 @@ NormalSample(0.5, 1.0)          #Z=0.5, σ=1
 ```
 """
 struct NormalSample{T,S} <: AbstractNormalSample{T}
-	Z::T
- 	σ::S
+    Z::T
+    σ::S
 end
 
 function NormalSample(σ::S) where {S}
-	NormalSample(missing, σ)
+    NormalSample(missing, σ)
 end
 
 
@@ -77,7 +77,11 @@ end
 
 
 # Conjugate computations
-function default_target_computation(::AbstractPosteriorTarget, ::AbstractNormalSample, ::Normal)
+function default_target_computation(
+    ::AbstractPosteriorTarget,
+    ::AbstractNormalSample,
+    ::Normal,
+)
     Conjugate()
 end
 
@@ -96,7 +100,9 @@ function posterior(Z::AbstractNormalSample, prior::Normal)
     prior_mu = mean(prior)
     prior_A = var(prior)
 
-    post_mean = (prior_A)/(prior_A + sigma_squared)*z + sigma_squared/(prior_A + sigma_squared)*prior_mu
+    post_mean =
+        (prior_A) / (prior_A + sigma_squared) * z +
+        sigma_squared / (prior_A + sigma_squared) * prior_mu
     post_var = prior_A * sigma_squared / (prior_A + sigma_squared)
     Normal(post_mean, sqrt(post_var))
 end

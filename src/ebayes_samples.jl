@@ -25,7 +25,7 @@ abstract type Skedasticity end
 struct Homoskedastic <: Skedasticity end
 struct Heteroskedastic <: Skedasticity end
 
-function skedasticity(Zs::AbstractVector{EB}) where EB <: EBayesSample
+function skedasticity(Zs::AbstractVector{EB}) where {EB<:EBayesSample}
     # probably should check that we have a concrete type..
     #Base.typename(typeof(BinomialSample(2,3)))
     length(unique(nuisance_parameter.(Zs))) == 1 ? Homoskedastic() : Heteroskedastic()
@@ -33,8 +33,10 @@ end
 
 # avoid piracy
 likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), response(Z)) # maybe dispatch to Z first, then can deal with discretized sample
-loglikelihood(Z::EBayesSample, param) = _logpdf(likelihood_distribution(Z, param), response(Z))
-loglikelihood(Z::EBayesSample, prior::Distribution) = logpdf(marginalize(Z, prior), response(Z))
+loglikelihood(Z::EBayesSample, param) =
+    _logpdf(likelihood_distribution(Z, param), response(Z))
+loglikelihood(Z::EBayesSample, prior::Distribution) =
+    logpdf(marginalize(Z, prior), response(Z))
 
 pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
 cdf(prior::Distribution, Z::EBayesSample) = cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
@@ -50,48 +52,50 @@ _logpdf(dbn, z) = logpdf(dbn, z)
 
 #const EBInterval{T} = Union{[Interval{T, S, R} for S in [Open, Closed, Unbounded], R in [Open, Closed, Unbounded]]...} where T
 
-const EBInterval{T} = Union{Interval{T, Unbounded, Unbounded},
-                            Interval{T, Unbounded, Closed},
-                            Interval{T, Open, Unbounded},
-                            Interval{T, Open, Closed}} where T
+const EBInterval{T} = Union{
+    Interval{T,Unbounded,Unbounded},
+    Interval{T,Unbounded,Closed},
+    Interval{T,Open,Unbounded},
+    Interval{T,Open,Closed},
+} where {T}
 
 
-function _pdf(dbn, interval::Interval{T, Unbounded, Unbounded}) where T
+function _pdf(dbn, interval::Interval{T,Unbounded,Unbounded}) where {T}
     one(eltype(interval))
 end
 
-function _logpdf(dbn, interval::Interval{T, Unbounded, Unbounded}) where T
+function _logpdf(dbn, interval::Interval{T,Unbounded,Unbounded}) where {T}
     zero(eltype(interval))
 end
 
 # need better handling if (Unbounded, Open)
-function _pdf(dbn, interval::Interval{T, Unbounded, Closed}) where T
+function _pdf(dbn, interval::Interval{T,Unbounded,Closed}) where {T}
     cdf(dbn, last(interval))
 end
 
-function _logpdf(dbn, interval::Interval{T, Unbounded, Closed}) where T
+function _logpdf(dbn, interval::Interval{T,Unbounded,Closed}) where {T}
     logcdf(dbn, last(interval))
 end
 
-function _pdf(dbn, interval::Interval{T, Open, Unbounded}) where T
+function _pdf(dbn, interval::Interval{T,Open,Unbounded}) where {T}
     ccdf(dbn, first(interval))
 end
 
-function _logpdf(dbn, interval::Interval{T, Open, Unbounded}) where T
+function _logpdf(dbn, interval::Interval{T,Open,Unbounded}) where {T}
     logccdf(dbn, first(interval))
 end
 
-function _pdf(dbn, interval::Interval{T, Open, Closed}) where T
+function _pdf(dbn, interval::Interval{T,Open,Closed}) where {T}
     cdf(dbn, last(interval)) - cdf(dbn, first(interval))
 end
 
-function _logpdf(dbn, interval::Interval{T, Open, Closed}) where T
+function _logpdf(dbn, interval::Interval{T,Open,Closed}) where {T}
     logdiffcdf(dbn, last(interval), first(interval))
 end
 
 
 
-struct MultinomialSummary{T, D<:AbstractDict{T, Int}}
+struct MultinomialSummary{T,D<:AbstractDict{T,Int}}
     store::D #TODO, use other container
 end
 
@@ -103,7 +107,7 @@ function skedasticity(Zs_summary::MultinomialSummary)
 end
 
 function loglikelihood(mult::MultinomialSummary, prior)
-    sum([n*loglikelihood(Z, prior) for (Z,n) in mult.store])
+    sum([n * loglikelihood(Z, prior) for (Z, n) in mult.store])
 end
 
 nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))

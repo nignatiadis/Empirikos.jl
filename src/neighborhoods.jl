@@ -5,7 +5,7 @@ Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
     α::T = 0.05
 end
 
-function _dkw_level(dkw::DvoretzkyKieferWolfowitz{T}, Zs) where T<:Number
+function _dkw_level(dkw::DvoretzkyKieferWolfowitz{T}, Zs) where {T<:Number}
     dkw.α
 end
 
@@ -13,22 +13,26 @@ function _dkw_level(dkw::DvoretzkyKieferWolfowitz, Zs)
     dkw.α(nobs(Zs))
 end
 
-struct FittedDvoretzkyKieferWolfowitz{T, S, D<:AbstractDict{T,S}}
+struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S}}
     summary::D
     band::S
 end
 
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
-    cdf_probs = cumsum([v for (k,v) in Zs_summary.store])
+    cdf_probs = cumsum([v for (k, v) in Zs_summary.store])
     cdf_probs /= cdf_probs[end]
-    _dict = SortedDict( keys(Zs_summary.store) .=> cdf_probs)
+    _dict = SortedDict(keys(Zs_summary.store) .=> cdf_probs)
     α = _dkw_level(dkw, Zs_summary)
     n = nobs(Zs_summary)
-    band = sqrt(log(2/α)/(2n))
+    band = sqrt(log(2 / α) / (2n))
     FittedDvoretzkyKieferWolfowitz(_dict, band)
 end
 
- function neighborhood_constraint!(model, dkw::FittedDvoretzkyKieferWolfowitz, prior::PriorVariable)
+function neighborhood_constraint!(
+    model,
+    dkw::FittedDvoretzkyKieferWolfowitz,
+    prior::PriorVariable,
+)
     band = dkw.band
     for (Z, cdf_value) in dkw.summary
         marginal_cdf = cdf(prior, Z::EBayesSample)
