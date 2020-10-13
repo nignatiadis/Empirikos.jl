@@ -16,6 +16,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
+DataStructures = "0.18"
 Distributions = "0.23, 0.24"
 Intervals = "1.4"
 JuMP = "0.21"
