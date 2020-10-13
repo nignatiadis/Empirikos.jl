@@ -1,6 +1,7 @@
 using Empirikos
 using Test
+using InteractiveUtils
 
-@testset "Empirikos.jl" begin
-    # Write your tests here.
+@testset "EBayes Intervals" begin
+    include("test_intervals.jl")
 end

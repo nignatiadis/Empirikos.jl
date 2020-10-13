@@ -58,10 +58,13 @@ std(Z::StandardNormalSample) = one(eltype(response(Z)))
 
 nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 
-
-
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 likelihood_distribution(Z::AbstractNormalSample) = likelihood_distribution(μ, zero(std(Z)))
+
+function Base.isless(a::AbstractNormalSample, b::AbstractNormalSample)
+    std(a) <= std(b) && response(a) < response(b)
+end
+
 
 
 # Targets

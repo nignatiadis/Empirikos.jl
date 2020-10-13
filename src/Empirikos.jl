@@ -5,7 +5,7 @@ using Reexport
 import Base:eltype, zero
 using DataStructures
 @reexport using Distributions
-import Distributions:ntrials, pdf, support, location, cf, cdf
+import Distributions:ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf
 
 @reexport using Intervals
 using JuMP
