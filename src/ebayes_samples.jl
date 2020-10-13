@@ -4,8 +4,8 @@
 abstract type EBayesSample{T} end
 
 function likelihood_distribution end
-function  response end
-function  nuisance_parameter end
+function response end
+function nuisance_parameter end
 
 """
 	marginalize(Z, prior)
@@ -17,6 +17,8 @@ i.e., no realization is needed.
 function marginalize end
 
 function posterior end
+
+Broadcast.broadcastable(Z::EBayesSample) = Ref(Z)
 
 # trait
 abstract type Skedasticity end
@@ -32,8 +34,14 @@ end
 # avoid piracy
 likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), response(Z)) # maybe dispatch to Z first, then can deal with discretized sample
 loglikelihood(Z::EBayesSample, param) = _logpdf(likelihood_distribution(Z, param), response(Z))
-
 loglikelihood(Z::EBayesSample, prior::Distribution) = logpdf(marginalize(Z, prior), response(Z))
+
+pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
+cdf(prior::Distribution, Z::EBayesSample) = cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
+ccdf(prior::Distribution, Z::EBayesSample) = ccdf(marginalize(Z, prior), response(Z))
+
+
+
 
 
 
@@ -83,22 +91,22 @@ end
 
 
 
-struct MultinomialSummary{T}
-    store::Dict{T,Int} #TODO, use other container
+struct MultinomialSummary{T, D<:AbstractDict{T, Int}}
+    store::D #TODO, use other container
 end
 
-summarize(Zs::AbstractVector{<:EBayesSample}) = MultinomialSummary(countmap, Zs)
+summarize(Zs::AbstractVector{<:EBayesSample}) = MultinomialSummary(SortedDict(countmap(Zs)))
 
 function skedasticity(Zs_summary::MultinomialSummary)
     all_unique_samples = collect(keys(Zs_summary.store))
     skedasticity(all_unique_samples)
 end
 
-
 function loglikelihood(mult::MultinomialSummary, prior)
     sum([n*loglikelihood(Z, prior) for (Z,n) in mult.store])
 end
 
+nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))
 
 
 
@@ -106,11 +114,6 @@ end
 
 # target(Z)(prior) ->
 # target(Z)(μ) = μ # dirac mass prior type of computation
-
-
-
-#  Mixture of Conjugates functionality
-
 
 
 #function marginalize(MixtureModel{}, Z::EBayesSample)

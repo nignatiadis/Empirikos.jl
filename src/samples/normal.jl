@@ -1,7 +1,5 @@
 abstract type AbstractNormalSample{T} <: EBayesSample{T} end
 
-
-
 """
     NormalSample(Z,σ)
 
@@ -63,6 +61,22 @@ nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
+likelihood_distribution(Z::AbstractNormalSample) = likelihood_distribution(μ, zero(std(Z)))
+
+
+# Targets
+
+# TODO: Note this is not correct for intervals.
+function cf(target::MarginalDensity{<:AbstractNormalSample}, t)
+    error_dbn = likelihood_distribution(location(target))
+    cf(error_dbn, t)
+end
+
+
+# Conjugate computations
+function default_target_computation(::AbstractPosteriorTarget, ::AbstractNormalSample, ::Normal)
+    Conjugate()
+end
 
 function marginalize(Z::AbstractNormalSample, prior::Normal)
     prior_var = var(prior)
@@ -70,4 +84,16 @@ function marginalize(Z::AbstractNormalSample, prior::Normal)
     likelihood_var = var(Z)
     marginal_σ = sqrt(likelihood_var + prior_var)
     Normal(prior_μ, marginal_σ)
+end
+
+
+function posterior(Z::AbstractNormalSample, prior::Normal)
+    z = response(Z)
+    sigma_squared = var(Z)
+    prior_mu = mean(prior)
+    prior_A = var(prior)
+
+    post_mean = (prior_A)/(prior_A + sigma_squared)*z + sigma_squared/(prior_A + sigma_squared)*prior_mu
+    post_var = prior_A * sigma_squared / (prior_A + sigma_squared)
+    Normal(post_mean, sqrt(post_var))
 end

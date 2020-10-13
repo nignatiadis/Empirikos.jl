@@ -6,7 +6,7 @@ end
 BinomialSample(n::Integer) = BinomialSample(missing, n)
 
 function Base.show(io::IO, Z::BinomialSample)
-    spaces_to_keep = max(3-ndigits(response(Z)), 1)
+    spaces_to_keep = ismissing(response(Z)) ? 1 : max(3-ndigits(response(Z)), 1)
     spaces = repeat(" ", spaces_to_keep)
     print(io, "Z=", response(Z), spaces, "| ", "n=", ntrials(Z))
 end
