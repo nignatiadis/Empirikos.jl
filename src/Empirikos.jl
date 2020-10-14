@@ -2,7 +2,7 @@ module Empirikos
 
 using Reexport
 
-import Base: eltype, zero
+import Base: eltype, zero, <=
 using DataStructures
 @reexport using Distributions
 import Distributions:
@@ -11,6 +11,7 @@ import Distributions:
 @reexport using Intervals
 using JuMP
 using LinearAlgebra
+using MathOptInterface
 using Optim
 using Statistics
 import Statistics: std, var
@@ -26,6 +27,7 @@ include("ebayes_targets.jl")
 include("mixtures.jl")
 include("convex_priors.jl")
 include("neighborhoods.jl")
+include("NPMLE.jl")
 include("samples/binomial.jl")
 include("samples/normal.jl")
 
@@ -49,6 +51,6 @@ export EBayesSample,
     MarginalDensity,
     DiscretePriorClass,
     DvoretzkyKieferWolfowitz,
-    linear_functional
+    NPMLE
 
 end

@@ -16,6 +16,22 @@ function Base.isless(a::BinomialSample, b::BinomialSample)
     ntrials(a) <= ntrials(b) && response(a) < response(b)
 end
 
+function Base.isless(a, b::BinomialSample)
+    a < response(b)
+end
+function <=(a, b::BinomialSample)
+    a <= response(b)
+end
+function Base.isless(a::BinomialSample, b)
+    response(a) < b
+end
+function <=(a::BinomialSample, b)
+    response(a) <= b
+end
+
+
+
+
 
 response(Z::BinomialSample) = Z.Z
 ntrials(Z::BinomialSample) = Z.n

@@ -38,9 +38,9 @@ loglikelihood(Z::EBayesSample, param) =
 loglikelihood(Z::EBayesSample, prior::Distribution) =
     logpdf(marginalize(Z, prior), response(Z))
 
-pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
-cdf(prior::Distribution, Z::EBayesSample) = cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
-ccdf(prior::Distribution, Z::EBayesSample) = ccdf(marginalize(Z, prior), response(Z))
+pdf(prior, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
+cdf(prior, Z::EBayesSample) = cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
+ccdf(prior, Z::EBayesSample) = ccdf(marginalize(Z, prior), response(Z))
 
 
 
