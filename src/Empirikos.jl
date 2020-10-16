@@ -2,7 +2,7 @@ module Empirikos
 
 using Reexport
 
-import Base: eltype, zero, <=
+import Base: broadcast, broadcast!, broadcasted, eltype, zero, <=
 using DataStructures
 @reexport using Distributions
 import Distributions:
@@ -30,6 +30,7 @@ include("neighborhoods.jl")
 include("NPMLE.jl")
 include("samples/binomial.jl")
 include("samples/normal.jl")
+include("samples/poisson.jl")
 
 
 export EBayesSample,

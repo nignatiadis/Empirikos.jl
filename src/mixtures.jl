@@ -29,3 +29,12 @@ function marginalize(Z::EBayesSample, prior::MixtureModel)
     marginal_components = marginalize.(Z, components(prior))
     MixtureModel(marginal_components, πs)
 end
+
+function posterior(Z::EBayesSample, prior::MixtureModel)
+    πs = probs(prior)
+    fs = likelihood.(Z, components(prior))
+    posterior_πs = πs .* fs
+    posterior_πs /= sum(posterior_πs)
+    posterior_components = posterior.(Z, components(prior))
+    MixtureModel(posterior_components, posterior_πs)
+end

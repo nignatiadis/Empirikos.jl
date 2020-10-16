@@ -20,6 +20,10 @@ struct NormalSample{T,S} <: AbstractNormalSample{T}
     σ::S
 end
 
+function NormalSample(Z::P, σ::S) where {T, P <: EBInterval{T}, S}
+    NormalSample{EBInterval{T}, S}(Z, σ)
+end
+
 function NormalSample(σ::S) where {S}
     NormalSample(missing, σ)
 end
@@ -60,6 +64,21 @@ nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 likelihood_distribution(Z::AbstractNormalSample) = likelihood_distribution(μ, zero(std(Z)))
+
+function Base.show(io::IO, Z::AbstractNormalSample)
+    Zz = response(Z)
+    print(io, "Z=")
+    print(io, round(Zz, sigdigits=4))
+    print(io, " | ", "σ=", std(Z)) #perhaps need sth a bit nicer here if $\sigma$ takes annoying form
+end
+
+
+function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
+    Zz = response(Z)
+    print(io, "Z ∈ ")
+    show(IOContext(io, :compact=>true), Zz)
+    print(io, " | ", "σ=", std(Z)) #perhaps need sth a bit nicer here if $\sigma$ takes annoying form
+end
 
 function Base.isless(a::AbstractNormalSample, b::AbstractNormalSample)
     std(a) <= std(b) && response(a) < response(b)

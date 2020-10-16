@@ -28,11 +28,12 @@ function StatsBase.fit(npmle::NPMLE, Zs)
     π = Empirikos.prior_variable!(model, convexclass)
     f = pdf.(π, Zs)
 
-    n = length(f)
+    _mult = multiplicity(Zs)
+    n = length(_mult)
 
     @variable(model, u)
 
-    @constraint(model,  vcat(u, f, fill(1.0,n)) in MathOptInterface.RelativeEntropyCone(2n+1))
+    @constraint(model,  vcat(u, f, _mult) in MathOptInterface.RelativeEntropyCone(2n+1))
     @objective(model, Min, u)
     optimize!(model)
     estimated_prior = convexclass(fix_πs(JuMP.value.(π.finite_param)))

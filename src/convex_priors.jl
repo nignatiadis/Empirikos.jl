@@ -31,8 +31,9 @@ nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
 function prior_variable!(model, convexclass::DiscretePriorClass; var_name = "π") # adds constraints
     n = nparams(convexclass)
     tmp_vars = @variable(model, [i = 1:n])
-    model[Symbol(var_name)] = tmp_vars
+    #model[Symbol(var_name)] = tmp_vars
     set_lower_bound.(tmp_vars, 0.0)
+    #@constraint(model, tmp_vars .> 0)
     con = @constraint(model, sum(tmp_vars) == 1.0)
     PriorVariable(convexclass, tmp_vars, model)
 end

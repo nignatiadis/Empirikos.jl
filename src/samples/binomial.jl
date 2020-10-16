@@ -30,15 +30,19 @@ function <=(a::BinomialSample, b)
 end
 
 
-
-
-
 response(Z::BinomialSample) = Z.Z
 ntrials(Z::BinomialSample) = Z.n
 nuisance_parameter(Z::BinomialSample) = ntrials(Z)
 
 likelihood_distribution(Z::BinomialSample, p) = Binomial(ntrials(Z), p)
 
+
+function fill_levels(Zs::AbstractVector{<:BinomialSample})
+    skedasticity(Zs) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    _min, _max = extrema(response.(Zs))
+    n = ntrials(Zs[1])
+    BinomialSample.(_min:_max, n)
+end
 
 #-----------------------------------------------------------------------
 #---------- Beta Binomial Conjugacy-------------------------------------
