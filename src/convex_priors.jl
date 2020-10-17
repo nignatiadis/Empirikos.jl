@@ -13,10 +13,6 @@ end
 
 Base.broadcastable(prior::PriorVariable) = Ref(prior)
 
-function (convexclass::ConvexPriorClass)(p)
-    PriorVariable(convexclass, v)
-end
-
 struct DiscretePriorClass{S} <: ConvexPriorClass
     support::S #(-Inf, Inf) #default
 end
@@ -57,5 +53,3 @@ function (target::LinearEBayesTarget)(prior::PriorVariable{<:DiscretePriorClass}
     linear_functional_evals = target.(support(convexclass))
     @expression(model, dot(finite_param, linear_functional_evals))
 end
-
-function linear_functional end

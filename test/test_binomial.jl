@@ -21,8 +21,8 @@ npmle_fit_summary = fit(NPMLE(cvx_class, Hypatia.Optimizer), Zs_summary)
 mosek_loglikelihood = -225.94642846739816
 @test loglikelihood(Zs, npmle_fit_summary.prior) ≈ mosek_loglikelihood atol = 1e-3
 @test loglikelihood(Zs, npmle_fit_summary.prior) ≈ loglikelihood(Zs, npmle_fit.prior) atol = 1e-3
-@test loglikelihood(Zs, npmle_fit_summary.prior) ≈ loglikelihood(Zs_summary, npmle_fit_summary.prior)
-@test loglikelihood(Zs, npmle_fit.prior) ≈ loglikelihood(Zs_summary, npmle_fit.prior)
+@test loglikelihood(Zs, npmle_fit_summary.prior) ≈ loglikelihood(Zs_summary, npmle_fit_summary.prior) atol = 1e-3
+@test loglikelihood(Zs, npmle_fit.prior) ≈ loglikelihood(Zs_summary, npmle_fit.prior) atol = 1e-3
 
 
 

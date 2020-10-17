@@ -16,6 +16,8 @@ Base.broadcastable(fitted_npmle::FittedNPMLE) = Ref(fitted_npmle)
 
 marginalize(Z, fitted_npmle::FittedNPMLE) = marginalize(Z, fitted_npmle.prior)
 
+# TODO: implement corret projection onto simplex
+# though this should mostly help with minor numerical difficulties
 function fix_πs(πs)
     πs = max.(πs, 0.0)
     πs = πs ./ sum(πs)

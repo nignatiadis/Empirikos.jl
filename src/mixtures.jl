@@ -2,9 +2,9 @@
 
 
 function default_target_computation(
-    ::AbstractPosteriorTarget,
     ::EBayesSample,
     ::DiscreteNonParametric,
+    ::AbstractPosteriorTarget
 )
     Conjugate()
 end

@@ -17,8 +17,18 @@ struct Conjugate <: AbstractTargetComputation end
 function default_target_computation end
 
 
+function default_target_computation(sample, prior, target)
+    default_target_computation(sample, prior)
+end
+
+function default_target_computation(sample, prior)
+    default_target_computation(sample)
+end
+
+
+
 function (target::AbstractPosteriorTarget)(prior::Distribution)
-    _comp = default_target_computation(target, location(target), prior)
+    _comp = default_target_computation(location(target), prior, target)
     target(prior, _comp)
 end
 
@@ -100,6 +110,10 @@ function cf(target::PriorDensity, t)
     exp(im * location(target) * t)
 end
 
+function (target::PriorDensity)(μ::Number)
+    location(target) == μ ? one(μ) : zero(μ)
+end
+
 function (target::PriorDensity)(prior::Distribution)
     pdf(prior, location(target))
 end
@@ -132,10 +146,9 @@ end
 
 location(target::MarginalDensity) = target.Z
 
-function (target::MarginalDensity)(prior::Number)
-    likelihood(location(target), prior)
+function (target::MarginalDensity)(μ::Number)
+    likelihood(location(target), μ)
 end
-
 
 function (target::MarginalDensity)(prior::Distribution)
     pdf(prior, location(targetZ))

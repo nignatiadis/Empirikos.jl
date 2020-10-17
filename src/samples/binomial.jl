@@ -48,7 +48,7 @@ end
 #---------- Beta Binomial Conjugacy-------------------------------------
 #-----------------------------------------------------------------------
 
-function default_target_computation(::AbstractPosteriorTarget, ::BinomialSample, ::Beta)
+function default_target_computation(::BinomialSample, ::Beta, ::AbstractPosteriorTarget)
     Conjugate()
 end
 
@@ -64,13 +64,13 @@ end
 # Fit BetaBinomial
 function StatsBase.fit(
     ::MethodOfMoments{<:Beta},
-    Zs::AbstractVector{<:BinomialSample},
+    Zs::Union{AbstractVector{<:BinomialSample}, MultinomialSummary{<:BinomialSample}},
     ::Homoskedastic,
 )
     # TODO: Let ::Homoskedastic carry type information.
     n = ntrials(Zs[1])
-    μ₁ = mean(response.(Zs))
-    μ₂ = mean(abs2, response.(Zs))
+    μ₁ = mean(response.(Zs), weights(Zs))
+    μ₂ = mean(abs2.(response.(Zs)), weights(Zs))
     denom = n * (μ₂ / μ₁ - μ₁ - 1) + μ₁
     α = (n * μ₁ - μ₂) / denom
     β = (n - μ₁) * (n - μ₂ / μ₁) / denom

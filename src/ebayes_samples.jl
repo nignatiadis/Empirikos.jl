@@ -20,8 +20,11 @@ function posterior end
 
 Broadcast.broadcastable(Z::EBayesSample) = Ref(Z)
 
-function multiplicity(Zs::AbstractVector{<:EBayesSample})
-    fill(1, length(Zs))
+function multiplicity(Zs)
+    collect(weights(Zs))
+end
+function weights(Zs::AbstractVector{<:EBayesSample})
+    uweights(length(Zs))
 end
 
 # trait
@@ -108,7 +111,7 @@ function _logpdf(dbn, interval::Interval{T,Open,Closed}) where {T}
     logdiffcdf(dbn, last(interval), first(interval))
 end
 
-# In the case of continuous distributions, we can delegate most result to  (Open, Closed)
+# In the case of continuous distributions, we can delegate most results to  (Open, Closed)
 for f in [:_pdf, :_logpdf]
     @eval begin
         # Closed - Closed and Closed - Open and Open - Open
@@ -143,11 +146,9 @@ function Base.broadcasted(::typeof(pdf), prior, Zs_summary::MultinomialSummary)
 end
 
 
-
-function multiplicity(Zs_summary::MultinomialSummary)
-    collect(values(Zs_summary.store))
+function weights(Zs_summary::MultinomialSummary)
+   fweights(collect(values(Zs_summary.store)))
 end
-
 
 summarize(Zs::AbstractVector{<:EBayesSample}) = MultinomialSummary(SortedDict(countmap(Zs)))
 
@@ -166,19 +167,10 @@ nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))
 
 
 
-# target(Z)(prior) ->
-# target(Z)(μ) = μ # dirac mass prior type of computation
 
-
-#function marginalize(MixtureModel{}, Z::EBayesSample)
-#
-#end
-
-
-#function posterior(MixtureModel{}, Z::EBayesSample)
-#
-#end
-
-
-
-# Poisson
+# Recall difference between truncating marginal VS truncated likelihood
+# Truncated(Normal())
+#------------------------------------------
+# MarginalTruncated{...} and Truncated{...}
+#------------------------------------------
+# w Dirac prior these are the same!

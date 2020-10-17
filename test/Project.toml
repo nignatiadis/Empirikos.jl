@@ -1,4 +1,5 @@
 [deps]
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Hypatia = "b99e6be6-89ff-11e8-14f8-45c827f4f8f2"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"

@@ -49,7 +49,6 @@ struct StandardNormalSample{T} <: AbstractNormalSample{T}
     Z::T
 end
 
-
 eltype(Z::AbstractNormalSample{T}) where {T} = T
 support(Z::AbstractNormalSample) = RealInterval(-Inf, +Inf)
 
@@ -96,11 +95,7 @@ end
 
 
 # Conjugate computations
-function default_target_computation(
-    ::AbstractPosteriorTarget,
-    ::AbstractNormalSample,
-    ::Normal,
-)
+function default_target_computation(::AbstractNormalSample, ::Normal, ::AbstractPosteriorTarget)
     Conjugate()
 end
 

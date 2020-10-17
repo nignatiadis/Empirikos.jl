@@ -13,6 +13,7 @@ using JuMP
 using LinearAlgebra
 using MathOptInterface
 using Optim
+using Setfield
 using Statistics
 import Statistics: std, var
 @reexport using StatsBase
@@ -20,8 +21,9 @@ import StatsBase: loglikelihood, response, fit, nobs
 
 using UnPack
 
-
+include("dict_function.jl")
 include("ebayes_samples.jl")
+include("interval_discretizer.jl")
 include("ebayes_methods.jl")
 include("ebayes_targets.jl")
 include("mixtures.jl")
@@ -51,7 +53,12 @@ export EBayesSample,
     PosteriorVariance,
     MarginalDensity,
     DiscretePriorClass,
-    DvoretzkyKieferWolfowitz,
     NPMLE
+
+# neighborhoods
+export DvoretzkyKieferWolfowitz
+
+# utilities
+export DictFunction
 
 end
