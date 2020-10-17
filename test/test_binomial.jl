@@ -7,8 +7,7 @@ Z = BinomialSample(10)
 
 betabin = marginalize(Z, Beta(2,1))
 
-Random.seed!(1)
-Zs = BinomialSample.(rand(betabin, 100), 10);
+Zs = BinomialSample.(rand(MersenneTwister(1), betabin, 100), 10);
 unique_Zs = sort(unique(Zs))
 Zs_summary = summarize(Zs)
 
