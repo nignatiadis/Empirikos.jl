@@ -4,7 +4,7 @@ struct NPMLE{C} <: EBayesMethod
     dict::Any
 end
 
-NPMLE(convexclass, solver) = NPMLE(convexclass, solver, nothing)
+NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
 
 struct FittedNPMLE{D, N<:NPMLE}
     prior::D
@@ -16,14 +16,17 @@ Base.broadcastable(fitted_npmle::FittedNPMLE) = Ref(fitted_npmle)
 
 marginalize(Z, fitted_npmle::FittedNPMLE) = marginalize(Z, fitted_npmle.prior)
 
-# TODO: implement corret projection onto simplex
-# though this should mostly help with minor numerical difficulties
-function fix_πs(πs)
-    πs = max.(πs, 0.0)
-    πs = πs ./ sum(πs)
-end
 
 function StatsBase.fit(npmle::NPMLE, Zs)
+    Zs = summarize_by_default(Zs) ? summarize(Zs) : Zs
+
+    convexclass = instantiate(npmle.convexclass, Zs; npmle.dict...)
+    instantiated_npmle = @set npmle.convexclass = convexclass
+
+    _fit(instantiated_npmle, Zs)
+end
+
+function _fit(npmle::NPMLE, Zs)
     @unpack convexclass, solver = npmle
     model = Model(solver)
 
@@ -38,7 +41,7 @@ function StatsBase.fit(npmle::NPMLE, Zs)
     @constraint(model,  vcat(u, f, _mult) in MathOptInterface.RelativeEntropyCone(2n+1))
     @objective(model, Min, u)
     optimize!(model)
-    estimated_prior = convexclass(fix_πs(JuMP.value.(π.finite_param)))
+    estimated_prior = convexclass(JuMP.value.(π.finite_param))
     FittedNPMLE(estimated_prior, npmle, model)
 end
 

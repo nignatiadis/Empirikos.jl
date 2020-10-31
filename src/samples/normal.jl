@@ -1,4 +1,4 @@
-abstract type AbstractNormalSample{T} <: EBayesSample{T} end
+abstract type AbstractNormalSample{T} <: ContinuousEBayesSample{T} end
 
 """
     NormalSample(Z,σ)
@@ -119,4 +119,18 @@ function posterior(Z::AbstractNormalSample, prior::Normal)
         sigma_squared / (prior_A + sigma_squared) * prior_mu
     post_var = prior_A * sigma_squared / (prior_A + sigma_squared)
     Normal(post_mean, sqrt(post_var))
+end
+
+
+
+
+#
+function instantiate(convexclass::DiscretePriorClass{Nothing},
+    Zs::AbstractVector{<:AbstractNormalSample};  #TODO for MultinomialSummary
+    kwargs...)
+    eps = get(kwargs, :eps, 1e-4)
+    prior_grid_length = get(kwargs, :prior_grid_length, 300)::Integer
+    _sample_min, _sample_max = extrema(response.(Zs))
+    _grid = range(_sample_min - eps; stop=_sample_max + eps, length=prior_grid_length)
+    DiscretePriorClass(_grid)
 end

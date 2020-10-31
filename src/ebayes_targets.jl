@@ -27,46 +27,6 @@ end
 
 
 
-function (target::AbstractPosteriorTarget)(prior::Distribution)
-    _comp = default_target_computation(location(target), prior, target)
-    target(prior, _comp)
-end
-
-function (targets::AbstractVector{<:EBayesTarget})(prior)
-    [target(prior) for target in targets]
-end
-
-location(target::AbstractPosteriorTarget) = target.Z
-
-"""
-    PosteriorMean(Z::EBayesSample) <: EBayesTarget
-
-Type representing the posterior mean, i.e.,
-
-```math
-E_G[\\mu_i \\mid Z_i = z]
-```
-
-"""
-struct PosteriorMean{T} <: AbstractPosteriorTarget
-    Z::T
-end
-PosteriorMean() = PosteriorMean(missing)
-
-function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
-    mean(posterior(Z, prior))
-end
-
-struct PosteriorVariance{T} <: AbstractPosteriorTarget
-    Z::T
-end
-PosteriorVariance() = PosteriorVariance(missing)
-
-function (postvar::PosteriorVariance)(prior, Z::EBayesSample, ::Conjugate)
-    var(posterior(Z, prior))
-end
-
-
 # ::Conjugate, ::LinearOverLinear, ::MixtureOfConjugates
 
 
@@ -152,4 +112,73 @@ end
 
 function (target::MarginalDensity)(prior::Distribution)
     pdf(prior, location(targetZ))
+end
+
+
+
+# Posterior Targets
+
+function (target::AbstractPosteriorTarget)(prior::Distribution)
+    _comp = default_target_computation(location(target), prior, target)
+    target(prior, location(target), _comp)
+end
+
+function (targets::AbstractVector{<:EBayesTarget})(prior)
+    [target(prior) for target in targets]
+end
+
+location(target::AbstractPosteriorTarget) = target.Z
+Base.denominator(target::AbstractPosteriorTarget) = MarginalDensity(location(target))
+
+struct PosteriorTargetNumerator{T} <: LinearEBayesTarget
+    posterior_target::T
+end
+
+location(target::PosteriorTargetNumerator) = location(target.posterior_target)
+
+function (post_numerator::PosteriorTargetNumerator)(prior)
+    _post =   post_numerator.posterior_target
+    post_numerator.posterior_target(prior)*denominator(post_)(prior)
+end
+
+Base.numerator(target::AbstractPosteriorTarget) = PosteriorTargetNumerator(target)
+
+
+
+#function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
+#    mean(posterior(Z, prior))
+#end
+
+"""
+    PosteriorMean(Z::EBayesSample) <: EBayesTarget
+
+Type representing the posterior mean, i.e.,
+
+```math
+E_G[\\mu_i \\mid Z_i = z]
+```
+
+"""
+struct PosteriorMean{T} <: AbstractPosteriorTarget
+    Z::T
+end
+PosteriorMean() = PosteriorMean(missing)
+
+function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
+    mean(posterior(Z, prior))
+end
+
+
+
+
+
+
+#
+struct PosteriorVariance{T} <: AbstractPosteriorTarget
+    Z::T
+end
+PosteriorVariance() = PosteriorVariance(missing)
+
+function (postvar::PosteriorVariance)(prior, Z::EBayesSample, ::Conjugate)
+    var(posterior(Z, prior))
 end

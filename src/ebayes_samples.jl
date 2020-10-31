@@ -2,6 +2,9 @@
 # types for a single EB sample
 #---------------------------------------
 abstract type EBayesSample{T} end
+abstract type ContinuousEBayesSample{T} <: EBayesSample{T}  end
+abstract type DiscreteEBayesSample{T} <: EBayesSample{T}  end
+
 
 function likelihood_distribution end
 function response end
@@ -26,6 +29,9 @@ end
 function weights(Zs::AbstractVector{<:EBayesSample})
     uweights(length(Zs))
 end
+
+summarize_by_default(Zs) = false
+
 
 # trait
 abstract type Skedasticity end
@@ -139,6 +145,9 @@ end
 struct MultinomialSummary{T,D<:AbstractDict{T,Int}}
     store::D #TODO, use other container
 end
+
+const VectorOrSummary{T} = Union{AbstractVector{T}, MultinomialSummary{T}}
+
 
 function Base.broadcasted(::typeof(pdf), prior, Zs_summary::MultinomialSummary)
     # Should this also return keys?

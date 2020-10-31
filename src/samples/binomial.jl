@@ -1,4 +1,4 @@
-struct BinomialSample{T<:Integer,S<:Union{Missing,T}} <: EBayesSample{T}
+struct BinomialSample{T<:Integer,S<:Union{Missing,T}} <: DiscreteEBayesSample{T}
     Z::S
     n::T     # add checks that Z \in {0,...,n}
 end
@@ -10,6 +10,8 @@ function Base.show(io::IO, Z::BinomialSample)
     spaces = repeat(" ", spaces_to_keep)
     print(io, "Z=", response(Z), spaces, "| ", "n=", ntrials(Z))
 end
+
+summarize_by_default(::AbstractVector{<:BinomialSample}) = true
 
 # how to break ties on n?
 function Base.isless(a::BinomialSample, b::BinomialSample)
@@ -64,7 +66,7 @@ end
 # Fit BetaBinomial
 function StatsBase.fit(
     ::MethodOfMoments{<:Beta},
-    Zs::Union{AbstractVector{<:BinomialSample}, MultinomialSummary{<:BinomialSample}},
+    Zs::VectorOrSummary{<:BinomialSample},
     ::Homoskedastic,
 )
     # TODO: Let ::Homoskedastic carry type information.
@@ -99,4 +101,18 @@ function StatsBase.fit(
 
     opt = optimize(func, dfc, [1.0; 1.0], IPNewton())
     Beta(Optim.minimizer(opt)...)
+end
+
+
+
+
+# DiscretePriorClass
+
+
+function instantiate(convexclass::DiscretePriorClass{Nothing},
+                     Zs::VectorOrSummary{<:BinomialSample};
+                     kwargs...)
+    eps = get(kwargs, :eps, 1e-4)
+    prior_grid_length = get(kwargs, :prior_grid_length, 300)::Integer
+    DiscretePriorClass(range(eps; stop=1-eps, length=prior_grid_length))
 end
