@@ -1,6 +1,6 @@
-struct BinomialSample{T<:Integer,S<:Union{Missing,T}} <: DiscreteEBayesSample{T}
-    Z::S
-    n::T     # add checks that Z \in {0,...,n}
+struct BinomialSample{T,S<:Integer} <: DiscreteEBayesSample{T}
+    Z::T
+    n::S     # add checks that Z \in {0,...,n}
 end
 
 BinomialSample(n::Integer) = BinomialSample(missing, n)

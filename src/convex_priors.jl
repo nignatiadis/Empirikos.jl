@@ -7,6 +7,11 @@ abstract type ConvexPriorClass end
 
 instantiate(convexclass::ConvexPriorClass, Zs; kwargs...) = convexclass
 
+#function instantiate(convexclass::ConvexPriorClass, Zs::MultinomialSummary; kwargs...)
+#    instantiate(convexclass, ; kwargs...)
+#end
+
+
 struct PriorVariable{C<:ConvexPriorClass,V}
     convexclass::C
     finite_param::V

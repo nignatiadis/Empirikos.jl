@@ -57,8 +57,8 @@ function loglikelihood(Zs::AbstractVector{<:EBayesSample}, prior)
 end
 
 pdf(prior, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
-cdf(prior, Z::EBayesSample) = cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
-ccdf(prior, Z::EBayesSample) = ccdf(marginalize(Z, prior), response(Z))
+cdf(prior, Z::EBayesSample) = _cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
+ccdf(prior, Z::EBayesSample) = _ccdf(marginalize(Z, prior), response(Z))
 
 
 
@@ -68,29 +68,36 @@ ccdf(prior, Z::EBayesSample) = ccdf(marginalize(Z, prior), response(Z))
 _pdf(dbn, z) = pdf(dbn, z)
 _logpdf(dbn, z) = logpdf(dbn, z)
 
+_cdf(dbn, z) = cdf(dbn, z)
+_ccdf(dbn, z) = ccdf(dbn, z)
 #const EBInterval{T} = Union{[Interval{T, S, R} for S in [Open, Closed, Unbounded], R in [Open, Closed, Unbounded]]...} where T
 
 const EBInterval{T} = Union{
-    Interval{T,Unbounded,Unbounded},
     Interval{T,Unbounded,Closed},
     Interval{T,Open,Unbounded},
     Interval{T,Open,Closed},
 } where {T}
 
 const EBIntervalFlipped{T} = Union{
-    Interval{T,Unbounded,Unbounded},
     Interval{T,Closed,Open},
     Interval{T,Unbounded,Open},
     Interval{T,Closed,Unbounded},
 } where {T}
 
+function _cdf(dbn, interval::Interval{T,S,Unbounded}) where {T,S}
+    one(eltype(dbn))
+end
+
+function _cdf(dbn::ContinuousUnivariateDistribution, interval::Interval{T,S,B}) where {T,S,B<:Intervals.Bounded}
+    _cdf(dbn, last(interval))
+end
 
 #-- Unbounded - Unbounded
 function _pdf(dbn, interval::Interval{T,Unbounded,Unbounded}) where {T}
-    one(eltype(interval))
+    one(eltype(dbn))
 end
 function _logpdf(dbn, interval::Interval{T,Unbounded,Unbounded}) where {T}
-    zero(eltype(interval))
+    zero(eltype(dbn))
 end
 
 #-- Unbounded - Closed
@@ -148,6 +155,11 @@ end
 
 const VectorOrSummary{T} = Union{AbstractVector{T}, MultinomialSummary{T}}
 
+Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
+
+function Base.broadcasted(::typeof(response), Zs_summary::MultinomialSummary)
+    response.(keys(Zs_summary))
+end
 
 function Base.broadcasted(::typeof(pdf), prior, Zs_summary::MultinomialSummary)
     # Should this also return keys?

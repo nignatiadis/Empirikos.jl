@@ -1,6 +1,6 @@
 struct PoissonSample{T,S} <: DiscreteEBayesSample{T}
     Z::T
-    E::S     # add checks that Z \in {0,...,n}
+    E::S
 end
 
 PoissonSample(E) = BinomialSample(missing, E)
