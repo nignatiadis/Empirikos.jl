@@ -1,4 +1,5 @@
 abstract type EBayesNeighborhood end
+abstract type FittedEBayesNeighborhood end
 
 
 Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
@@ -13,11 +14,12 @@ function _dkw_level(dkw::DvoretzkyKieferWolfowitz, Zs)
     dkw.α(nobs(Zs))
 end
 
-struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S}}
+struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S}} <: FittedEBayesNeighborhood
     summary::D
     band::S
 end
 
+# TODO: Allow this to work more broadly.
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     cdf_probs = cumsum([v for (k, v) in Zs_summary.store])
     cdf_probs /= cdf_probs[end]

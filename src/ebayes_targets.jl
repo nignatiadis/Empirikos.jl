@@ -111,7 +111,7 @@ function (target::MarginalDensity)(μ::Number)
 end
 
 function (target::MarginalDensity)(prior::Distribution)
-    pdf(prior, location(targetZ))
+    pdf(prior, location(target))
 end
 
 
@@ -136,9 +136,9 @@ end
 
 location(target::PosteriorTargetNumerator) = location(target.posterior_target)
 
-function (post_numerator::PosteriorTargetNumerator)(prior)
+function (post_numerator::PosteriorTargetNumerator)(prior::Distribution)
     _post =   post_numerator.posterior_target
-    post_numerator.posterior_target(prior)*denominator(post_)(prior)
+    post_numerator.posterior_target(prior)*denominator(_post)(prior)
 end
 
 Base.numerator(target::AbstractPosteriorTarget) = PosteriorTargetNumerator(target)
@@ -150,7 +150,7 @@ Base.numerator(target::AbstractPosteriorTarget) = PosteriorTargetNumerator(targe
 #end
 
 """
-    PosteriorMean(Z::EBayesSample) <: EBayesTarget
+    PosteriorMean(Z::EBayesSample) <: AbstractPosteriorTarget
 
 Type representing the posterior mean, i.e.,
 
@@ -172,8 +172,16 @@ end
 
 
 
+"""
+    PosteriorVariance(Z::EBayesSample) <: AbstractPosteriorTarget
 
-#
+Type representing the posterior variance, i.e.,
+
+```math
+V_G[\\mu_i \\mid Z_i = z]
+```
+
+"""
 struct PosteriorVariance{T} <: AbstractPosteriorTarget
     Z::T
 end
@@ -181,4 +189,25 @@ PosteriorVariance() = PosteriorVariance(missing)
 
 function (postvar::PosteriorVariance)(prior, Z::EBayesSample, ::Conjugate)
     var(posterior(Z, prior))
+end
+
+
+
+"""
+    PosteriorProbability(Z::EBayesSample, s) <: AbstractPosteriorTarget
+
+Type representing the posterior probability, i.e.,
+
+```math
+\\Prob_G[\\mu_i \\in s \\mid Z_i = z]
+```
+
+"""
+struct PosteriorProbability{T,S} <: AbstractPosteriorTarget
+    Z::T
+    s::S
+end
+
+function (postprob::PosteriorProbability)(prior, Z::EBayesSample, ::Conjugate)
+    _pdf(posterior(Z, prior), postprob.s)
 end

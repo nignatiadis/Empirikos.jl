@@ -9,7 +9,7 @@ instantiate(convexclass::ConvexPriorClass, Zs; kwargs...) = convexclass
 
 #function instantiate(convexclass::ConvexPriorClass, Zs::MultinomialSummary; kwargs...)
 #    instantiate(convexclass, ; kwargs...)
-#end
+#wend
 
 
 struct PriorVariable{C<:ConvexPriorClass,V}
@@ -20,11 +20,7 @@ end
 
 Base.broadcastable(prior::PriorVariable) = Ref(prior)
 
-struct DiscretePriorClass{S} <: ConvexPriorClass
-    support::S #(-Inf, Inf) #default
-end
-
-DiscretePriorClass() = DiscretePriorClass(nothing)
+abstract type AbstractMixturePriorClass <: ConvexPriorClass end
 
 # TODO: implement correct projection onto simplex and check deviation is not too big
 # though this should mostly help with minor numerical difficulties
@@ -33,6 +29,16 @@ function fix_πs(πs)
     πs = πs ./ sum(πs)
 end
 
+"""
+    DiscretePriorClass
+
+"""
+struct DiscretePriorClass{S} <: AbstractMixturePriorClass
+    support::S #(-Inf, Inf) #default
+end
+
+DiscretePriorClass() = DiscretePriorClass(nothing)
+
 function (convexclass::DiscretePriorClass)(p::AbstractVector{<:Real})
     DiscreteNonParametric(support(convexclass), fix_πs(p))
 end
@@ -40,10 +46,10 @@ end
 support(convexclass::DiscretePriorClass) = convexclass.support
 nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
 
-function prior_variable!(model, convexclass::DiscretePriorClass; var_name = "π") # adds constraints
+function prior_variable!(model, convexclass::AbstractMixturePriorClass; var_name = "π") # adds constraints
     n = nparams(convexclass)
     tmp_vars = @variable(model, [i = 1:n])
-    model[Symbol(var_name)] = tmp_vars
+    #model[Symbol(var_name)] = tmp_vars
     set_lower_bound.(tmp_vars, 0.0)
     #@constraint(model, tmp_vars .> 0)
     con = @constraint(model, sum(tmp_vars) == 1.0)
@@ -67,5 +73,41 @@ end
 function (target::LinearEBayesTarget)(prior::PriorVariable{<:DiscretePriorClass})
     @unpack convexclass, finite_param, model = prior
     linear_functional_evals = target.(support(convexclass))
+    @expression(model, dot(finite_param, linear_functional_evals))
+end
+
+
+
+"""
+    MixturePriorClass
+
+"""
+struct MixturePriorClass{S} <: AbstractMixturePriorClass
+    components::S
+end
+
+MixturePriorClass() = MixturePriorClass(nothing)
+components(mixclass::MixturePriorClass) = mixclass.components
+nparams(mixclass::MixturePriorClass) = length(components(mixclass))
+
+function (mixclass::MixturePriorClass)(p::AbstractVector{<:Real})
+    MixtureModel(components(convexclass), fix_πs(p))
+end
+
+function pdf(prior::PriorVariable{<:MixturePriorClass}, Z::EBayesSample)
+    @unpack convexclass, finite_param, model = prior
+    pdf_combination = pdf.(components(convexclass), Z)
+    @expression(model, dot(finite_param, pdf_combination))
+end
+
+function cdf(prior::PriorVariable{<:MixturePriorClass}, Z::EBayesSample)
+    @unpack convexclass, finite_param, model = prior
+    cdf_combination = cdf.(components(convexclass), Z)
+    @expression(model, dot(finite_param, cdf_combination))
+end
+
+function (target::LinearEBayesTarget)(prior::PriorVariable{<:MixturePriorClass})
+    @unpack convexclass, finite_param, model = prior
+    linear_functional_evals = target.(components(convexclass))
     @expression(model, dot(finite_param, linear_functional_evals))
 end

@@ -6,7 +6,8 @@ import Base: broadcast, broadcast!, broadcasted, eltype, zero, <=
 using DataStructures
 @reexport using Distributions
 import Distributions:
-    ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf
+    ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
+using Expectations
 
 @reexport using Intervals
 using JuMP
@@ -55,6 +56,7 @@ export EBayesSample,
     PosteriorVariance,
     MarginalDensity,
     DiscretePriorClass,
+    MixturePriorClass,
     NPMLE
 
 # neighborhoods
