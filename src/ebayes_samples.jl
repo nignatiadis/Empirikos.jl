@@ -12,8 +12,8 @@ function likelihood_distribution end
 function response end
 function nuisance_parameter end
 
-function Float64(Z::EBayesSample{Float64})
-    Float64(response(Z))
+function Base.Float64(Z::EBayesSample{Float64})
+    Base.Float64(response(Z))
 end
 
 

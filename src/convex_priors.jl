@@ -18,7 +18,13 @@ struct PriorVariable{C<:ConvexPriorClass,V}
     model::Any
 end
 
+
 Base.broadcastable(prior::PriorVariable) = Ref(prior)
+
+function (priorvariable::PriorVariable)(p::AbstractVector{<:Real})
+    convexclass = priorvariable.convexclass
+    convexclass(p)
+end
 
 abstract type AbstractMixturePriorClass <: ConvexPriorClass end
 
@@ -91,7 +97,7 @@ components(mixclass::MixturePriorClass) = mixclass.components
 nparams(mixclass::MixturePriorClass) = length(components(mixclass))
 
 function (mixclass::MixturePriorClass)(p::AbstractVector{<:Real})
-    MixtureModel(components(convexclass), fix_πs(p))
+    MixtureModel(components(mixclass), fix_πs(p))
 end
 
 function pdf(prior::PriorVariable{<:MixturePriorClass}, Z::EBayesSample)

@@ -1,4 +1,6 @@
-struct NPMLE{C} <: EBayesMethod
+abstract type ConvexMinimumDistanceMethod <: EBayesMethod end
+
+struct NPMLE{C} <: ConvexMinimumDistanceMethod
     convexclass::C
     solver::Any
     dict::Any
@@ -6,27 +8,27 @@ end
 
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
 
-struct FittedNPMLE{D, N<:NPMLE}
+struct FittedConvexMinimumDistance{D, N<:ConvexMinimumDistanceMethod}
     prior::D
-    npmle::N
+    method::N
     model::Any # add status?
 end
-Base.broadcastable(fitted_npmle::FittedNPMLE) = Ref(fitted_npmle)
+Base.broadcastable(fitted_method::FittedConvexMinimumDistance) = Ref(fitted_method)
 
 
-marginalize(Z, fitted_npmle::FittedNPMLE) = marginalize(Z, fitted_npmle.prior)
+marginalize(Z, fitted_method::FittedConvexMinimumDistance) = marginalize(Z, fitted_method.prior)
 
-function (target::EBayesTarget)(fitted_npmle::FittedNPMLE, args...)
-    target(fitted_npmle.prior, args...)
+function (target::EBayesTarget)(fitted_method::FittedConvexMinimumDistance, args...)
+    target(fitted_method.prior, args...)
 end
 
-function StatsBase.fit(npmle::NPMLE, Zs)
+function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs)
     Zs = summarize_by_default(Zs) ? summarize(Zs) : Zs
 
-    convexclass = instantiate(npmle.convexclass, Zs; npmle.dict...)
-    instantiated_npmle = @set npmle.convexclass = convexclass
+    convexclass = instantiate(method.convexclass, Zs; method.dict...)
+    instantiated_method = @set method.convexclass = convexclass
 
-    _fit(instantiated_npmle, Zs)
+    _fit(instantiated_method, Zs)
 end
 
 function _fit(npmle::NPMLE, Zs)
@@ -45,9 +47,37 @@ function _fit(npmle::NPMLE, Zs)
     @objective(model, Min, u)
     optimize!(model)
     estimated_prior = convexclass(JuMP.value.(π.finite_param))
-    FittedNPMLE(estimated_prior, npmle, model)
+    FittedConvexMinimumDistance(estimated_prior, npmle, model)
 end
 
+
+struct KolmogorovSmirnovMinimumDistance{C} <: ConvexMinimumDistanceMethod
+    convexclass::C
+    solver::Any
+    dict::Any
+end
+
+function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
+    @unpack convexclass, solver = method
+    model = Model(solver)
+
+    π = Empirikos.prior_variable!(model, convexclass)
+
+    dkw = fit(DvoretzkyKieferWolfowitz(), Zs)
+
+    F = cdf.(π, keys(dkw.summary))
+    Fhat = collect(values(dkw.summary))
+
+    @variable(model, u)
+
+    @constraint(model, F - Fhat .<= u)
+    @constraint(model, F - Fhat .>= -u)
+
+    @objective(model, Min, u)
+    optimize!(model)
+    estimated_prior = convexclass(JuMP.value.(π.finite_param))
+    FittedConvexMinimumDistance(estimated_prior, method, model)
+end
 # NonparametricMLE( __ optional {ConvexPriorClass}; grid= , ngrid=  , method=:primal or :dual, solver= )
 
 # NPMLE{}

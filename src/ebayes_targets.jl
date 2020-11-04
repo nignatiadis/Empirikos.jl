@@ -224,7 +224,7 @@ end
 
 @recipe function f(targets::AbstractVector{<:EBayesTarget}, g)
     length(unique(typeof.(targets))) == 1 || error("Expected homogeneous targets")
-    xs = Float64.(location(targets))
+    xs = Float64.(location.(targets))
     ys = targets.(g)
 
     background_color_legend --> :transparent

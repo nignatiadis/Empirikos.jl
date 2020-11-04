@@ -1,6 +1,13 @@
 abstract type EBayesNeighborhood end
 abstract type FittedEBayesNeighborhood end
 
+function neighborhood_constraint!(
+    model,
+    nbood,
+    prior::PriorVariable)
+
+    model
+end
 
 Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
     α::T = 0.05
@@ -10,10 +17,13 @@ function nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number})
     dkw.α
 end
 
-set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number}, Zs) = dkw
-
-function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz, Zs)
-    α = dkw.α(nobs(Zs))
+function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz; α=dkw.α)
+    @set dkw.α = α
+end
+function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number}, Zs; kwargs...)
+    set_nominal_alpha(dkw; kwargs...)
+end
+function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz, Zs; α = dkw.α(nobs(Zs)))
     @set dkw.α = α
 end
 
@@ -43,6 +53,8 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     band = sqrt(log(2 / α) / (2n))
     FittedDvoretzkyKieferWolfowitz(_dict, band, dkw)
 end
+
+
 
 function neighborhood_constraint!(
     model,
