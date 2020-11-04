@@ -13,6 +13,11 @@ abstract type AbstractPosteriorTarget <: EBayesTarget end
 abstract type AbstractTargetComputation end
 
 struct Conjugate <: AbstractTargetComputation end
+struct SampleQuadrature <: AbstractTargetComputation end
+struct PriorQuadrature <: AbstractTargetComputation end
+struct LinearOverLinear <: AbstractTargetComputation end #could allow LinearOverLinear{1,2}
+
+
 
 function default_target_computation end
 
@@ -27,7 +32,6 @@ end
 
 
 
-# ::Conjugate, ::LinearOverLinear, ::MixtureOfConjugates
 
 
 
@@ -210,4 +214,24 @@ end
 
 function (postprob::PosteriorProbability)(prior, Z::EBayesSample, ::Conjugate)
     _pdf(posterior(Z, prior), postprob.s)
+end
+
+
+
+
+
+# Plotting code
+
+@recipe function f(targets::AbstractVector{<:EBayesTarget}, g)
+    length(unique(typeof.(targets))) == 1 || error("Expected homogeneous targets")
+    xs = Float64.(location(targets))
+    ys = targets.(g)
+
+    background_color_legend --> :transparent
+	foreground_color_legend --> :transparent
+
+	seriestype  -->  :path
+	seriescolor --> "#550133"
+
+    xs, ys
 end

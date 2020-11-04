@@ -6,9 +6,17 @@ abstract type ContinuousEBayesSample{T} <: EBayesSample{T}  end
 abstract type DiscreteEBayesSample{T} <: EBayesSample{T}  end
 
 
+
+
 function likelihood_distribution end
 function response end
 function nuisance_parameter end
+
+function Float64(Z::EBayesSample{Float64})
+    Float64(response(Z))
+end
+
+
 
 """
 	marginalize(Z, prior)

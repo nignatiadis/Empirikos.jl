@@ -49,15 +49,19 @@ struct StandardNormalSample{T} <: AbstractNormalSample{T}
     Z::T
 end
 
+StandardNormalSample() = StandardNormalSample(missing)
+
 eltype(Z::AbstractNormalSample{T}) where {T} = T
 support(Z::AbstractNormalSample) = RealInterval(-Inf, +Inf)
 
 response(Z::AbstractNormalSample) = Z.Z
 var(Z::AbstractNormalSample) = Z.σ^2
 var(Z::StandardNormalSample) = one(eltype(response(Z)))
+var(Z::StandardNormalSample{Missing}) = 1.0
 
 std(Z::AbstractNormalSample) = Z.σ
 std(Z::StandardNormalSample) = one(eltype(response(Z)))
+std(Z::StandardNormalSample{Missing}) = 1.0
 
 nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 

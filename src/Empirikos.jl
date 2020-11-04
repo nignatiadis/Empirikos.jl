@@ -14,6 +14,7 @@ using JuMP
 using LinearAlgebra
 using MathOptInterface
 using Optim
+using RecipesBase
 using Setfield
 using Statistics
 import Statistics: std, var
@@ -57,7 +58,8 @@ export EBayesSample,
     MarginalDensity,
     DiscretePriorClass,
     MixturePriorClass,
-    NPMLE
+    NPMLE,
+    nominal_alpha
 
 # neighborhoods
 export DvoretzkyKieferWolfowitz

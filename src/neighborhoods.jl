@@ -6,28 +6,42 @@ Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
     α::T = 0.05
 end
 
-function _dkw_level(dkw::DvoretzkyKieferWolfowitz{T}, Zs) where {T<:Number}
+function nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number})
     dkw.α
 end
 
-function _dkw_level(dkw::DvoretzkyKieferWolfowitz, Zs)
-    dkw.α(nobs(Zs))
+set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number}, Zs) = dkw
+
+function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz, Zs)
+    α = dkw.α(nobs(Zs))
+    @set dkw.α = α
 end
 
-struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S}} <: FittedEBayesNeighborhood
+
+struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <: FittedEBayesNeighborhood
     summary::D
     band::S
+    dkw::DKW
+end
+
+function nominal_alpha(dkw::FittedDvoretzkyKieferWolfowitz)
+    nominal_alpha(dkw.dkw)
 end
 
 # TODO: Allow this to work more broadly.
+function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs::AbstractVector{<:EBayesSample})
+    StatsBase.fit(dkw, summarize(Zs))
+end
+
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     cdf_probs = cumsum([v for (k, v) in Zs_summary.store])
     cdf_probs /= cdf_probs[end]
     _dict = SortedDict(keys(Zs_summary.store) .=> cdf_probs)
-    α = _dkw_level(dkw, Zs_summary)
+    dkw = set_nominal_alpha(dkw, Zs_summary)
+    α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
     band = sqrt(log(2 / α) / (2n))
-    FittedDvoretzkyKieferWolfowitz(_dict, band)
+    FittedDvoretzkyKieferWolfowitz(_dict, band, dkw)
 end
 
 function neighborhood_constraint!(

@@ -16,6 +16,9 @@ Base.broadcastable(fitted_npmle::FittedNPMLE) = Ref(fitted_npmle)
 
 marginalize(Z, fitted_npmle::FittedNPMLE) = marginalize(Z, fitted_npmle.prior)
 
+function (target::EBayesTarget)(fitted_npmle::FittedNPMLE, args...)
+    target(fitted_npmle.prior, args...)
+end
 
 function StatsBase.fit(npmle::NPMLE, Zs)
     Zs = summarize_by_default(Zs) ? summarize(Zs) : Zs
