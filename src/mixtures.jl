@@ -23,6 +23,14 @@ function posterior(Z::EBayesSample, prior::DiscreteNonParametric)
     DiscreteNonParametric(support(prior), posterior_πs)
 end
 
+function default_target_computation(
+    ::EBayesSample,
+    ::MixtureModel,
+    ::AbstractPosteriorTarget
+)
+    Conjugate()
+end
+
 
 function marginalize(Z::EBayesSample, prior::MixtureModel)
     πs = probs(prior)
@@ -32,7 +40,7 @@ end
 
 function posterior(Z::EBayesSample, prior::MixtureModel)
     πs = probs(prior)
-    fs = likelihood.(Z, components(prior))
+    fs = pdf.(components(prior), Z)
     posterior_πs = πs .* fs
     posterior_πs /= sum(posterior_πs)
     posterior_components = posterior.(Z, components(prior))

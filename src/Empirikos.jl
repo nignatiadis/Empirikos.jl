@@ -23,9 +23,10 @@ import StatsBase: loglikelihood, response, fit, nobs
 
 using UnPack
 
-include("dict_function.jl")
+include("set_defaults.jl")
 include("ebayes_samples.jl")
 include("interval_discretizer.jl")
+include("dict_function.jl")
 include("ebayes_methods.jl")
 include("ebayes_targets.jl")
 include("mixtures.jl")
@@ -66,5 +67,9 @@ export DvoretzkyKieferWolfowitz
 
 # utilities
 export DictFunction
+
+# default
+
+export DataBasedDefault
 
 end

@@ -128,11 +128,11 @@ end
 
 
 
-function instantiate(convexclass::DiscretePriorClass{Nothing},
+function _set_defaults(convexclass::DiscretePriorClass,
     Zs::VectorOrSummary{<:AbstractNormalSample};  #TODO for MultinomialSummary
-    kwargs...)
-    eps = get(kwargs, :eps, 1e-4)
-    prior_grid_length = get(kwargs, :prior_grid_length, 300)::Integer
+    hints)
+    eps = get(hints, :eps, 1e-4)
+    prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
     _sample_min, _sample_max = extrema(response.(Zs))
     # This won't handle infinity correctly. TODOOO
     _sample_min = isa(_sample_min, Interval) ? first(_sample_min) : _sample_min

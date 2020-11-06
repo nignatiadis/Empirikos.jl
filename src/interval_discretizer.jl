@@ -2,6 +2,8 @@ struct Discretizer{T, C <: AbstractInterval{T}, S<:AbstractVector{C}}
     sorted_intervals::S
 end
 
+Base.keys(discr::Discretizer) = discr.sorted_intervals
+
 function Discretizer(grid::AbstractVector; closed=:right, unbounded=:both)
     if (closed === :right) && (unbounded === :both)
         ints = EBInterval{eltype(grid)}[Interval{Unbounded, Closed}(nothing, grid[1]);

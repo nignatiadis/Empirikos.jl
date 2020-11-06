@@ -5,12 +5,6 @@ Abstract type representing convex classes of probability distributions ``\\mathc
 """
 abstract type ConvexPriorClass end
 
-instantiate(convexclass::ConvexPriorClass, Zs; kwargs...) = convexclass
-
-#function instantiate(convexclass::ConvexPriorClass, Zs::MultinomialSummary; kwargs...)
-#    instantiate(convexclass, ; kwargs...)
-#wend
-
 
 struct PriorVariable{C<:ConvexPriorClass,V}
     convexclass::C

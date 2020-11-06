@@ -191,6 +191,7 @@ function loglikelihood(mult::MultinomialSummary, prior)
 end
 
 nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))
+nobs(Zs::AbstractVector{<:EBayesSample}) = length(Zs)
 
 
 

@@ -22,13 +22,11 @@ function (target::EBayesTarget)(fitted_method::FittedConvexMinimumDistance, args
     target(fitted_method.prior, args...)
 end
 
-function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs)
+# seems like template that could be useful more generally..
+function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs; kwargs...)
     Zs = summarize_by_default(Zs) ? summarize(Zs) : Zs
-
-    convexclass = instantiate(method.convexclass, Zs; method.dict...)
-    instantiated_method = @set method.convexclass = convexclass
-
-    _fit(instantiated_method, Zs)
+    method = set_defaults(method, Zs; kwargs...)
+    _fit(method, Zs)
 end
 
 function _fit(npmle::NPMLE, Zs)

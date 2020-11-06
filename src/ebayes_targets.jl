@@ -52,7 +52,7 @@ Note that ``\\psi^*(t)`` is such that for distributions ``G`` with density ``g``
 L(G) = \\frac{1}{2\\pi}\\int g^*(\\mu)\\psi^*(\\mu) d\\mu
 ```
 """
-function cf(::LinearEBayesTarget, t) end
+function Distributions.cf(::LinearEBayesTarget, t) end
 
 """
 	PriorDensity(z::Float64) <: LinearEBayesTarget
@@ -70,7 +70,7 @@ end
 
 location(target::PriorDensity) = target.μ
 
-function cf(target::PriorDensity, t)
+function Distributions.cf(target::PriorDensity, t)
     exp(im * location(target) * t)
 end
 
@@ -147,6 +147,19 @@ end
 
 Base.numerator(target::AbstractPosteriorTarget) = PosteriorTargetNumerator(target)
 
+
+struct PosteriorTargetNullHypothesis{T,S} <: LinearEBayesTarget
+    posterior_target::T
+    c::S
+end
+
+location(target::PosteriorTargetNullHypothesis) = location(target.posterior_target)
+
+function (post_null::PosteriorTargetNullHypothesis)(prior::Distribution)
+    c = post_null.c
+    _post =   post_null.posterior_target
+    numerator(_post)(prior)- c*denominator(_post)(prior)
+end
 
 
 #function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)

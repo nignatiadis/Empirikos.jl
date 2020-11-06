@@ -24,7 +24,7 @@ end
 
 # Conjugate computations
 
-function default_target_computation(::PoissonSample, ::Gamma, ::AbstractPosteriorTarget)
+function default_target_computation(::PoissonSample, ::Gamma)
     Conjugate()
 end
 
@@ -64,11 +64,11 @@ end
 # DiscretePriorClass
 
 
-function instantiate(convexclass::DiscretePriorClass{Nothing},
+function _set_defaults(convexclass::DiscretePriorClass,
     Zs::AbstractVector{<:PoissonSample};  #TODO for MultinomialSummary
-    kwargs...)
-    eps = get(kwargs, :eps, 1e-4)
-    prior_grid_length = get(kwargs, :prior_grid_length, 300)::Integer
+    hints)
+    eps = get(hints, :eps, 1e-4)
+    prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
     _sample_min, _sample_max =  extrema( response.(Zs) ./ nuisance_parameter.(Zs))
     _grid_min = max(2*eps, _sample_min - eps)
     _grid_max = _sample_max + eps

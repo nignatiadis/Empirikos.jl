@@ -1,7 +1,6 @@
-Base.@kwdef struct DictFunction{S, C, T, D <: AbstractDict{S,T}}
+Base.@kwdef struct DictFunction{S, T, D <: AbstractDict{S,T}}
     dict::D
     default_value::T = zero(eltype(values(dict)))
-    discretizer::C = nothing
 end
 
 function DictFunction(dict::AbstractDict)
@@ -13,13 +12,27 @@ function DictFunction(keys, values; kwargs...)
 end
 
 
-function (f::DictFunction{S})(x::S) where S
-    get(f.dict, x, f.default_value)
-end
-
 function (f::DictFunction)(x)
-    f(f.discretizer(x))
+    get(f.dict, x, f.default_value)
 end
 
 Base.keys(dictfun::DictFunction) = Base.keys(dictfun.dict)
 Base.values(dictfun::DictFunction) = Base.values(dictfun.dict)
+
+
+Base.@kwdef struct DiscretizedDictFunction{D <: Empirikos.Discretizer, F <: DictFunction}
+    discretizer::D
+    dictfunction::F
+end
+
+Base.keys(dictfun::DiscretizedDictFunction) = Base.keys(dictfun.dictfunction)
+
+Base.values(dictfun::DiscretizedDictFunction) = Base.values(dictfun.dictfunction)
+
+function DiscretizedDictFunction(discretizer, values; kwargs...)
+    DiscretizedDictFunction(discretizer, DictFunction(Base.values(discretizer), values; kwargs...))
+end
+
+function (f::DiscretizedDictFunction)(x)
+    f.dictfunction(f.discretizer(x))
+end

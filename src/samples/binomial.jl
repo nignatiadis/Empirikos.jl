@@ -50,7 +50,7 @@ end
 #---------- Beta Binomial Conjugacy-------------------------------------
 #-----------------------------------------------------------------------
 
-function default_target_computation(::BinomialSample, ::Beta, ::AbstractPosteriorTarget)
+function default_target_computation(::BinomialSample, ::Beta)
     Conjugate()
 end
 
@@ -109,10 +109,10 @@ end
 # DiscretePriorClass
 
 
-function instantiate(convexclass::DiscretePriorClass{Nothing},
+function _set_defaults(convexclass::DiscretePriorClass,
                      Zs::VectorOrSummary{<:BinomialSample};
-                     kwargs...)
-    eps = get(kwargs, :eps, 1e-4)
-    prior_grid_length = get(kwargs, :prior_grid_length, 300)::Integer
+                     hints)
+    eps = get(hints, :eps, 1e-4)
+    prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
     DiscretePriorClass(range(eps; stop=1-eps, length=prior_grid_length))
 end
