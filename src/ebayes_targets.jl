@@ -229,6 +229,9 @@ function (postprob::PosteriorProbability)(prior, Z::EBayesSample, ::Conjugate)
     _pdf(posterior(Z, prior), postprob.s)
 end
 
+function Base.extrema(target::PosteriorProbability)
+	(0.0,1.0)
+end
 
 
 

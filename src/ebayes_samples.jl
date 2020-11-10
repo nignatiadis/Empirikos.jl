@@ -64,9 +64,9 @@ function loglikelihood(Zs::AbstractVector{<:EBayesSample}, prior)
     sum(loglikelihood.(Zs, prior))
 end
 
-pdf(prior, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
-cdf(prior, Z::EBayesSample) = _cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
-ccdf(prior, Z::EBayesSample) = _ccdf(marginalize(Z, prior), response(Z))
+pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
+cdf(prior::Distribution, Z::EBayesSample) = _cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
+ccdf(prior::Distribution, Z::EBayesSample) = _ccdf(marginalize(Z, prior), response(Z))
 
 
 
@@ -180,6 +180,7 @@ function weights(Zs_summary::MultinomialSummary)
 end
 
 summarize(Zs::AbstractVector{<:EBayesSample}) = MultinomialSummary(SortedDict(countmap(Zs)))
+summarize(Zs::MultinomialSummary) = Zs
 
 function skedasticity(Zs_summary::MultinomialSummary)
     all_unique_samples = collect(keys(Zs_summary.store))
@@ -194,7 +195,7 @@ nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))
 nobs(Zs::AbstractVector{<:EBayesSample}) = length(Zs)
 
 
-
+StatsBase.fit(::Nothing, ::VectorOrSummary) = nothing
 
 
 

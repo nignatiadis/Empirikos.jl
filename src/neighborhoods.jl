@@ -1,6 +1,14 @@
 abstract type EBayesNeighborhood end
 abstract type FittedEBayesNeighborhood end
 
+StatsBase.fit(nbhood::FittedEBayesNeighborhood, args...; kwargs...) = nbhood
+
+function nominal_alpha(nbhood::EBayesNeighborhood)
+    nbhood.α
+end
+
+
+
 function neighborhood_constraint!(
     model,
     nbood,
@@ -11,20 +19,6 @@ end
 
 Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
     α::T = 0.05
-end
-
-function nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number})
-    dkw.α
-end
-
-function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz; α=dkw.α)
-    @set dkw.α = α
-end
-function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz{<:Number}, Zs; kwargs...)
-    set_nominal_alpha(dkw; kwargs...)
-end
-function set_nominal_alpha(dkw::DvoretzkyKieferWolfowitz, Zs; α = dkw.α(nobs(Zs)))
-    @set dkw.α = α
 end
 
 
@@ -47,7 +41,6 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     cdf_probs = cumsum([v for (k, v) in Zs_summary.store])
     cdf_probs /= cdf_probs[end]
     _dict = SortedDict(keys(Zs_summary.store) .=> cdf_probs)
-    dkw = set_nominal_alpha(dkw, Zs_summary)
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
     band = sqrt(log(2 / α) / (2n))

@@ -22,6 +22,8 @@ function (target::EBayesTarget)(fitted_method::FittedConvexMinimumDistance, args
     target(fitted_method.prior, args...)
 end
 
+Distributions.pdf(fitted_method::FittedConvexMinimumDistance, Z) = Distributions.pdf(fitted_method.prior,  Z)
+
 # seems like template that could be useful more generally..
 function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs; kwargs...)
     Zs = summarize_by_default(Zs) ? summarize(Zs) : Zs

@@ -66,7 +66,6 @@ std(Z::StandardNormalSample{Missing}) = 1.0
 nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
-likelihood_distribution(Z::AbstractNormalSample) = likelihood_distribution(μ, zero(std(Z)))
 
 function Base.show(io::IO, Z::AbstractNormalSample)
     Zz = response(Z)
@@ -139,4 +138,9 @@ function _set_defaults(convexclass::DiscretePriorClass,
     _sample_max = isa(_sample_max, Interval) ? last(_sample_max) : _sample_max
     _grid = range(_sample_min - eps; stop=_sample_max + eps, length=prior_grid_length)
     DiscretePriorClass(_grid)
+end
+
+# Target specifics
+function Base.extrema(density::MarginalDensity{<:AbstractNormalSample{<:Real}})
+    (0.0, 1/sqrt(2π*var(location(density))))
 end

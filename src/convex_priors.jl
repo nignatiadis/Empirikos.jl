@@ -37,7 +37,7 @@ struct DiscretePriorClass{S} <: AbstractMixturePriorClass
     support::S #(-Inf, Inf) #default
 end
 
-DiscretePriorClass() = DiscretePriorClass(nothing)
+DiscretePriorClass() = DiscretePriorClass(DataBasedDefault())
 
 function (convexclass::DiscretePriorClass)(p::AbstractVector{<:Real})
     DiscreteNonParametric(support(convexclass), fix_πs(p))
