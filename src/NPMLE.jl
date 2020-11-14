@@ -8,23 +8,26 @@ end
 
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
 
-struct FittedConvexMinimumDistance{D, N<:ConvexMinimumDistanceMethod}
+struct FittedConvexMinimumDistance{D,N<:ConvexMinimumDistanceMethod}
     prior::D
     method::N
     model::Any # add status?
 end
 Base.broadcastable(fitted_method::FittedConvexMinimumDistance) = Ref(fitted_method)
 # TODO: replace these types of methods by a fit_if_not_fitted
-StatsBase.fit(fitted_method::FittedConvexMinimumDistance, args...; kwargs...) = fitted_method
+StatsBase.fit(fitted_method::FittedConvexMinimumDistance, args...; kwargs...) =
+    fitted_method
 
 
-marginalize(Z, fitted_method::FittedConvexMinimumDistance) = marginalize(Z, fitted_method.prior)
+marginalize(Z, fitted_method::FittedConvexMinimumDistance) =
+    marginalize(Z, fitted_method.prior)
 
 function (target::EBayesTarget)(fitted_method::FittedConvexMinimumDistance, args...)
     target(fitted_method.prior, args...)
 end
 
-Distributions.pdf(fitted_method::FittedConvexMinimumDistance, Z) = Distributions.pdf(fitted_method.prior,  Z)
+Distributions.pdf(fitted_method::FittedConvexMinimumDistance, Z) =
+    Distributions.pdf(fitted_method.prior, Z)
 
 # seems like template that could be useful more generally..
 function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs; kwargs...)
@@ -45,7 +48,7 @@ function _fit(npmle::NPMLE, Zs)
 
     @variable(model, u)
 
-    @constraint(model,  vcat(u, f, _mult) in MathOptInterface.RelativeEntropyCone(2n+1))
+    @constraint(model, vcat(u, f, _mult) in MathOptInterface.RelativeEntropyCone(2n + 1))
     @objective(model, Min, u)
     optimize!(model)
     estimated_prior = convexclass(JuMP.value.(π.finite_param))

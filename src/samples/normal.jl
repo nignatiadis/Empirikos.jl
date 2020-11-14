@@ -20,8 +20,8 @@ struct NormalSample{T,S} <: AbstractNormalSample{T}
     σ::S
 end
 
-function NormalSample(Z::P, σ::S) where {T, P <: EBInterval{T}, S}
-    NormalSample{EBInterval{T}, S}(Z, σ)
+function NormalSample(Z::P, σ::S) where {T,P<:EBInterval{T},S}
+    NormalSample{EBInterval{T},S}(Z, σ)
 end
 
 function NormalSample(σ::S) where {S}
@@ -70,7 +70,7 @@ likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 function Base.show(io::IO, Z::AbstractNormalSample)
     Zz = response(Z)
     print(io, "Z=")
-    print(io, round(Zz, sigdigits=4))
+    print(io, round(Zz, sigdigits = 4))
     print(io, " | ", "σ=", std(Z)) #perhaps need sth a bit nicer here if $\sigma$ takes annoying form
 end
 
@@ -78,7 +78,7 @@ end
 function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
     Zz = response(Z)
     print(io, "Z ∈ ")
-    show(IOContext(io, :compact=>true), Zz)
+    show(IOContext(io, :compact => true), Zz)
     print(io, " | ", "σ=", std(Z)) #perhaps need sth a bit nicer here if $\sigma$ takes annoying form
 end
 
@@ -98,7 +98,11 @@ end
 
 
 # Conjugate computations
-function default_target_computation(::AbstractNormalSample, ::Normal, ::AbstractPosteriorTarget)
+function default_target_computation(
+    ::AbstractNormalSample,
+    ::Normal,
+    ::AbstractPosteriorTarget,
+)
     Conjugate()
 end
 
@@ -127,20 +131,22 @@ end
 
 
 
-function _set_defaults(convexclass::DiscretePriorClass,
+function _set_defaults(
+    convexclass::DiscretePriorClass,
     Zs::VectorOrSummary{<:AbstractNormalSample};  #TODO for MultinomialSummary
-    hints)
+    hints,
+)
     eps = get(hints, :eps, 1e-4)
     prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
     _sample_min, _sample_max = extrema(response.(Zs))
     # This won't handle infinity correctly. TODOOO
     _sample_min = isa(_sample_min, Interval) ? first(_sample_min) : _sample_min
     _sample_max = isa(_sample_max, Interval) ? last(_sample_max) : _sample_max
-    _grid = range(_sample_min - eps; stop=_sample_max + eps, length=prior_grid_length)
+    _grid = range(_sample_min - eps; stop = _sample_max + eps, length = prior_grid_length)
     DiscretePriorClass(_grid)
 end
 
 # Target specifics
 function Base.extrema(density::MarginalDensity{<:AbstractNormalSample{<:Real}})
-    (0.0, 1/sqrt(2π*var(location(density))))
+    (0.0, 1 / sqrt(2π * var(location(density))))
 end

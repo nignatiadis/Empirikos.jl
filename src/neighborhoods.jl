@@ -9,10 +9,7 @@ end
 
 
 
-function neighborhood_constraint!(
-    model,
-    nbood,
-    prior::PriorVariable)
+function neighborhood_constraint!(model, nbood, prior::PriorVariable)
 
     model
 end
@@ -22,7 +19,8 @@ Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
 end
 
 
-struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <: FittedEBayesNeighborhood
+struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
+       FittedEBayesNeighborhood
     summary::D
     band::S
     dkw::DKW

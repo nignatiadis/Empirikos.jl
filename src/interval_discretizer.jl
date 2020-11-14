@@ -1,16 +1,18 @@
-struct Discretizer{T, C <: AbstractInterval{T}, S<:AbstractVector{C}}
+struct Discretizer{T,C<:AbstractInterval{T},S<:AbstractVector{C}}
     sorted_intervals::S
 end
 
 Base.keys(discr::Discretizer) = discr.sorted_intervals
 
-function Discretizer(grid::AbstractVector; closed=:right, unbounded=:both)
+function Discretizer(grid::AbstractVector; closed = :right, unbounded = :both)
     if (closed === :right) && (unbounded === :both)
-        ints = EBInterval{eltype(grid)}[Interval{Unbounded, Closed}(nothing, grid[1]);
-                                    Interval{Open, Closed}.(grid[1:end-1], grid[2:end]);
-                                    Interval{Open, Unbounded}(grid[end], nothing)]
+        ints = EBInterval{eltype(grid)}[
+            Interval{Unbounded,Closed}(nothing, grid[1])
+            Interval{Open,Closed}.(grid[1:end-1], grid[2:end])
+            Interval{Open,Unbounded}(grid[end], nothing)
+        ]
     elseif (closed === :right) && (unbounded === :none)
-        ints = Interval{Open, Closed}.(grid[1:end-1], grid[2:end])
+        ints = Interval{Open,Closed}.(grid[1:end-1], grid[2:end])
     end
     Discretizer(ints)
 end
@@ -20,8 +22,8 @@ function _discretize(sorted_intervals, x)
     n = length(sorted_intervals)
     left, right = 1, n
 
-    for i=1:n
-        middle = div(left+right, 2)
+    for i = 1:n
+        middle = div(left + right, 2)
         middle_interval = sorted_intervals[middle]
         if x ∈ middle_interval
             return middle_interval
@@ -48,9 +50,9 @@ function broadcasted(discr::Discretizer{T,C,S}, xs::AbstractVector{<:Number}) wh
 end
 
 
-function Discretizer(Zs::AbstractVector{<:EBayesSample}; eps=1e-6, nbins=300, kwargs...)
+function Discretizer(Zs::AbstractVector{<:EBayesSample}; eps = 1e-6, nbins = 300, kwargs...)
     _sample_min, _sample_max = extrema(response.(Zs))
-    _grid = range(_sample_min - eps; stop=_sample_max + eps, length=nbins)
+    _grid = range(_sample_min - eps; stop = _sample_max + eps, length = nbins)
     Discretizer(_grid; kwargs...)
 end
 
@@ -68,6 +70,6 @@ end
 
 
 #function broadcasted(discr::Discretizer{T,C,S},
-  #                  xs::AbstractVector{<:EBayesSample}) where {T,C,S}
- #   C[discr(x) for x in xs]
+#                  xs::AbstractVector{<:EBayesSample}) where {T,C,S}
+#   C[discr(x) for x in xs]
 #end

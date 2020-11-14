@@ -1,8 +1,8 @@
-1+1
+1 + 1
 
 abstract type AbstractDefault end
 
-struct DataBasedDefault <:  AbstractDefault end
+struct DataBasedDefault <: AbstractDefault end
 
 function _set_defaults end
 
@@ -14,7 +14,7 @@ function requires_defaults(obj)
         return false
     else
         _fields = getfield.(Ref(obj), fieldnames(typeof(obj)))
-         any(requires_defaults.(_fields))
+        any(requires_defaults.(_fields))
     end
 end
 
@@ -30,18 +30,18 @@ function set_defaults(obj, data...; hints = Dict())
     _fieldnames = fieldnames(typeof(obj))
     _fields = getfield.(Ref(obj), _fieldnames)
 
-    if any(isa.(_fields, AbstractDefault ))
-        updated_obj = _set_defaults(obj, data...; hints=hints)
-        all(.! isa.(getfield.(Ref(updated_obj), _fieldnames), AbstractDefault )) ||
+    if any(isa.(_fields, AbstractDefault))
+        updated_obj = _set_defaults(obj, data...; hints = hints)
+        all(.!isa.(getfield.(Ref(updated_obj), _fieldnames), AbstractDefault)) ||
             throw("set_default did not set all DataBasedDefaults. Please specify manually.")
-        return set_defaults(updated_obj, data...; hints=hints)
+        return set_defaults(updated_obj, data...; hints = hints)
     end
 
     idx = findfirst(requires_defaults.(_fields))
     subfield_hints = deepcopy(hints)
     push!(subfield_hints[:field_parents], obj)
-    subfield = set_defaults(_fields[idx], data...; hints=subfield_hints)
+    subfield = set_defaults(_fields[idx], data...; hints = subfield_hints)
 
     _lens = Setfield.PropertyLens{_fieldnames[idx]}()
-    set_defaults(set(obj, _lens, subfield), data...; hints=hints)
+    set_defaults(set(obj, _lens, subfield), data...; hints = hints)
 end

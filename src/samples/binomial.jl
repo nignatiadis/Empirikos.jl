@@ -40,7 +40,8 @@ likelihood_distribution(Z::BinomialSample, p) = Binomial(ntrials(Z), p)
 
 
 function fill_levels(Zs::AbstractVector{<:BinomialSample})
-    skedasticity(Zs) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    skedasticity(Zs) == Homoskedastic() ||
+        error("Heteroskedastic likelihood not implemented.")
     #_min, _max = extrema(response.(Zs))
     n = ntrials(Zs[1])
     #BinomialSample.(_min:_max, n)
@@ -48,7 +49,8 @@ function fill_levels(Zs::AbstractVector{<:BinomialSample})
 end
 
 function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:BinomialSample}, f)
-    skedasticity(Zs_summary) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    skedasticity(Zs_summary) == Homoskedastic() ||
+        error("Heteroskedastic likelihood not implemented.")
     Zs = fill_levels(collect(keys(Zs_summary)))
     if !isa(f, AbstractVector)
         f = f.(Zs)
@@ -58,7 +60,8 @@ end
 
 # TODO: Fix repetition with code above. Maybe separate fill_levels?
 function dictfun(::Nothing, Zs_summary::AbstractVector{<:BinomialSample}, f)
-    skedasticity(Zs_summary) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    skedasticity(Zs_summary) == Homoskedastic() ||
+        error("Heteroskedastic likelihood not implemented.")
     Zs = fill_levels(Zs_summary)
     if !isa(f, AbstractVector)
         f = f.(Zs)
@@ -130,10 +133,12 @@ end
 # DiscretePriorClass
 
 
-function _set_defaults(convexclass::DiscretePriorClass,
-                     Zs::VectorOrSummary{<:BinomialSample};
-                     hints)
+function _set_defaults(
+    convexclass::DiscretePriorClass,
+    Zs::VectorOrSummary{<:BinomialSample};
+    hints,
+)
     eps = get(hints, :eps, 1e-4)
     prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
-    DiscretePriorClass(range(eps; stop=1-eps, length=prior_grid_length))
+    DiscretePriorClass(range(eps; stop = 1 - eps, length = prior_grid_length))
 end

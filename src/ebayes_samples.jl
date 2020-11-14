@@ -2,8 +2,8 @@
 # types for a single EB sample
 #---------------------------------------
 abstract type EBayesSample{T} end
-abstract type ContinuousEBayesSample{T} <: EBayesSample{T}  end
-abstract type DiscreteEBayesSample{T} <: EBayesSample{T}  end
+abstract type ContinuousEBayesSample{T} <: EBayesSample{T} end
+abstract type DiscreteEBayesSample{T} <: EBayesSample{T} end
 
 
 
@@ -96,7 +96,10 @@ function _cdf(dbn, interval::Interval{T,S,Unbounded}) where {T,S}
     one(eltype(dbn))
 end
 
-function _cdf(dbn::ContinuousUnivariateDistribution, interval::Interval{T,S,B}) where {T,S,B<:Intervals.Bounded}
+function _cdf(
+    dbn::ContinuousUnivariateDistribution,
+    interval::Interval{T,S,B},
+) where {T,S,B<:Intervals.Bounded}
     _cdf(dbn, last(interval))
 end
 
@@ -136,19 +139,31 @@ end
 for f in [:_pdf, :_logpdf]
     @eval begin
         # Closed - Closed and Closed - Open and Open - Open
-        function $f(dbn::ContinuousUnivariateDistribution,
-                    interval::Union{Interval{T,Closed,Closed}, Interval{T,Closed,Open}, Interval{T,Open,Open}}) where {T}
-            _interval = Interval{T, Open, Closed}(first(interval), last(interval))
+        function $f(
+            dbn::ContinuousUnivariateDistribution,
+            interval::Union{
+                Interval{T,Closed,Closed},
+                Interval{T,Closed,Open},
+                Interval{T,Open,Open},
+            },
+        ) where {T}
+            _interval = Interval{T,Open,Closed}(first(interval), last(interval))
             $f(dbn, _interval)
         end
         # Unbounded - Open
-        function $f(dbn::ContinuousUnivariateDistribution, interval::Interval{T,Unbounded,Open}) where {T}
-            _interval = Interval{T, Unbounded, Closed}(first(interval), last(interval))
+        function $f(
+            dbn::ContinuousUnivariateDistribution,
+            interval::Interval{T,Unbounded,Open},
+        ) where {T}
+            _interval = Interval{T,Unbounded,Closed}(first(interval), last(interval))
             $f(dbn, _interval)
         end
         # Closed - Unbounded
-        function $f(dbn::ContinuousUnivariateDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
-            _interval = Interval{T, Open, Unbounded}(first(interval), last(interval))
+        function $f(
+            dbn::ContinuousUnivariateDistribution,
+            interval::Interval{T,Closed,Unbounded},
+        ) where {T}
+            _interval = Interval{T,Open,Unbounded}(first(interval), last(interval))
             $f(dbn, _interval)
         end
     end
@@ -161,9 +176,9 @@ struct MultinomialSummary{T,D<:AbstractDict{T,Int}}
     store::D #TODO, use other container
 end
 
-MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(vals .=> cnts ))
+MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(vals .=> cnts))
 
-const VectorOrSummary{T} = Union{AbstractVector{T}, MultinomialSummary{T}}
+const VectorOrSummary{T} = Union{AbstractVector{T},MultinomialSummary{T}}
 
 Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
 
@@ -183,7 +198,7 @@ end
 
 
 function StatsBase.weights(Zs_summary::MultinomialSummary)
-   fweights(collect(values(Zs_summary.store)))
+    fweights(collect(values(Zs_summary.store)))
 end
 
 summarize(Zs::AbstractVector{<:EBayesSample}) = MultinomialSummary(SortedDict(countmap(Zs)))

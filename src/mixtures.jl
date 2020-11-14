@@ -4,7 +4,7 @@
 function default_target_computation(
     ::EBayesSample,
     ::DiscreteNonParametric,
-    ::AbstractPosteriorTarget
+    ::AbstractPosteriorTarget,
 )
     Conjugate()
 end
@@ -28,7 +28,7 @@ end
 function default_target_computation(
     ::EBayesSample,
     ::MixtureModel,
-    ::AbstractPosteriorTarget
+    ::AbstractPosteriorTarget,
 )
     Conjugate()
 end

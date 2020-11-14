@@ -31,24 +31,21 @@ end
 function marginalize(Z::PoissonSample, prior::Gamma)
     E = nuisance_parameter(Z)
     @unpack α, θ = prior
-    β = 1/θ
-    p = β/(E+β)
-    NegativeBinomial(α,p)
+    β = 1 / θ
+    p = β / (E + β)
+    NegativeBinomial(α, p)
 end
 
 function posterior(Z::PoissonSample, prior::Gamma)
     E = nuisance_parameter(Z)
     @unpack α, θ = prior
-    β = 1/θ
+    β = 1 / θ
     α_post = α + response(Z)
     β_post = β + E
-    Gamma(α_post, 1/β_post)
+    Gamma(α_post, 1 / β_post)
 end
 
-function StatsBase.fit(
-    ::ParametricMLE{<:Gamma},
-    Zs::AbstractVector{<:PoissonSample}
-)
+function StatsBase.fit(::ParametricMLE{<:Gamma}, Zs::AbstractVector{<:PoissonSample})
     func = TwiceDifferentiable(
         params -> -loglikelihood(Zs, Gamma(params...)),
         [1.0; 1.0];
@@ -64,15 +61,17 @@ end
 # DiscretePriorClass
 
 
-function _set_defaults(convexclass::DiscretePriorClass,
+function _set_defaults(
+    convexclass::DiscretePriorClass,
     Zs::AbstractVector{<:PoissonSample};  #TODO for MultinomialSummary
-    hints)
+    hints,
+)
     eps = get(hints, :eps, 1e-4)
     prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
-    _sample_min, _sample_max =  extrema( response.(Zs) ./ nuisance_parameter.(Zs))
-    _grid_min = max(2*eps, _sample_min - eps)
+    _sample_min, _sample_max = extrema(response.(Zs) ./ nuisance_parameter.(Zs))
+    _grid_min = max(2 * eps, _sample_min - eps)
     _grid_max = _sample_max + eps
-    DiscretePriorClass(range(_grid_min; stop=_grid_max, length=prior_grid_length))
+    DiscretePriorClass(range(_grid_min; stop = _grid_max, length = prior_grid_length))
 end
 
 
