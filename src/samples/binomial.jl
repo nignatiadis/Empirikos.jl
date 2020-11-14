@@ -41,10 +41,31 @@ likelihood_distribution(Z::BinomialSample, p) = Binomial(ntrials(Z), p)
 
 function fill_levels(Zs::AbstractVector{<:BinomialSample})
     skedasticity(Zs) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
-    _min, _max = extrema(response.(Zs))
+    #_min, _max = extrema(response.(Zs))
     n = ntrials(Zs[1])
-    BinomialSample.(_min:_max, n)
+    #BinomialSample.(_min:_max, n)
+    BinomialSample.(0:n, n)
 end
+
+function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:BinomialSample}, f)
+    skedasticity(Zs_summary) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    Zs = fill_levels(collect(keys(Zs_summary)))
+    if !isa(f, AbstractVector)
+        f = f.(Zs)
+    end
+    DictFunction(Zs, f)
+end
+
+# TODO: Fix repetition with code above. Maybe separate fill_levels?
+function dictfun(::Nothing, Zs_summary::AbstractVector{<:BinomialSample}, f)
+    skedasticity(Zs_summary) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    Zs = fill_levels(Zs_summary)
+    if !isa(f, AbstractVector)
+        f = f.(Zs)
+    end
+    DictFunction(Zs, f)
+end
+
 
 #-----------------------------------------------------------------------
 #---------- Beta Binomial Conjugacy-------------------------------------

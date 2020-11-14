@@ -12,7 +12,7 @@ function likelihood_distribution end
 function response end
 function nuisance_parameter end
 
-function Base.Float64(Z::EBayesSample{Float64})
+function Base.Float64(Z::EBayesSample{Number})
     Base.Float64(response(Z))
 end
 
@@ -34,7 +34,7 @@ Broadcast.broadcastable(Z::EBayesSample) = Ref(Z)
 function multiplicity(Zs)
     collect(weights(Zs))
 end
-function weights(Zs::AbstractVector{<:EBayesSample})
+function StatsBase.weights(Zs::AbstractVector{<:EBayesSample})
     uweights(length(Zs))
 end
 
@@ -161,6 +161,8 @@ struct MultinomialSummary{T,D<:AbstractDict{T,Int}}
     store::D #TODO, use other container
 end
 
+MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(vals .=> cnts ))
+
 const VectorOrSummary{T} = Union{AbstractVector{T}, MultinomialSummary{T}}
 
 Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
@@ -174,8 +176,13 @@ function Base.broadcasted(::typeof(pdf), prior, Zs_summary::MultinomialSummary)
     pdf.(prior, collect(keys(Zs_summary.store)))
 end
 
+function Base.broadcasted(f, Zs_summary::MultinomialSummary)
+    # Should this also return keys?
+    f.(keys(Zs_summary.store))
+end
 
-function weights(Zs_summary::MultinomialSummary)
+
+function StatsBase.weights(Zs_summary::MultinomialSummary)
    fweights(collect(values(Zs_summary.store)))
 end
 

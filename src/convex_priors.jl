@@ -20,6 +20,11 @@ function (priorvariable::PriorVariable)(p::AbstractVector{<:Real})
     convexclass(p)
 end
 
+function (priorvariable::PriorVariable)()
+    priorvariable(JuMP.value.(priorvariable.finite_param))
+end
+
+
 abstract type AbstractMixturePriorClass <: ConvexPriorClass end
 
 # TODO: implement correct projection onto simplex and check deviation is not too big

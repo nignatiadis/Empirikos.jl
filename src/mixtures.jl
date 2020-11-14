@@ -12,6 +12,8 @@ end
 function marginalize(Z::EBayesSample, prior::DiscreteNonParametric)
     πs = probs(prior)
     distributions = likelihood_distribution.(Z, support(prior))
+    #TODO: note that e.g. for Binomial this could directly return another DiscreteNonParametric.
+    # In most cases this would not be worth the initial conversion cost?
     MixtureModel(distributions, πs)
 end
 

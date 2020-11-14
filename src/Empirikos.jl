@@ -36,6 +36,7 @@ include("NPMLE.jl")
 include("samples/binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
+include("example_priors.jl")
 
 
 export EBayesSample,

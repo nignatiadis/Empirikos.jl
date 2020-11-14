@@ -145,6 +145,11 @@ function (post_numerator::PosteriorTargetNumerator)(prior::Distribution)
     post_numerator.posterior_target(prior)*denominator(_post)(prior)
 end
 
+function (post_numerator::PosteriorTargetNumerator)(μ::Number)
+    _post =   post_numerator.posterior_target
+    post_numerator.posterior_target(μ)*denominator(_post)(μ)
+end
+
 Base.numerator(target::AbstractPosteriorTarget) = PosteriorTargetNumerator(target)
 
 
@@ -155,11 +160,12 @@ end
 
 location(target::PosteriorTargetNullHypothesis) = location(target.posterior_target)
 
-function (post_null::PosteriorTargetNullHypothesis)(prior::Distribution)
+function (post_null::PosteriorTargetNullHypothesis)(prior::Union{Distribution,Number})
     c = post_null.c
     _post =   post_null.posterior_target
     numerator(_post)(prior)- c*denominator(_post)(prior)
 end
+
 
 
 #function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
@@ -185,6 +191,9 @@ function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
     mean(posterior(Z, prior))
 end
 
+function (postmean::PosteriorMean)(μ::Number)
+    μ
+end
 
 
 

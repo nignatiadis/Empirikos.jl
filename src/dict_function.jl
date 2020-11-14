@@ -20,7 +20,7 @@ Base.keys(dictfun::DictFunction) = Base.keys(dictfun.dict)
 Base.values(dictfun::DictFunction) = Base.values(dictfun.dict)
 
 
-Base.@kwdef struct DiscretizedDictFunction{D <: Empirikos.Discretizer, F <: DictFunction}
+Base.@kwdef struct DiscretizedDictFunction{D <: Discretizer, F <: DictFunction}
     discretizer::D
     dictfunction::F
 end
@@ -35,4 +35,14 @@ end
 
 function (f::DiscretizedDictFunction)(x)
     f.dictfunction(f.discretizer(x))
+end
+
+function dictfun(discretizer::Discretizer, Zs::AbstractVector{<:EBayesSample}, f)
+    skedasticity(Zs) == Homoskedastic() || error("Heteroskedastic likelihood not implemented.")
+    Z = Zs[1]
+    interval_Zs = [@set Z.Z = _int for _int in discretizer.sorted_intervals]
+    if !isa(f, AbstractVector)
+        f = f.(interval_Zs)
+    end
+    DiscretizedDictFunction(discretizer, DictFunction(interval_Zs, f))
 end

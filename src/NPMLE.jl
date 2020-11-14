@@ -14,6 +14,8 @@ struct FittedConvexMinimumDistance{D, N<:ConvexMinimumDistanceMethod}
     model::Any # add status?
 end
 Base.broadcastable(fitted_method::FittedConvexMinimumDistance) = Ref(fitted_method)
+# TODO: replace these types of methods by a fit_if_not_fitted
+StatsBase.fit(fitted_method::FittedConvexMinimumDistance, args...; kwargs...) = fitted_method
 
 
 marginalize(Z, fitted_method::FittedConvexMinimumDistance) = marginalize(Z, fitted_method.prior)
