@@ -180,7 +180,12 @@ MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(vals .=> cnts))
 
 const VectorOrSummary{T} = Union{AbstractVector{T},MultinomialSummary{T}}
 
+function (Zs_summary::MultinomialSummary)(Z::EBayesSample)
+    get(Zs_summary.store, Z, zero(Int))
+end
+
 Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
+Base.values(Zs_summary::MultinomialSummary) = Base.values(Zs_summary.store)
 
 function Base.broadcasted(::typeof(response), Zs_summary::MultinomialSummary)
     response.(keys(Zs_summary))

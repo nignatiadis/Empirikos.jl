@@ -1,6 +1,13 @@
 abstract type EBayesNeighborhood end
 abstract type FittedEBayesNeighborhood end
 
+# Holy trait
+abstract type NeighborhoodVexity end
+struct LinearVexity <: NeighborhoodVexity end
+struct ConvexVexity <: NeighborhoodVexity end
+
+
+
 StatsBase.fit(nbhood::FittedEBayesNeighborhood, args...; kwargs...) = nbhood
 
 function nominal_alpha(nbhood::EBayesNeighborhood)
@@ -10,7 +17,6 @@ end
 
 
 function neighborhood_constraint!(model, nbood, prior::PriorVariable)
-
     model
 end
 
@@ -18,6 +24,7 @@ Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
     α::T = 0.05
 end
 
+vexity(::DvoretzkyKieferWolfowitz) = LinearVexity()
 
 struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
        FittedEBayesNeighborhood
@@ -25,6 +32,9 @@ struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
     band::S
     dkw::DKW
 end
+
+vexity(dkw::FittedDvoretzkyKieferWolfowitz) = vexity(dkw.dkw)
+
 
 function nominal_alpha(dkw::FittedDvoretzkyKieferWolfowitz)
     nominal_alpha(dkw.dkw)

@@ -19,7 +19,7 @@ using Setfield
 using Statistics
 import Statistics: std, var
 @reexport using StatsBase
-import StatsBase: loglikelihood, response, fit, nobs
+import StatsBase: loglikelihood, response, fit, nobs, weights
 
 using UnPack
 

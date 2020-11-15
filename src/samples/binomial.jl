@@ -48,6 +48,10 @@ function fill_levels(Zs::AbstractVector{<:BinomialSample})
     BinomialSample.(0:n, n)
 end
 
+function fill_levels(Zs::MultinomialSummary{<:BinomialSample})
+    fill_levels(collect(keys(Zs)))
+end
+
 function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:BinomialSample}, f)
     skedasticity(Zs_summary) == Homoskedastic() ||
         error("Heteroskedastic likelihood not implemented.")
@@ -141,4 +145,66 @@ function _set_defaults(
     eps = get(hints, :eps, 1e-4)
     prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
     DiscretePriorClass(range(eps; stop = 1 - eps, length = prior_grid_length))
+end
+
+
+# Chi-squared neighborhood
+
+
+
+Base.@kwdef struct ChiSquaredNeighborhood{T} <: EBayesNeighborhood
+    α::T = 0.05
+end
+
+vexity(::ChiSquaredNeighborhood) = ConvexVexity()
+
+
+struct FittedChiSquaredNeighborhood{T,S,D<:AbstractDict{T,S},C} <: FittedEBayesNeighborhood
+    summary::D
+    band::S
+    chisq::C
+    dof::Int
+    n::Int
+end
+
+vexity(chisq::FittedChiSquaredNeighborhood) = vexity(chisq.chisq)
+
+function nominal_alpha(chisq::FittedChiSquaredNeighborhood)
+    nominal_alpha(chisq.chisq)
+end
+
+# TODO: Allow this to work more broadly.
+function StatsBase.fit(chisq::ChiSquaredNeighborhood, Zs::AbstractVector{<:BinomialSample})
+    StatsBase.fit(chisq, summarize(Zs))
+end
+
+function StatsBase.fit(chisq::ChiSquaredNeighborhood, Zs_summary::MultinomialSummary)
+    n = nobs(Zs_summary)
+    _levels = fill_levels(Zs_summary)
+    _dof = ntrials(_levels[1]) #again maybe Homoskedastic() should return what type of homoskedastic
+    empirical_probs = Zs_summary.(_levels) ./ n
+    _dict = SortedDict(keys(Zs_summary.store) .=> empirical_probs)
+    α = nominal_alpha(chisq)
+    band =  quantile(Chisq(_dof), 1-α)
+    FittedChiSquaredNeighborhood(_dict, band, chisq, _dof, n)
+end
+
+
+
+function neighborhood_constraint!(
+    model,
+    chisq::FittedChiSquaredNeighborhood,
+    prior::PriorVariable,
+)
+    n = chisq.n
+
+    ts = @variable(model, [1:(chisq.dof+1)])
+    @constraint(model, ts .>= 0)
+    band = chisq.band
+    for (i, (Z, pdf_value)) in enumerate(chisq.summary)
+        _pdf = pdf(prior, Z::EBayesSample)
+        @constraint(model, [ts[i]; n * _pdf; n * _pdf - n * pdf_value] in RotatedSecondOrderCone())
+    end
+    @constraint(model, sum(ts) <= band/2)
+    model
 end
