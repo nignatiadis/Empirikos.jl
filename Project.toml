@@ -1,7 +1,7 @@
 name = "Empirikos"
 uuid = "cab608d6-c565-4ea1-96d6-ce5441ba21b0"
 authors = ["Nikos Ignatiadis <nikos.ignatiadis01@gmail.com> and contributors"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"

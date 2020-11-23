@@ -32,7 +32,7 @@ function posterior end
 Broadcast.broadcastable(Z::EBayesSample) = Ref(Z)
 
 function multiplicity(Zs)
-    collect(weights(Zs))
+    collect(StatsBase.weights(Zs))
 end
 function StatsBase.weights(Zs::AbstractVector{<:EBayesSample})
     uweights(length(Zs))
@@ -57,7 +57,7 @@ likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), res
 loglikelihood(Z::EBayesSample, param) =
     _logpdf(likelihood_distribution(Z, param), response(Z))
 loglikelihood(Z::EBayesSample, prior::Distribution) =
-    logpdf(marginalize(Z, prior), response(Z))
+    _logpdf(marginalize(Z, prior), response(Z))
 
 
 function loglikelihood(Zs::AbstractVector{<:EBayesSample}, prior)
@@ -231,7 +231,9 @@ function StatsBase.weights(Zs_summary::MultinomialSummary)
     fweights(collect(values(Zs_summary.store)))
 end
 
-summarize(Zs::AbstractVector{<:EBayesSample}) = MultinomialSummary(SortedDict(countmap(Zs)))
+summarize(Zs::AbstractVector) = MultinomialSummary(SortedDict(countmap(Zs)))
+summarize(Zs::AbstractVector, ws::StatsBase.AbstractWeights) = MultinomialSummary(SortedDict(countmap(Zs, ws)))
+
 summarize(Zs::MultinomialSummary) = Zs
 
 function skedasticity(Zs_summary::MultinomialSummary)
@@ -242,6 +244,7 @@ end
 function loglikelihood(mult::MultinomialSummary, prior)
     sum([n * loglikelihood(Z, prior) for (Z, n) in mult.store])
 end
+
 
 nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))
 nobs(Zs::AbstractVector{<:EBayesSample}) = length(Zs)
