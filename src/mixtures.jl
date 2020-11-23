@@ -2,9 +2,8 @@
 
 
 function default_target_computation(
-    ::EBayesSample,
-    ::DiscreteNonParametric,
-    ::AbstractPosteriorTarget,
+    ::BasicPosteriorTarget,
+    ::DiscreteNonParametric
 )
     Conjugate()
 end
@@ -26,10 +25,11 @@ function posterior(Z::EBayesSample, prior::DiscreteNonParametric)
 end
 
 function default_target_computation(
+    ::BasicPosteriorTarget,
     ::EBayesSample,
-    ::MixtureModel,
-    ::AbstractPosteriorTarget,
+    ::MixtureModel
 )
+    #TODO NOT always true.
     Conjugate()
 end
 

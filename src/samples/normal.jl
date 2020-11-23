@@ -98,10 +98,9 @@ end
 
 
 # Conjugate computations
-function default_target_computation(
+function default_target_computation(::BasicPosteriorTarget,
     ::AbstractNormalSample,
-    ::Normal,
-    ::AbstractPosteriorTarget,
+    ::Normal
 )
     Conjugate()
 end
@@ -144,6 +143,24 @@ function _set_defaults(
     _sample_max = isa(_sample_max, Interval) ? last(_sample_max) : _sample_max
     _grid = range(_sample_min - eps; stop = _sample_max + eps, length = prior_grid_length)
     DiscretePriorClass(_grid)
+end
+
+
+function _set_defaults(
+    convexclass::GaussianScaleMixtureClass,
+    Zs::AbstractVector{<:AbstractNormalSample};  #TODO for MultinomialSummary
+    hints,
+)
+    grid_scaling = get(hints, :grid_scaling, sqrt(2))
+
+    σ_min =  minimum(std.(Zs))./ 10
+    _max = maximum(response.(Zs).^2 .-  var.(Zs))
+    σ_max = _max > 0.0 ? 2*sqrt(_max) : 8*σ_min
+
+    npoint = ceil(Int, log2(σ_max/σ_min)/log2(grid_scaling))
+    σ_grid = σ_min*grid_scaling.^(0:npoint)
+
+    GaussianScaleMixtureClass(σ_grid)
 end
 
 # Target specifics

@@ -1,6 +1,9 @@
 using Empirikos
 using Test
 using InteractiveUtils
+using FiniteDifferences
+using ForwardDiff
+using QuadGK
 
 @testset "Test set default" begin
     include("test_set_defaults.jl")
@@ -17,6 +20,11 @@ end
 @testset "Binomial samples" begin
     include("test_binomial.jl")
 end
+
+@testset "Normal samples" begin
+    include("test_normal.jl")
+end
+
 
 @testset "Test targets" begin
     include("test_targets.jl")

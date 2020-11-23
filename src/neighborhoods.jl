@@ -48,7 +48,8 @@ end
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     cdf_probs = cumsum([v for (k, v) in Zs_summary.store])
     cdf_probs /= cdf_probs[end]
-    _dict = SortedDict(keys(Zs_summary.store) .=> cdf_probs)
+    # TODO: report issue with SortedDict upstream
+    _dict = SortedDict(Dict(keys(Zs_summary.store) .=> cdf_probs))
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
     band = sqrt(log(2 / α) / (2n))

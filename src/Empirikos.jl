@@ -14,6 +14,7 @@ using JuMP
 using LinearAlgebra
 using MathOptInterface
 using Optim
+using QuadGK
 using RecipesBase
 using Setfield
 using Statistics
@@ -60,6 +61,7 @@ export EBayesSample,
     MarginalDensity,
     DiscretePriorClass,
     MixturePriorClass,
+    GaussianScaleMixtureClass,
     NPMLE,
     nominal_alpha
 

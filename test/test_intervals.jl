@@ -60,3 +60,9 @@ multinormals = NormalSample.(ints, 2.0)
 untyped_multinormals = [NormalSample{typeof(int), Float64}(int, 2.0) for int in ints]
 Base.summarysize(multinormals)
 Base.summarysize(untyped_multinormals)
+
+
+
+# Test some discrete Interval functionality
+tmp = BinomialSample(Interval(0,1), 10)
+cdf(Binomial(10, 0.5), 1) == likelihood(tmp, 0.5)

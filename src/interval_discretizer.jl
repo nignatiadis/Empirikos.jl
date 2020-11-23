@@ -13,6 +13,8 @@ function Discretizer(grid::AbstractVector; closed = :right, unbounded = :both)
         ]
     elseif (closed === :right) && (unbounded === :none)
         ints = Interval{Open,Closed}.(grid[1:end-1], grid[2:end])
+    elseif (closed === :left) && (unbounded === :none)
+        ints = Interval{Closed,Open}.(grid[1:end-1], grid[2:end])
     end
     Discretizer(ints)
 end
@@ -62,7 +64,9 @@ function discretize(Zs::AbstractVector; kwargs...)
     discr.(Zs)
 end
 
-
+function summarize(Zs::AbstractVector, discr::Discretizer)
+        summarize(discr.(Zs))
+end
 
 #function broadcasted(discr::Discretizer{T,C,S}, Zs::AbstractVector{<:EBayesSample}) where {T,C,S}
 #    C[discr(x) for x in xs]

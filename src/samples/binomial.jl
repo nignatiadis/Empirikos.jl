@@ -11,6 +11,13 @@ function Base.show(io::IO, Z::BinomialSample)
     print(io, "Z=", response(Z), spaces, "| ", "n=", ntrials(Z))
 end
 
+function Base.show(io::IO, Z::BinomialSample{<:Interval})
+    Zz = response(Z)
+    print(io, "Z ∈ ")
+    show(IOContext(io, :compact => true), Zz)
+    print(io, " | ", "n=", ntrials(Z))
+end
+
 summarize_by_default(::AbstractVector{<:BinomialSample}) = true
 
 # how to break ties on n?
@@ -43,9 +50,11 @@ function fill_levels(Zs::AbstractVector{<:BinomialSample})
     skedasticity(Zs) == Homoskedastic() ||
         error("Heteroskedastic likelihood not implemented.")
     #_min, _max = extrema(response.(Zs))
-    n = ntrials(Zs[1])
+    #n = ntrials(Zs[1])
     #BinomialSample.(_min:_max, n)
-    BinomialSample.(0:n, n)
+    #BinomialSample.(0:n, n) #TODO!  Is it responsibility of whatever passes stuff in here
+    # to e.g. include 0 counts?
+    sort(unique(Zs))
 end
 
 function fill_levels(Zs::MultinomialSummary{<:BinomialSample})
@@ -78,7 +87,7 @@ end
 #---------- Beta Binomial Conjugacy-------------------------------------
 #-----------------------------------------------------------------------
 
-function default_target_computation(::BinomialSample, ::Beta)
+function default_target_computation(::BasicPosteriorTarget,::BinomialSample, ::Beta)
     Conjugate()
 end
 
@@ -181,7 +190,7 @@ end
 function StatsBase.fit(chisq::ChiSquaredNeighborhood, Zs_summary::MultinomialSummary)
     n = nobs(Zs_summary)
     _levels = fill_levels(Zs_summary)
-    _dof = ntrials(_levels[1]) #again maybe Homoskedastic() should return what type of homoskedastic
+    _dof = length(_levels) - 1        #ntrials(_levels[1]) #again maybe Homoskedastic() should return what type of homoskedastic
     empirical_probs = Zs_summary.(_levels) ./ n
     _dict = SortedDict(keys(Zs_summary.store) .=> empirical_probs)
     α = nominal_alpha(chisq)

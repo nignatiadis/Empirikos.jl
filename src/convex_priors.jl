@@ -24,8 +24,8 @@ function (priorvariable::PriorVariable)()
     priorvariable(JuMP.value.(priorvariable.finite_param))
 end
 
-
-abstract type AbstractMixturePriorClass <: ConvexPriorClass end
+abstract type AbstractSimplexPriorClass <: ConvexPriorClass end
+abstract type AbstractMixturePriorClass <: AbstractSimplexPriorClass end
 
 # TODO: implement correct projection onto simplex and check deviation is not too big
 # though this should mostly help with minor numerical difficulties
@@ -38,7 +38,7 @@ end
     DiscretePriorClass
 
 """
-struct DiscretePriorClass{S} <: AbstractMixturePriorClass
+struct DiscretePriorClass{S} <: AbstractSimplexPriorClass
     support::S #(-Inf, Inf) #default
 end
 
@@ -51,7 +51,7 @@ end
 support(convexclass::DiscretePriorClass) = convexclass.support
 nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
 
-function prior_variable!(model, convexclass::AbstractMixturePriorClass; var_name = "π") # adds constraints
+function prior_variable!(model, convexclass::AbstractSimplexPriorClass; var_name = "π") # adds constraints
     n = nparams(convexclass)
     tmp_vars = @variable(model, [i = 1:n])
     #model[Symbol(var_name)] = tmp_vars
@@ -71,7 +71,7 @@ end
 # Dirac
 function cdf(prior::PriorVariable{<:DiscretePriorClass}, Z::EBayesSample)
     @unpack convexclass, finite_param, model = prior
-    cdf_combination = cdf.(likelihood_distribution.(Z, support(convexclass)), response(Z))
+    cdf_combination = _cdf.(likelihood_distribution.(Z, support(convexclass)), response(Z))
     @expression(model, dot(finite_param, cdf_combination))
 end
 
@@ -85,7 +85,6 @@ end
 
 """
     MixturePriorClass
-
 """
 struct MixturePriorClass{S} <: AbstractMixturePriorClass
     components::S
@@ -93,26 +92,37 @@ end
 
 MixturePriorClass() = MixturePriorClass(nothing)
 components(mixclass::MixturePriorClass) = mixclass.components
-nparams(mixclass::MixturePriorClass) = length(components(mixclass))
+nparams(mixclass::AbstractMixturePriorClass) = length(components(mixclass))
 
-function (mixclass::MixturePriorClass)(p::AbstractVector{<:Real})
+function (mixclass::AbstractMixturePriorClass)(p::AbstractVector{<:Real})
     MixtureModel(components(mixclass), fix_πs(p))
 end
 
-function pdf(prior::PriorVariable{<:MixturePriorClass}, Z::EBayesSample)
+function pdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
     @unpack convexclass, finite_param, model = prior
     pdf_combination = pdf.(components(convexclass), Z)
     @expression(model, dot(finite_param, pdf_combination))
 end
 
-function cdf(prior::PriorVariable{<:MixturePriorClass}, Z::EBayesSample)
+function cdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
     @unpack convexclass, finite_param, model = prior
-    cdf_combination = cdf.(components(convexclass), Z)
+    cdf_combination = _cdf.(components(convexclass), Z)
     @expression(model, dot(finite_param, cdf_combination))
 end
 
-function (target::LinearEBayesTarget)(prior::PriorVariable{<:MixturePriorClass})
+function (target::LinearEBayesTarget)(prior::PriorVariable{<:AbstractMixturePriorClass})
     @unpack convexclass, finite_param, model = prior
     linear_functional_evals = target.(components(convexclass))
     @expression(model, dot(finite_param, linear_functional_evals))
 end
+
+"""
+    GaussianScaleMixtureClass
+"""
+struct GaussianScaleMixtureClass{S} <: AbstractMixturePriorClass
+    σs::S
+end
+
+GaussianScaleMixtureClass() = GaussianScaleMixtureClass(DataBasedDefault())
+
+components(convexclass::GaussianScaleMixtureClass) = Normal.(0, convexclass.σs)

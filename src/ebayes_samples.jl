@@ -170,18 +170,43 @@ for f in [:_pdf, :_logpdf]
 end
 
 #TODO: Handle discrete distributions (less important)
+function _pdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Closed}) where {T}
+    cdf(dbn, last(interval)) - cdf(dbn, first(interval)) + pdf(dbn, first(interval))
+end
+
+function _cdf(
+    dbn::DiscreteDistribution,
+    interval::Interval{T,S,Closed},
+) where {T,S}
+    _cdf(dbn, last(interval))
+end
+
+function _support(d::Distribution)
+    distributions_interval_to_interval(support(d))
+end
+
+function distributions_interval_to_interval(interval::Distributions.RealInterval)
+    _lb = isinf(interval.lb) ? nothing : interval.lb
+    _ub = isinf(interval.ub) ? nothing : interval.ub
+    Interval(_lb, _ub)
+end
+
 
 
 struct MultinomialSummary{T,D<:AbstractDict{T,Int}}
     store::D #TODO, use other container
 end
 
-MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(vals .=> cnts))
+MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(Dict(vals .=> cnts)))
 
 const VectorOrSummary{T} = Union{AbstractVector{T},MultinomialSummary{T}}
 
-function (Zs_summary::MultinomialSummary)(Z::EBayesSample)
+function (Zs_summary::MultinomialSummary)(Z)
     get(Zs_summary.store, Z, zero(Int))
+end
+
+function Base.getindex(Zs_summary::MultinomialSummary, i)
+    Base.getindex(Zs_summary.store, i)
 end
 
 Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)

@@ -7,36 +7,76 @@ abstract type EBayesTarget end
 
 broadcastable(target::EBayesTarget) = Ref(target)
 
+function (targets::AbstractVector{<:EBayesTarget})(prior)
+    [target(prior) for target in targets]
+end
 
 abstract type AbstractPosteriorTarget <: EBayesTarget end
+abstract type BasicPosteriorTarget <: AbstractPosteriorTarget end
+
+abstract type LinearEBayesTarget <: EBayesTarget end
+
+_support(::LinearEBayesTarget) = Interval(nothing, nothing)
 
 abstract type AbstractTargetComputation end
 
+
 struct Conjugate <: AbstractTargetComputation end
-struct SampleQuadrature <: AbstractTargetComputation end
-struct PriorQuadrature <: AbstractTargetComputation end
-struct LinearOverLinear <: AbstractTargetComputation end #could allow LinearOverLinear{1,2}
+struct NumeratorOfConjugate <: AbstractTargetComputation end
+struct QuadgkQuadrature <: AbstractTargetComputation end
+
+struct LinearOverLinear{N,D} <: AbstractTargetComputation
+    num::N
+    denom::D
+end
+Base.numerator(lin::LinearOverLinear) = lin.num
+Base.denominator(lin::LinearOverLinear) = lin.denom
 
 
 
-function default_target_computation end
-
-
-function default_target_computation(sample, prior, target)
-    default_target_computation(sample, prior)
+function compute_target(comp::AbstractTargetComputation, target, prior)
+    compute_target(comp, target, location(target), prior)
 end
 
-function default_target_computation(sample, prior)
-    default_target_computation(sample)
+function (target::EBayesTarget)(prior::Distribution)
+    _loc = location(target)
+    _comp = default_target_computation(target, _loc, prior)
+    compute_target(_comp, target, _loc, prior)
 end
 
+function default_target_computation(target::LinearEBayesTarget, sample, prior)
+    QuadgkQuadrature()
+end
 
+function default_target_computation(target::AbstractPosteriorTarget, sample, prior)
+    LinearOverLinear(nothing, nothing)
+end
 
+function compute_target(lin::LinearOverLinear, target::AbstractPosteriorTarget, sample, prior)
+    _num = numerator(target)(prior)
+    _denom = denominator(target)(prior)
+    _num/_denom
+end
 
+# TODO: Allow setting tolerances.
+function compute_target(lin::QuadgkQuadrature, target::LinearEBayesTarget, sample, prior::ContinuousUnivariateDistribution)
+   _interval = intersect(_support(target), _support(prior))
+   if Intervals.isbounded(_interval)
+        _lower = first(_interval)
+        _upper = last(_interval)
+   elseif isa(_interval, Interval{T, Unbounded, Unbounded} where {T})
+        _lower = -Inf
+        _upper = +Inf
+   elseif isa(_interval, Interval{T, Unbounded} where {T})
+        _lower = -Inf
+        _upper = last(_interval)
+   else
+        _lower = first(_interval)
+        _upper = +Inf
+   end
+   quadgk( μ -> target(μ)*pdf(prior,μ), _lower, _upper)[1]
+end
 
-
-
-abstract type LinearEBayesTarget <: EBayesTarget end
 
 """
 	cf(::LinearEBayesTarget, t)
@@ -120,16 +160,6 @@ end
 
 
 
-# Posterior Targets
-
-function (target::AbstractPosteriorTarget)(prior::Distribution)
-    _comp = default_target_computation(location(target), prior, target)
-    target(prior, location(target), _comp)
-end
-
-function (targets::AbstractVector{<:EBayesTarget})(prior)
-    [target(prior) for target in targets]
-end
 
 location(target::AbstractPosteriorTarget) = target.Z
 Base.denominator(target::AbstractPosteriorTarget) = MarginalDensity(location(target))
@@ -140,7 +170,12 @@ end
 
 location(target::PosteriorTargetNumerator) = location(target.posterior_target)
 
-function (post_numerator::PosteriorTargetNumerator)(prior::Distribution)
+function default_target_computation(target::PosteriorTargetNumerator{<:BasicPosteriorTarget}, sample, prior)
+    _post_target = default_target_computation(target.posterior_target, sample, prior)
+    _post_target == Conjugate() ? NumeratorOfConjugate() : QuadgkQuadrature()
+end
+
+function compute_target(::NumeratorOfConjugate, post_numerator::PosteriorTargetNumerator, sample, prior)
     _post = post_numerator.posterior_target
     post_numerator.posterior_target(prior) * denominator(_post)(prior)
 end
@@ -168,9 +203,8 @@ end
 
 
 
-#function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
-#    mean(posterior(Z, prior))
-#end
+
+
 
 """
     PosteriorMean(Z::EBayesSample) <: AbstractPosteriorTarget
@@ -182,12 +216,12 @@ E_G[\\mu_i \\mid Z_i = z]
 ```
 
 """
-struct PosteriorMean{T} <: AbstractPosteriorTarget
+struct PosteriorMean{T} <: BasicPosteriorTarget
     Z::T
 end
 PosteriorMean() = PosteriorMean(missing)
 
-function (postmean::PosteriorMean)(prior, Z::EBayesSample, ::Conjugate)
+function compute_target(::Conjugate, postmean::PosteriorMean, Z::EBayesSample, prior)
     mean(posterior(Z, prior))
 end
 
@@ -208,15 +242,17 @@ V_G[\\mu_i \\mid Z_i = z]
 ```
 
 """
-struct PosteriorVariance{T} <: AbstractPosteriorTarget
+struct PosteriorVariance{T} <: BasicPosteriorTarget
     Z::T
 end
 PosteriorVariance() = PosteriorVariance(missing)
 
-function (postvar::PosteriorVariance)(prior, Z::EBayesSample, ::Conjugate)
+function compute_target(::Conjugate, postmean::PosteriorVariance, Z::EBayesSample, prior)
     var(posterior(Z, prior))
 end
 
+Base.numerator(::PosteriorVariance) = throw("Posterior Variance is not fractional.")
+Base.denominator(::PosteriorVariance) = throw("Posterior Variance is not fractional.")
 
 
 """
@@ -229,20 +265,30 @@ Type representing the posterior probability, i.e.,
 ```
 
 """
-struct PosteriorProbability{T,S} <: AbstractPosteriorTarget
+struct PosteriorProbability{T,S} <: BasicPosteriorTarget
     Z::T
     s::S
 end
 
-function (postprob::PosteriorProbability)(prior, Z::EBayesSample, ::Conjugate)
+
+function compute_target(::Conjugate, postprob::PosteriorProbability, Z::EBayesSample, prior)
     _pdf(posterior(Z, prior), postprob.s)
 end
+
+function (postprob::PosteriorProbability{T, <:Interval})(μ::Number) where {T}
+    _interval = postprob.s
+    eltype(_interval)(μ in postprob.s)
+end
+
 
 function Base.extrema(target::PosteriorProbability)
     (0.0, 1.0)
 end
 
-
+# TODO: once we define support for posterior targets as well?
+function _support(target::PosteriorTargetNumerator{<:PosteriorProbability})
+    target.posterior_target.s
+end
 
 
 # Plotting code

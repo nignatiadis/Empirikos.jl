@@ -13,7 +13,7 @@ Zs_summary = summarize(Zs)
 
 
 cvx_class = DiscretePriorClass(0.01:0.01:0.99)
-
+npmle = NPMLE(cvx_class, Hypatia.Optimizer)
 npmle_fit = fit(NPMLE(cvx_class, Hypatia.Optimizer), Zs)
 npmle_fit_summary = fit(NPMLE(cvx_class, Hypatia.Optimizer), Zs_summary)
 

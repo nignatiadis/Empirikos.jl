@@ -74,6 +74,7 @@ function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
     Fhat = collect(values(dkw.summary))
 
     @variable(model, u)
+    @show Fhat
 
     @constraint(model, F - Fhat .<= u)
     @constraint(model, F - Fhat .>= -u)
