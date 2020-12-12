@@ -12,11 +12,12 @@ function likelihood_distribution end
 function response end
 function nuisance_parameter end
 
-function Base.Float64(Z::EBayesSample{Number})
+function Base.Float64(Z::EBayesSample{<:Number})
     Base.Float64(response(Z))
 end
 
-
+Base.isnan(Z::EBayesSample) = Base.isnan(response(Z))
+Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 
 """
 	marginalize(Z, prior)

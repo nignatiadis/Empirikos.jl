@@ -16,6 +16,7 @@ abstract type BasicPosteriorTarget <: AbstractPosteriorTarget end
 
 abstract type LinearEBayesTarget <: EBayesTarget end
 
+Base.extrema(::EBayesTarget) = (-Inf, +Inf) # allow distribution-dependent choice?
 _support(::LinearEBayesTarget) = Interval(nothing, nothing)
 
 abstract type AbstractTargetComputation end

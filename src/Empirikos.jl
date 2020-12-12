@@ -7,15 +7,19 @@ using DataStructures
 @reexport using Distributions
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
-using Expectations
 
 @reexport using Intervals
 using JuMP
+using KernelDensity
 using LinearAlgebra
+using LinearFractional
 using MathOptInterface
 using Optim
+using ParameterJuMP
 using QuadGK
+using Random
 using RecipesBase
+using Roots
 using Setfield
 using Statistics
 import Statistics: std, var
@@ -38,6 +42,10 @@ include("samples/binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
 include("example_priors.jl")
+include("confidence_interval_tools.jl")
+include("neighborhood_worst_case.jl")
+include("neighborhood_kde.jl")
+include("local_linear_minimax.jl")
 
 
 export EBayesSample,
@@ -74,5 +82,7 @@ export DictFunction
 # default
 
 export DataBasedDefault
+
+export NeighborhoodWorstCase
 
 end
