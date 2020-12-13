@@ -1,3 +1,20 @@
+"""
+    PoissonSample(Z, E)
+
+An observed sample ``Z`` drawn from a Poisson distribution,
+
+```math
+Z \\sim \\text{Poisson}(\\mu \\cdot E).
+```
+
+The multiplying intensity ``E`` is assumed to be known (and equal to `1.0` by default), while
+``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
+
+```julia
+PoissonSample(3)
+PoissonSample(3, 1.5)
+```
+"""
 struct PoissonSample{T,S} <: DiscreteEBayesSample{T}
     Z::T
     E::S

@@ -3,7 +3,7 @@ abstract type AbstractNormalSample{T} <: ContinuousEBayesSample{T} end
 """
     NormalSample(Z,σ)
 
-A observed sample ``Z`` drawn from a Normal distribution with known variance ``\\sigma^2 > 0``.
+An observed sample ``Z`` drawn from a Normal distribution with known variance ``\\sigma^2 > 0``.
 
 ```math
 Z \\sim \\mathcal{N}(\\mu, \\sigma^2)
@@ -33,7 +33,7 @@ end
 """
     StandardNormalSample(Z)
 
-A observed sample ``Z`` drawn from a Normal distribution with known variance ``\\sigma^2 =1``.
+An observed sample ``Z`` drawn from a Normal distribution with known variance ``\\sigma^2 =1``.
 
 ```math
 Z \\sim \\mathcal{N}(\\mu, 1)
