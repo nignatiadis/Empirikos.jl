@@ -39,7 +39,7 @@ function compute_target(comp::AbstractTargetComputation, target, prior)
     compute_target(comp, target, location(target), prior)
 end
 
-function (target::EBayesTarget)(prior::Distribution)
+function (target::EBayesTarget)(prior)
     _loc = location(target)
     _comp = default_target_computation(target, _loc, prior)
     compute_target(_comp, target, _loc, prior)
@@ -196,7 +196,7 @@ end
 
 location(target::PosteriorTargetNullHypothesis) = location(target.posterior_target)
 
-function (post_null::PosteriorTargetNullHypothesis)(prior::Union{Distribution,Number})
+function (post_null::PosteriorTargetNullHypothesis)(prior::T) where {T<:Union{Distribution,Number}}
     c = post_null.c
     _post = post_null.posterior_target
     numerator(_post)(prior) - c * denominator(_post)(prior)

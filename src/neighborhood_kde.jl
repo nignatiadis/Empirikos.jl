@@ -238,27 +238,34 @@ function certainty_banded_KDE(Xs, a_min, a_max;
 end
 
 
-@recipe function f(ctband::FittedInfinityNormDensityBand)
-    y = ctband.fitted_kde.density
-    x = ctband.fitted_kde.x
-    xlims --> (ctband.a_min, ctband.a_max)
+@recipe function f(ctband::FittedInfinityNormDensityBand; subsample=300)
+    y_all = ctband.fitted_kde.density
+    x_all = ctband.fitted_kde.x
+    a_min = ctband.a_min
+    a_max = ctband.a_max
+
+    _in_amin_amax = a_min .<= x_all .<= a_max
+    x_all = x_all[_in_amin_amax]
+    y_all = y_all[_in_amin_amax]
+
+    n = length(y_all)
+    _step = div(n-2, subsample)
+    idxs = [1; 2:_step:(n-1); n]
+    x = x_all[idxs]
+    y = y_all[idxs]
+
+
+    xlims --> (a_min, a_max)
+    ylims --> (0, maximum(y)*1.1)
     yguide --> "Density"
 
-    seriestype  -->  :path
-    linewidth --> 2
-    seriescolor --> :purple
-	background_color_legend --> :transparent
-	foreground_color_legend --> :transparent
-    grid --> nothing
-
-    α = Empirikos.nominal_alpha(ctband)
+    α = nominal_alpha(ctband)
     ci_level = 100*(1-α)
 
 	cis_ribbon  = ctband.C∞
 	fillalpha --> 0.36
 	seriescolor --> "#018AC4"
 	ribbon --> cis_ribbon
-    linealpha --> 0
     framestyle --> :box
     legend --> :topleft
     label --> "$ci_level% CI"

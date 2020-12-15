@@ -101,10 +101,8 @@ end
 
 
 function (half_ci::HalfCIWidth)(bias, unit_var_proxy)
-    @show bias
     se = sqrt(unit_var_proxy/half_ci.n)
-    @show se
-    @show gaussian_ci(se; maxbias=bias, α=half_ci.α)
+    gaussian_ci(se; maxbias=bias, α=half_ci.α)
 end
 
 
@@ -113,7 +111,7 @@ Base.@kwdef struct LocalizedAffineMinimax{N, G, M}
     neighborhood::N
     solver
     discretizer = DataBasedDefault()
-    plugin_G
+    plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
     data_split = :none
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
@@ -342,7 +340,7 @@ function StatsBase.confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
     _wts = StatsBase.weights(Zs)
     _se = std(Q.Q.(Zs), _wts)/sqrt(nobs(Zs))
     point_estimate = mean(Q.Q.(Zs), _wts)
-    halfwidth = MinimaxCalibratedEBayes.gaussian_ci(_se; maxbias=_bias, α=α)
+    halfwidth = gaussian_ci(_se; maxbias=_bias, α=α)
     BiasVarianceConfidenceInterval(estimate = point_estimate,
                                    maxbias = _bias,
                                    se = _se,
@@ -399,10 +397,10 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
     outer_ci =  @set outer_ci.α = α
 
     if isnothing(c_lower)
-        @show c_lower = outer_ci.lower
+        c_lower = outer_ci.lower
     end
     if isnothing(c_upper)
-        @show c_upper = outer_ci.upper
+        c_upper = outer_ci.upper
     end
 
     target_lower = Empirikos.PosteriorTargetNullHypothesis(target, c_lower)
@@ -430,8 +428,8 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
 
     cov_lower_upper = cov([Q_lower Q_upper], _wts)[1,2]/n
 
-    @show  confint_lower.lower, confint_lower.upper
-    @show confint_upper.lower, confint_upper.upper
+    #@show  confint_lower.lower, confint_lower.upper
+    #@show confint_upper.lower, confint_upper.upper
     if confint_lower.lower <= 0.0 || confint_upper.upper >= 0.0
         return outer_ci
     end
@@ -450,7 +448,7 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
 
     λs_lhs =  find_zeros(λ -> first(confint(bisection_pair, λ; α=α))  , 0.0, 1.0)
     λs_rhs =  find_zeros(λ -> last(confint(bisection_pair, λ; α=α))  , 0.0, 1.0)
-    @show λs_lhs, λs_rhs
+    #@show λs_lhs, λs_rhs
     λ_lhs = minimum(λs_lhs)
     λ_rhs = maximum(λs_rhs)
 
@@ -491,7 +489,7 @@ function Base.broadcasted(::typeof(StatsBase.confint), method::LocalizedAffineMi
     end
 
 
-    confint_vec =  Vector{MinimaxCalibratedEBayes.LowerUpperConfidenceInterval}(undef, length(targets))
+    confint_vec =  Vector{LowerUpperConfidenceInterval}(undef, length(targets))
 
     for (index, target) in enumerate(targets)
         _ci = StatsBase.confint(method, target, Zs, args...; initialized=true, kwargs...)

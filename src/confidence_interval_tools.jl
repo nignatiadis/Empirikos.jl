@@ -41,7 +41,6 @@ end
         _linestyle = get(plotattributes, :linestyle, :dash)
         _linecolor = get(plotattributes, :linecolor, :black)
         label := [_label nothing]
-        @show "EEEHI"
         linecolor := [_linecolor _linecolor]
         linestyle := [_linestyle _linestyle]
         return x, [lower upper]

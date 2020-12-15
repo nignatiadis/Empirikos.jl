@@ -20,6 +20,19 @@ function neighborhood_constraint!(model, nbood, prior::PriorVariable)
     model
 end
 
+"""
+    DvoretzkyKieferWolfowitz(α) <: EBayesNeighborhood
+
+The Dvoretzky-Kiefer-Wolfowitz band (based on the Kolmogorov-Smirnov distance)
+at confidence level `1-α` that bounds the distance of the true distribution function
+to the ECDF ``\\widehat{F}_n`` based on ``n`` samples. The constant of the band is the sharp
+constant derived by Massart:
+
+```math
+F \\text{ distribution}:  \\sup_{t \\in \\mathbb R}\\lvert F(t) - \\widehat{F}_n(t) \\rvert  \\leq  \\sqrt{\\log(2/\\alpha)/(2n)}
+```
+
+"""
 Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
     α::T = 0.05
 end
@@ -76,15 +89,25 @@ function neighborhood_constraint!(
     model
 end
 
-# grid could be :default or Integer or actual grid.
+@recipe function f(fitted_dkw::FittedDvoretzkyKieferWolfowitz; subsample=100)
+    x_dkw_all = response.(collect(keys(fitted_dkw.summary)))
+    F_dkw_all = collect(values(fitted_dkw.summary))
 
+    n = length(x_dkw_all)
+    step = div(n-2, subsample)
+    idxs = [1; 2:step:(n-1); n]
 
+    x_dkw = x_dkw_all[idxs]
+    F_dkw = F_dkw_all[idxs]
 
+    band = fitted_dkw.band
+    lower = max.(F_dkw .- band, 0.0)
+    upper = min.(F_dkw .+ band, 1.0)
+    cis_ribbon  = F_dkw .- lower, upper .- F_dkw
+    fillalpha --> 0.36
+    legend --> :topleft
+    seriescolor --> "#018AC4"
+    ribbon --> cis_ribbon
 
-
-
-
-
-#struct InfinityNormBand{T}
-#
-#end
+    x_dkw, F_dkw
+end

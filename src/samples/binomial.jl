@@ -172,10 +172,19 @@ function _set_defaults(
 end
 
 
-# Chi-squared neighborhood
+"""
+    ChiSquaredNeighborhood(α) <: EBayesNeighborhood
 
-
-
+The ``\\chi^2`` neighborhood at confidence level ``1-\\alpha`` for a discrete random variable
+taking values in ``\\{0,\\dotsc, N\\}``. It is equal to:
+```math
+f: \\sum_{x=0}^N \\frac{(n \\hat{f}_n(x) - n f(x))^2}{n f(x)} \\leq \\chi^2_{N,1-\\alpha},
+```
+where ``\\chi^2_{N,1-\\alpha}`` is the ``1-\\alpha`` quantile of the Chi-squared
+distribution with ``N`` degrees of freedom, ``n`` is the sample size,
+``\\hat{f}_n(x)`` is the proportion of samples equal to ``x`` and ``f(x)`` is then
+population pmf.
+"""
 Base.@kwdef struct ChiSquaredNeighborhood{T} <: EBayesNeighborhood
     α::T = 0.05
 end

@@ -74,7 +74,8 @@ export EBayesSample,
     nominal_alpha
 
 # neighborhoods
-export DvoretzkyKieferWolfowitz
+export DvoretzkyKieferWolfowitz,
+    ChiSquaredNeighborhood
 
 # utilities
 export DictFunction
