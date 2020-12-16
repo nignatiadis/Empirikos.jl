@@ -13,7 +13,9 @@ makedocs(
     modules = [Empirikos],
     pages    = [
         "index.md",
-        "samples.md"
+        "samples.md",
+        "estimation.md",
+        "neighborhoods.md"
     ]
 )
 

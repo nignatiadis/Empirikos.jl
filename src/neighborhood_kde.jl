@@ -113,7 +113,7 @@ Note that the bound is valid from `a_min` to `a_max`.
 Base.@kwdef struct InfinityNormDensityBand <: Empirikos.EBayesNeighborhood
    a_min = DataBasedDefault()
    a_max = DataBasedDefault()
-   npoints::Integer = 2048
+   npoints::Integer = 1024
    kernel = DeLaValleePoussinKernel()
    bootstrap = :Multinomial
    nboot::Integer = 1000

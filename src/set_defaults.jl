@@ -1,5 +1,3 @@
-1 + 1
-
 abstract type AbstractDefault end
 
 struct DataBasedDefault <: AbstractDefault end

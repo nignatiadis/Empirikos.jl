@@ -94,12 +94,17 @@ end
     F_dkw_all = collect(values(fitted_dkw.summary))
 
     n = length(x_dkw_all)
-    step = div(n-2, subsample)
-    idxs = [1; 2:step:(n-1); n]
 
-    x_dkw = x_dkw_all[idxs]
-    F_dkw = F_dkw_all[idxs]
+    if isa(subsample, Integer)
+        step = div(n-2, subsample)
+        idxs = [1; 2:step:(n-1); n]
 
+        x_dkw = x_dkw_all[idxs]
+        F_dkw = F_dkw_all[idxs]
+    else
+        x_dkw = x_dkw_all
+        F_dkw = F_dkw_all
+    end
     band = fitted_dkw.band
     lower = max.(F_dkw .- band, 0.0)
     upper = min.(F_dkw .+ band, 1.0)

@@ -1,5 +1,15 @@
 abstract type ConvexMinimumDistanceMethod <: EBayesMethod end
 
+"""
+    NPMLE(convexclass, solver)
+
+Given ``n`` independent samples ``Z_i`` from the empirical Bayes problem with prior ``G`` known to lie
+in the `convexclass` ``\\mathcal{G}``, estimate ``G`` by Nonparametric Maximum Likelihood (NPMLE)
+```math
+\\widehat{G}_n \\in \\operatorname{argmax}_{G \\in \\mathcal{G}}\\{\\sum_{i=1}^n \\log( f_{i,G}(Z_i)) \\},
+```
+where ``f_{i,G}(z) = \\int p_i(z \\mid \\mu) dG(\\mu)`` is the marginal density of the ``i``-th sample.
+"""
 struct NPMLE{C} <: ConvexMinimumDistanceMethod
     convexclass::C
     solver::Any
@@ -55,7 +65,16 @@ function _fit(npmle::NPMLE, Zs)
     FittedConvexMinimumDistance(estimated_prior, npmle, model)
 end
 
+"""
+    KolmogorovSmirnovMinimumDistance(convexclass, solver)
 
+Given ``n`` i.i.d. samples from the empirical Bayes problem with prior ``G`` known to lie
+in the `convexclass` ``\\mathcal{G}`` , estimate ``G`` as follows:
+```math
+\\widehat{G}_n \\in \\operatorname{argmin}_{G \\in \\mathcal{G}}\\{\\sup_{t \\in \\mathbb R}\\lvert F_G(t) - \\widehat{F}_n(t)\\rvert\\},
+```
+where ``\\widehat{F}_n`` is the ECDF of the samples.
+"""
 struct KolmogorovSmirnovMinimumDistance{C} <: ConvexMinimumDistanceMethod
     convexclass::C
     solver::Any
@@ -74,7 +93,6 @@ function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
     Fhat = collect(values(dkw.summary))
 
     @variable(model, u)
-    @show Fhat
 
     @constraint(model, F - Fhat .<= u)
     @constraint(model, F - Fhat .>= -u)

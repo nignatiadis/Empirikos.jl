@@ -3,6 +3,7 @@
 
 function default_target_computation(
     ::BasicPosteriorTarget,
+    ::EBayesSample,
     ::DiscreteNonParametric
 )
     Conjugate()

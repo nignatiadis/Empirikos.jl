@@ -41,7 +41,7 @@ end
 
 # Conjugate computations
 
-function default_target_computation(::BasicPosteriorTarget,::PoissonSample, ::Gamma)
+function default_target_computation(::BasicPosteriorTarget, ::PoissonSample, ::Gamma)
     Conjugate()
 end
 

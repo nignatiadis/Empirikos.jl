@@ -155,7 +155,8 @@ function _set_defaults(
 
     σ_min =  minimum(std.(Zs))./ 10
     _max = maximum(response.(Zs).^2 .-  var.(Zs))
-    σ_max = _max > 0.0 ? 2*sqrt(_max) : 8*σ_min
+    _σ_max = _max > 0.0 ? 2*sqrt(_max) : 8*σ_min
+    σ_max = get(hints, :σ_max, _σ_max) #somewhat redundant computations above.
 
     npoint = ceil(Int, log2(σ_max/σ_min)/log2(grid_scaling))
     σ_grid = σ_min*grid_scaling.^(0:npoint)
