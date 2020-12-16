@@ -344,7 +344,7 @@ function StatsBase.confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
     BiasVarianceConfidenceInterval(estimate = point_estimate,
                                    maxbias = _bias,
                                    se = _se,
-                                   α = α, method = Q.method, target = target)
+                                   α = α, method = nothing, target = target)
 end
 
 function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
@@ -463,7 +463,7 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
     end
     #let us assume we have neighborhoods.
 
-    LowerUpperConfidenceInterval(α=α, target=target, method=method,
+    LowerUpperConfidenceInterval(α=α, target=target, method=nothing,
                                  lower=c_lower_updated,
                                  upper=c_upper_updated)
 end

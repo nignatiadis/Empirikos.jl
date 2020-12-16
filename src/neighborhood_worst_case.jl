@@ -198,7 +198,7 @@ end
 function StatsBase.confint(fitted_worst_case::FittedNeighborhoodWorstCase)
     @unpack target, method, lower, upper = fitted_worst_case
     α = nominal_alpha(method.neighborhood)
-    LowerUpperConfidenceInterval(α=α, target=target, method=method, lower=lower,
+    LowerUpperConfidenceInterval(α=α, target=target, lower=lower,
                                  upper=upper)
 end
 
