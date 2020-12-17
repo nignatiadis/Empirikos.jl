@@ -20,8 +20,8 @@ struct PoissonSample{T,S} <: DiscreteEBayesSample{T}
     E::S
 end
 
-PoissonSample(E) = BinomialSample(missing, E)
-PoissonSample() = BinomialSample(missing, 1.0)
+PoissonSample(Z) = PoissonSample(Z, 1.0)
+PoissonSample() = PoissonSample(missing)
 
 response(Z::PoissonSample) = Z.Z
 nuisance_parameter(Z::PoissonSample) = Z.E
@@ -29,9 +29,14 @@ nuisance_parameter(Z::PoissonSample) = Z.E
 likelihood_distribution(Z::PoissonSample, λ) = Poisson(λ * nuisance_parameter(Z))
 
 function Base.show(io::IO, Z::PoissonSample)
-    spaces_to_keep = ismissing(response(Z)) ? 1 : max(3 - ndigits(response(Z)), 1)
+    resp_Z = response(Z)
+    if ismissing(resp_Z) || isa(resp_Z, Interval)
+        spaces_to_keep = 1
+    else
+        spaces_to_keep = max(3 - ndigits(response(Z)), 1)
+    end
     spaces = repeat(" ", spaces_to_keep)
-    print(io, "Z=", response(Z), spaces, "| ", "E=", Z.E)
+    print(io, "Z=", resp_Z, spaces, "| ", "E=", Z.E)
 end
 
 # how to break ties on n?
@@ -80,7 +85,7 @@ end
 
 function _set_defaults(
     convexclass::DiscretePriorClass,
-    Zs::AbstractVector{<:PoissonSample};  #TODO for MultinomialSummary
+    Zs::VectorOrSummary{<:PoissonSample};
     hints,
 )
     eps = get(hints, :eps, 1e-4)

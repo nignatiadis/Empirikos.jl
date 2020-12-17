@@ -61,7 +61,7 @@ nuisance_parameter(Z::BinomialSample) = ntrials(Z)
 likelihood_distribution(Z::BinomialSample, p) = Binomial(ntrials(Z), p)
 
 
-function fill_levels(Zs::AbstractVector{<:BinomialSample})
+function fill_levels(Zs::AbstractVector{<:DiscreteEBayesSample})
     skedasticity(Zs) == Homoskedastic() ||
         error("Heteroskedastic likelihood not implemented.")
     #_min, _max = extrema(response.(Zs))
@@ -72,11 +72,11 @@ function fill_levels(Zs::AbstractVector{<:BinomialSample})
     sort(unique(Zs))
 end
 
-function fill_levels(Zs::MultinomialSummary{<:BinomialSample})
+function fill_levels(Zs::MultinomialSummary{<:DiscreteEBayesSample})
     fill_levels(collect(keys(Zs)))
 end
 
-function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:BinomialSample}, f)
+function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:DiscreteEBayesSample}, f)
     skedasticity(Zs_summary) == Homoskedastic() ||
         error("Heteroskedastic likelihood not implemented.")
     Zs = fill_levels(collect(keys(Zs_summary)))
@@ -87,7 +87,7 @@ function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:BinomialSample}, f)
 end
 
 # TODO: Fix repetition with code above. Maybe separate fill_levels?
-function dictfun(::Nothing, Zs_summary::AbstractVector{<:BinomialSample}, f)
+function dictfun(::Nothing, Zs_summary::AbstractVector{<:DiscreteEBayesSample}, f)
     skedasticity(Zs_summary) == Homoskedastic() ||
         error("Heteroskedastic likelihood not implemented.")
     Zs = fill_levels(Zs_summary)

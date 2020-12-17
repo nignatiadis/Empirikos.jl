@@ -182,6 +182,12 @@ function _cdf(
     _cdf(dbn, last(interval))
 end
 
+function _pdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
+    ccdf(dbn, first(interval)) + pdf(dbn, first(interval))
+end
+
+
+
 function _support(d::Distribution)
     distributions_interval_to_interval(support(d))
 end
