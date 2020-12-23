@@ -1,5 +1,11 @@
 abstract type InfiniteOrderKernel <: ContinuousUnivariateDistribution end
 
+function Base.show(io::IO, d::InfiniteOrderKernel)
+    print(io, Base.typename(typeof(d)))
+    print(io, " | bandwidth = ")
+    print(io, d.h)
+end
+
 """
     SincKernel(h)
 

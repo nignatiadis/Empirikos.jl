@@ -67,11 +67,13 @@ nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 
+
 function Base.show(io::IO, Z::AbstractNormalSample)
     Zz = response(Z)
     print(io, "Z=")
-    print(io, round(Zz, sigdigits = 4))
-    print(io, " | ", "σ=", std(Z)) #perhaps need sth a bit nicer here if $\sigma$ takes annoying form
+    print(io, lpad(round(Zz, digits = 4),8))
+    print(io, " | ", "σ=")
+    print(io, rpad(round(std(Z), digits = 3),5))
 end
 
 
@@ -79,7 +81,8 @@ function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
     Zz = response(Z)
     print(io, "Z ∈ ")
     show(IOContext(io, :compact => true), Zz)
-    print(io, " | ", "σ=", std(Z)) #perhaps need sth a bit nicer here if $\sigma$ takes annoying form
+    print(io, " | ", "σ=")
+    print(io, rpad(round(std(Z), digits = 3),5))
 end
 
 function Base.isless(a::AbstractNormalSample, b::AbstractNormalSample)
