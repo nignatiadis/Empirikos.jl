@@ -48,6 +48,7 @@ include("neighborhood_kde.jl")
 include("local_linear_minimax.jl")
 
 include("datasets/LordCressie/LordCressie.jl")
+include("datasets/Prostate/Prostate.jl")
 
 export EBayesSample,
     summarize,
