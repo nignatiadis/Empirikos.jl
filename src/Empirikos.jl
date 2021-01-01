@@ -47,6 +47,7 @@ include("neighborhood_worst_case.jl")
 include("neighborhood_kde.jl")
 include("local_linear_minimax.jl")
 
+include("datasets/LordCressie/LordCressie.jl")
 
 export EBayesSample,
     summarize,
