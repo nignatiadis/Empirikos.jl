@@ -1,14 +1,44 @@
 #---------------------------------------
 # types for a single EB sample
 #---------------------------------------
+
+"""
+    EBayesSample{T}
+
+Abstract type representing empirical Bayes samples with realizations of type `T`.
+"""
 abstract type EBayesSample{T} end
+
 abstract type ContinuousEBayesSample{T} <: EBayesSample{T} end
 abstract type DiscreteEBayesSample{T} <: EBayesSample{T} end
 
 
+"""
+    likelihood_distribution(Z::EBayesSample, μ::Number)
 
+Returns the distribution ``p(\\cdot \\mid \\mu)`` of ``Z \\mid \\mu`` (the return type being
+`Distributions.jl` Distribution).
 
+# Examples
+```julia-repl
+julia> likelihood_distribution(StandardNormalSample(1.0), 2.0)
+Normal{Float64}(μ=2.0, σ=1.0)
+```
+"""
 function likelihood_distribution end
+
+"""
+    response(Z::EBayesSample{T})
+
+Returns the concrete realization of `Z` as type `T`, thus dropping the information about the
+likelihood.
+
+# Examples
+```julia-repl
+julia> response(StandardNormalSample(1.0))
+1.0
+```
+"""
 function response end
 function nuisance_parameter end
 
@@ -20,11 +50,17 @@ Base.isnan(Z::EBayesSample) = Base.isnan(response(Z))
 Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 
 """
-	marginalize(Z, prior)
+	marginalize(Z::EBayesSample, prior::Distribution)
 
 Given a `prior` distribution ``G`` and  `EBayesSample` ``Z``,
 return that marginal distribution of ``Z``. Works for EBayesSample{Missing},
 i.e., no realization is needed.
+
+# Examples
+```julia-repl
+julia> marginalize(StandardNormalSample(1.0), Normal(2.0, sqrt(3)))
+Normal{Float64}(μ=2.0, σ=1.9999999999999998)
+````
 """
 function marginalize end
 

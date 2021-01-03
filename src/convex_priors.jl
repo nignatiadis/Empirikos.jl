@@ -36,13 +36,12 @@ end
 
 """
     DiscretePriorClass
-
 """
 struct DiscretePriorClass{S} <: AbstractSimplexPriorClass
-    support::S #(-Inf, Inf) #default
+    support::S
 end
 
-DiscretePriorClass() = DiscretePriorClass(DataBasedDefault())
+DiscretePriorClass(; support=DataBasedDefault()) = DiscretePriorClass(support)
 
 function (convexclass::DiscretePriorClass)(p::AbstractVector{<:Real})
     DiscreteNonParametric(support(convexclass), fix_πs(p))

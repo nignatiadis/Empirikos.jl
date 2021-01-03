@@ -110,7 +110,7 @@ Base.@kwdef struct LocalizedAffineMinimax{N, G, M}
     convexclass::G
     neighborhood::N
     solver
-    discretizer = DataBasedDefault()
+    discretizer = nothing#DataBasedDefault()
     plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
     data_split = :none
     delta_grid = 0.2:0.5:6.7
