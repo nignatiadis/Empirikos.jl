@@ -5,7 +5,7 @@ Abstract type that describes Empirical Bayes estimands (which we want to estimat
 """
 abstract type EBayesTarget end
 
-broadcastable(target::EBayesTarget) = Ref(target)
+Base.broadcastable(target::EBayesTarget) = Ref(target)
 
 function (targets::AbstractVector{<:EBayesTarget})(prior)
     [target(prior) for target in targets]

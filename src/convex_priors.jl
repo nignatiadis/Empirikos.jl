@@ -35,7 +35,21 @@ function fix_πs(πs)
 end
 
 """
-    DiscretePriorClass
+    DiscretePriorClass(support) <: Empirikos.ConvexPriorClass
+
+Type representing the family of all discrete distributions supported on a subset
+of `support`, i.e., it represents all `DiscreteNonParametric` distributions with
+`support = support` and `probs` taking values on the probability simplex.
+
+Note that `DiscretePriorClass(support)(probs) == DiscreteNonParametric(support, probs)`.
+
+# Examples
+```julia-repl
+julia> gcal = DiscretePriorClass([0,0.5,1.0])
+DiscretePriorClass | suport = [0.0, 0.5, 1.0]
+julia> gcal([0.2,0.2,0.6])
+DiscreteNonParametric{Float64,Float64,Array{Float64,1},Array{Float64,1}}(support=[0.0, 0.5, 1.0], p=[0.2, 0.2, 0.6])
+```
 """
 struct DiscretePriorClass{S} <: AbstractSimplexPriorClass
     support::S
@@ -49,6 +63,12 @@ end
 
 support(convexclass::DiscretePriorClass) = convexclass.support
 nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
+
+function Base.show(io::IO, gcal::DiscretePriorClass)
+    print(io, "DiscretePriorClass | suport = ")
+    show(IOContext(io, :compact => true), support(gcal))
+end
+
 
 function prior_variable!(model, convexclass::AbstractSimplexPriorClass; var_name = "π") # adds constraints
     n = nparams(convexclass)
@@ -83,18 +103,53 @@ end
 
 
 """
-    MixturePriorClass
+    MixturePriorClass(components) <: Empirikos.ConvexPriorClass
+
+Type representing the family of all mixture distributions with mixing components equal to
+`components`, i.e., it represents all `MixtureModel` distributions with
+`components = components` and `probs` taking values on the probability simplex.
+
+Note that `MixturePriorClass(components)(probs) == MixtureModel(components, probs)`.
+
+# Examples
+```julia-repl
+julia> gcal = MixturePriorClass([Normal(0,1), Normal(0,2)])
+MixturePriorClass (K = 2)
+Normal{Float64}(μ=0.0, σ=1.0)
+Normal{Float64}(μ=0.0, σ=2.0)
+
+julia> gcal([0.2,0.8])
+MixtureModel{Normal{Float64}}(K = 2)
+components[1] (prior = 0.2000): Normal{Float64}(μ=0.0, σ=1.0)
+components[2] (prior = 0.8000): Normal{Float64}(μ=0.0, σ=2.0)
+```
 """
 struct MixturePriorClass{S} <: AbstractMixturePriorClass
     components::S
 end
 
 MixturePriorClass() = MixturePriorClass(nothing)
-components(mixclass::MixturePriorClass) = mixclass.components
+Distributions.components(mixclass::MixturePriorClass) = mixclass.components
+function Distributions.component(mixclass::AbstractMixturePriorClass, i::Integer)
+    Distributions.components(mixclass)[i]
+end
 nparams(mixclass::AbstractMixturePriorClass) = length(components(mixclass))
-
+Distributions.ncomponents(mixclass::MixturePriorClass) = nparams(mixclass)
 function (mixclass::AbstractMixturePriorClass)(p::AbstractVector{<:Real})
     MixtureModel(components(mixclass), fix_πs(p))
+end
+
+# Similar to show method for MixtureModel
+function Base.show(io::IO, gcal::MixturePriorClass)
+    K = ncomponents(gcal)
+    println(io, "MixturePriorClass (K = $K)")
+    Ks = min(K, 8)
+    for i = 1:Ks
+        println(io, Distributions.component(gcal, i))
+    end
+    if Ks < K
+        println(io, "The rest are omitted ...")
+    end
 end
 
 function pdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
@@ -116,12 +171,31 @@ function (target::LinearEBayesTarget)(prior::PriorVariable{<:AbstractMixturePrio
 end
 
 """
-    GaussianScaleMixtureClass
+    GaussianScaleMixtureClass(σs) <: Empirikos.ConvexPriorClass
+
+Type representing the family of mixtures of Gaussians with mean `0` and standard deviations
+equal to `σs`. `GaussianScaleMixtureClass(σs)` represents the same class of distributions
+as `MixturePriorClass.(Normal.(0, σs))`
+
+```julia-repl
+julia> gcal = GaussianScaleMixtureClass([1.0,2.0])
+GaussianScaleMixtureClass | σs = [1.0, 2.0]
+
+julia> gcal([0.2,0.8])
+MixtureModel{Normal{Float64}}(K = 2)
+components[1] (prior = 0.2000): Normal{Float64}(μ=0.0, σ=1.0)
+components[2] (prior = 0.8000): Normal{Float64}(μ=0.0, σ=2.0)
+```
 """
 struct GaussianScaleMixtureClass{S} <: AbstractMixturePriorClass
     σs::S
 end
 
 GaussianScaleMixtureClass() = GaussianScaleMixtureClass(DataBasedDefault())
+
+function Base.show(io::IO, gcal::GaussianScaleMixtureClass)
+    print(io, "GaussianScaleMixtureClass | σs = ")
+    show(IOContext(io, :compact => true), gcal.σs)
+end
 
 components(convexclass::GaussianScaleMixtureClass) = Normal.(0, convexclass.σs)

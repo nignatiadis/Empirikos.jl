@@ -118,3 +118,6 @@ function StatsBase.confint(pair::BisectionPair, λ ; α=0.05)
     bw = gaussian_ci(_se; maxbias=_maxbias, α=α)
     _estimate -bw , _estimate+bw
 end
+
+
+Base.broadcastable(ci::ConfidenceInterval) = Ref(ci)

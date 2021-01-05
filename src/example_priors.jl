@@ -28,7 +28,8 @@ const AshPriors = Dict(
     MarronWandGaussianMixtures
 
 Flexible Gaussian Mixture distributions described in
-Marron, J. Steve, and Matt P. Wand. Exact mean integrated squared error.
+
+> Marron, J. Steve, and Matt P. Wand. Exact mean integrated squared error.
 The Annals of Statistics (1992): 712-736.
 """
 const MarronWandGaussianMixtures = Dict(
@@ -52,7 +53,8 @@ Empirical Bayes priors that are used in the simulations of:
 """
 const IWPriors = Dict(
     :Unimodal => MixtureModel([ Normal(-0.2,.2), Normal(0,0.9)],[0.7, 0.3]),
-    :Bimodal => MixtureModel([Normal(-1.5,.2), Normal(1.5, .2)]))
+    :Bimodal => MixtureModel([Normal(-1.5,.2), Normal(1.5, .2)]),
+    :NegSpiky => MixtureModel([Normal(-0.25, 0.25), Normal(0, 1.0)], [0.8, 0.2]))
 
 
 """

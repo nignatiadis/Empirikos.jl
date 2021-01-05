@@ -14,6 +14,7 @@ makedocs(
     pages    = [
         "index.md",
         "samples.md",
+        "convexpriors.md",
         "estimation.md",
         "neighborhoods.md"
     ]
