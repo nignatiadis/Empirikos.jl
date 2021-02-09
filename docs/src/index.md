@@ -24,14 +24,14 @@ Pkg.add("Empirikos")
 
 ## Getting started
 
-Below are some vignettes using this package for empirical Bayes tasks.
+Below are some vignettes using this package for empirical Bayes tasks. There are also available as [Pluto.jl](https://github.com/fonsp/Pluto.jl) notebooks at the following [directory](https://github.com/nignatiadis/Empirikos.jl/tree/master/pluto).
 
 * Nonparametric estimation using the Nonparametric Maximum Likelihood estimator (NPMLE):
   * A [vignette](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/REBayes.jl.html) that partially reproduces the vignette of the REBayes package [[koenker2017rebayes](@cite)]. 
-* Nonparametric confidence intervals for empirical Bayes estimands as in [[ignatiadis2019bias](@cite)]:
-  * Posterior mean and local false sign rate in a Gaussian dataset.
-  * Posterior mean in a Binomial dataset.
-  * Posterior mean in a Poisson dataset.
+* Nonparametric confidence intervals for empirical Bayes estimands as developed in [[ignatiadis2019bias](@cite)]:
+  * [Posterior mean and local false sign rate in a Gaussian dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/prostate.jl.html)
+  * [Posterior mean in a Binomial dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/lord_cressie.jl.html)
+  * [Posterior mean in a Poisson dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/bichsel.jl.html)
 
 ## Related packages
 

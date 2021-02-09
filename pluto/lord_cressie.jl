@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.18
+# v0.12.20
 
 using Markdown
 using InteractiveUtils
@@ -25,7 +25,7 @@ md"""
 # ╔═╡ b852c54c-4bd2-11eb-27c9-6fbfa3dc09e7
 begin
 	pgfplotsx()
-	deleteat!(PGFPlotsX.CUSTOM_PREAMBLE, 
+	deleteat!(PGFPlotsX.CUSTOM_PREAMBLE,
 			  Base.OneTo(length(PGFPlotsX.CUSTOM_PREAMBLE)))
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\usepackage{amssymb}")
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\PP}[2][]{\mathbb{P}_{#1}\left[#2\right]}")
@@ -50,7 +50,7 @@ empirical_probs = StatsBase.weights(Zs)/nobs(Zs)
 
 # ╔═╡ a197f656-4bd2-11eb-1d34-15acb373e216
 lord_cressie_freq = plot(
-	 0:20, 
+	 0:20,
 	 sqrt.(empirical_probs), seriestype=:sticks, frame=:box,
      grid=nothing, color=:grey, markershape=:circle,
      markerstrokealpha = 0, ylim=(-0.001,sqrt(0.15)),
@@ -90,14 +90,14 @@ postmean_targets = Empirikos.PosteriorMean.(BinomialSample.(0:20,20));
 md""" ### $\chi^2-F$-localization intervals"""
 
 # ╔═╡ a51a7982-4bd4-11eb-09b5-434543d65565
-chisq_nbhood = Empirikos.ChiSquaredNeighborhood(0.05)
+chisq_floc = Empirikos.ChiSquaredFLocalization(0.05)
 
 # ╔═╡ aa690a8e-4bd4-11eb-3f7c-c36955f21c08
-nbhood_method_chisq = NeighborhoodWorstCase(neighborhood = chisq_nbhood,
+floc_method_chisq = FLocalizationInterval(flocalization = chisq_floc,
                                        convexclass= gcal, solver=quiet_mosek)
 
 # ╔═╡ c24e0e60-4bd4-11eb-048c-0b02d946fc95
-chisq_cis = confint.(nbhood_method_chisq, postmean_targets, Zs_collapse)
+chisq_cis = confint.(floc_method_chisq, postmean_targets, Zs_collapse)
 
 # ╔═╡ 14790a00-4bd5-11eb-395e-d37b63309906
 lower_chisq_ci = getproperty.(chisq_cis, :lower)
@@ -116,13 +116,13 @@ end
 md""" ### DKW $F$-localization intervals"""
 
 # ╔═╡ ecca61e8-4bd4-11eb-1f1d-5f7a677e157c
-nbhood_method_dkw = NeighborhoodWorstCase(
-							neighborhood = DvoretzkyKieferWolfowitz(0.05),
+floc_method_dkw = FLocalizationInterval(
+							flocalization = DvoretzkyKieferWolfowitz(0.05),
                             convexclass= gcal, solver=quiet_mosek)
 
 
 # ╔═╡ 0316c28e-4bd5-11eb-00c2-2150f66f1721
-dkw_cis = confint.(nbhood_method_dkw, postmean_targets, Zs_collapse);
+dkw_cis = confint.(floc_method_dkw, postmean_targets, Zs_collapse);
 
 
 # ╔═╡ b7f27c2a-4bd5-11eb-3b2b-63532c39571b
@@ -135,9 +135,9 @@ upper_dkw_ci = getproperty.(dkw_cis, :upper)
 md"""### Amari intervals"""
 
 # ╔═╡ dec4fae4-4bd5-11eb-337d-0152aba1d793
-lam_chisq = Empirikos.LocalizedAffineMinimax(
+lam_chisq = Empirikos.AMARI(
 							convexclass=gcal,
-                            neighborhood = Empirikos.ChiSquaredNeighborhood(0.01),
+                            flocalization = Empirikos.ChiSquaredFLocalization(0.01),
                             solver=quiet_mosek, discretizer=nothing)
 
 
@@ -183,7 +183,7 @@ end
 savefig(postmean_plot, "lord_cressie_posterior_mean.tikz")
 
 # ╔═╡ Cell order:
-# ╠═7cd14ada-4bd1-11eb-137b-0591983ae782
+# ╟─7cd14ada-4bd1-11eb-137b-0591983ae782
 # ╠═33cbdf58-4bd1-11eb-2c37-81d5f476828e
 # ╠═b852c54c-4bd2-11eb-27c9-6fbfa3dc09e7
 # ╠═bd3d470e-4bd1-11eb-2b6a-3342f8a8a272

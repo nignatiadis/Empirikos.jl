@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.18
+# v0.12.20
 
 using Markdown
 using InteractiveUtils
@@ -25,7 +25,7 @@ md"""
 # ╔═╡ 473d8a28-4bf4-11eb-0151-8b3f3d286eda
 begin
 	pgfplotsx()
-	deleteat!(PGFPlotsX.CUSTOM_PREAMBLE, 
+	deleteat!(PGFPlotsX.CUSTOM_PREAMBLE,
 			  Base.OneTo(length(PGFPlotsX.CUSTOM_PREAMBLE)))
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\usepackage{amssymb}")
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\PP}[2][]{\mathbb{P}_{#1}\left[#2\right]}")
@@ -51,10 +51,10 @@ md"""
 """
 
 # ╔═╡ 0731218a-4bf5-11eb-10f4-81241477b265
-dkw_nbhood = DvoretzkyKieferWolfowitz(0.05)
+dkw_floc = DvoretzkyKieferWolfowitz(0.05)
 
 # ╔═╡ 0d36dbee-4bf5-11eb-3036-7bcf68579a46
-fitted_dkw = fit(dkw_nbhood, Zs)
+fitted_dkw = fit(dkw_floc, Zs)
 
 # ╔═╡ 246264dc-4bf5-11eb-2f9d-b5c7d137a9b3
 dkw_plot = plot(fitted_dkw, subsample=300, label="DKW band",
@@ -67,20 +67,20 @@ savefig(dkw_plot, "prostate_dkw_band.tikz")
 md"### KDE-F-Localization"
 
 # ╔═╡ 5ad6b662-4bf5-11eb-24fb-d141933957ca
-infty_nbhood = Empirikos.InfinityNormDensityBand(a_min=-3.0,a_max=3.0);
+infty_floc = Empirikos.InfinityNormDensityBand(a_min=-3.0,a_max=3.0);
 
 # ╔═╡ 605a545e-4bf5-11eb-3020-6d9c53e39a8e
-fitted_infty_nbhood = fit(infty_nbhood, Zs)
+fitted_infty_floc = fit(infty_floc, Zs)
 
 # ╔═╡ 69e87366-4bf5-11eb-3fbb-8f7bf325d366
 prostate_kde_plot = begin
 	prostate_marginal_plot = histogram(response.(Zs), bins=50, normalize=true,
           label="Histogram", fillalpha=0.4, linealpha=0.4, fillcolor=:lightgray,
           size=(380,280), xlims=(-4.5,4.5))
-	plot!(prostate_marginal_plot, fitted_infty_nbhood,
+	plot!(prostate_marginal_plot, fitted_infty_floc,
        	  label="KDE band", xlims=(-4.5,4.5),
           yguide=L"\widehat{f}_n(z)", xguide=L"z")
-	plot!([-3.0;3.0], seriestype=:vline, 
+	plot!([-3.0;3.0], seriestype=:vline,
 		  linestyle=:dot, label=nothing, color=:lightgrey)
 end
 
@@ -104,39 +104,39 @@ gcal_scalemix = Empirikos.set_defaults(GaussianScaleMixtureClass(), Zs; hints = 
 discr = Empirikos.Discretizer(-3.0:0.005:3.0)
 
 # ╔═╡ ce945cca-4bf6-11eb-29bc-4b2514ae395d
-nbhood_method_dkw_locmix = NeighborhoodWorstCase(neighborhood = dkw_nbhood,
+floc_method_dkw_locmix = FLocalizationInterval(flocalization = dkw_floc,
                                convexclass = gcal_locmix, solver = quiet_mosek)
 
 
 # ╔═╡ e9e81b9c-4bf6-11eb-1c3c-d56076f6858b
-nbhood_method_kde_locmix = NeighborhoodWorstCase(neighborhood = infty_nbhood,
+floc_method_kde_locmix = FLocalizationInterval(flocalization = infty_floc,
                                convexclass = gcal_locmix, solver = quiet_mosek)
 
 
 # ╔═╡ 04c72ec6-4bf7-11eb-3265-5f69502b9f0b
 
-lam_kde_locmix = Empirikos.LocalizedAffineMinimax(
+lam_kde_locmix = Empirikos.AMARI(
 						convexclass = gcal_locmix,
-						neighborhood = (@set infty_nbhood.α=0.01),
+						flocalization = (@set infty_floc.α=0.01),
                         discretizer=discr,
                         solver=quiet_mosek, )
 
 
 
 # ╔═╡ 31bd322c-4bf7-11eb-007c-d7583730cd8e
-nbhood_method_dkw_scalemix = NeighborhoodWorstCase(neighborhood = dkw_nbhood,
+floc_method_dkw_scalemix = FLocalizationInterval(flocalization = dkw_floc,
                                convexclass = gcal_scalemix, solver = quiet_mosek)
 
 
 # ╔═╡ 3d5b459c-4bf7-11eb-3825-6b75cc4099f3
-nbhood_method_kde_scalemix = NeighborhoodWorstCase(neighborhood = infty_nbhood,
+floc_method_kde_scalemix = FLocalizationInterval(flocalization = infty_floc,
                                convexclass = gcal_scalemix, solver = quiet_mosek)
 
 
 # ╔═╡ 474bdc10-4bf7-11eb-0099-cdf3150001a2
-lam_kde_scalemix = Empirikos.LocalizedAffineMinimax(
+lam_kde_scalemix = Empirikos.AMARI(
 						convexclass = gcal_scalemix,
-						neighborhood = (@set infty_nbhood.α=0.01),
+						flocalization = (@set infty_floc.α=0.01),
                         discretizer=discr,
                         solver=quiet_mosek, )
 
@@ -147,15 +147,15 @@ ts= -3:0.2:3
 postmean_targets = Empirikos.PosteriorMean.(StandardNormalSample.(ts))
 
 # ╔═╡ 6ade8f74-4bf7-11eb-2b46-51436f6bf297
-lfsrs = Empirikos.PosteriorProbability.(StandardNormalSample.(ts), 
+lfsrs = Empirikos.PosteriorProbability.(StandardNormalSample.(ts),
 										Interval(0,nothing))
 
 
 # ╔═╡ 7c0fd708-4bf7-11eb-12e0-45ecc7f9af7a
-postmean_ci_dkw_locmix = confint.(nbhood_method_dkw_locmix, postmean_targets, Zs)
+postmean_ci_dkw_locmix = confint.(floc_method_dkw_locmix, postmean_targets, Zs)
 
 # ╔═╡ 85c63cc4-4bf7-11eb-2688-2b63ea65b2e7
-postmean_ci_kde_locmix = confint.(nbhood_method_kde_locmix, postmean_targets, Zs)
+postmean_ci_kde_locmix = confint.(floc_method_kde_locmix, postmean_targets, Zs)
 
 # ╔═╡ 89a047c2-4bf7-11eb-3c79-15fe2fcdcb1c
 postmean_ci_lam_locmix = confint.(lam_kde_locmix, postmean_targets, Zs)
@@ -168,9 +168,9 @@ postmean_locmix_plot = begin
 		show_ribbon=false, alpha=0.9, color=:black)
 	plot!(postmean_locmix_plot, ts, postmean_ci_lam_locmix, label="Amari",
 		show_ribbon=true, fillcolor=:blue, fillalpha=0.4)
-	plot!(postmean_locmix_plot, [-3.0;3.0], [-3.0; 3.0], seriestype=:line, 
+	plot!(postmean_locmix_plot, [-3.0;3.0], [-3.0; 3.0], seriestype=:line,
 		linestyle=:dot, label=nothing, color=:lightgrey)
-	plot!(postmean_locmix_plot, xlabel = L"z", 
+	plot!(postmean_locmix_plot, xlabel = L"z",
 		ylabel=L"\EE{\mu \mid Z=z}", size=(380,280))
 end
 
@@ -179,10 +179,10 @@ end
 savefig(postmean_locmix_plot, "prostate_locmix_postmean.tikz")
 
 # ╔═╡ 6930b1ae-4bf8-11eb-23c7-e5be40b7a283
-postmean_ci_dkw_scalemix = confint.(nbhood_method_dkw_scalemix, postmean_targets, Zs)
+postmean_ci_dkw_scalemix = confint.(floc_method_dkw_scalemix, postmean_targets, Zs)
 
 # ╔═╡ 6fba4f94-4bf8-11eb-2177-87f38a9b73d2
-postmean_ci_kde_scalemix = confint.(nbhood_method_kde_scalemix, postmean_targets, Zs)
+postmean_ci_kde_scalemix = confint.(floc_method_kde_scalemix, postmean_targets, Zs)
 
 # ╔═╡ 7c308bb4-4bf8-11eb-249a-0f6d933a530c
 postmean_ci_lam_scalemix = confint.(lam_kde_scalemix, postmean_targets, Zs)
@@ -191,13 +191,13 @@ postmean_ci_lam_scalemix = confint.(lam_kde_scalemix, postmean_targets, Zs)
 postmean_scalemix_plot = begin
 	postmean_scalemix_plot = plot(ts, postmean_ci_kde_scalemix,
 		label="KDE-F-Loc", fillcolor=:darkorange, fillalpha=0.5, ylim=(-2.55,2.55))
-	plot!(postmean_scalemix_plot, ts, postmean_ci_dkw_scalemix, 
+	plot!(postmean_scalemix_plot, ts, postmean_ci_dkw_scalemix,
 		label="DKW-F-Loc",show_ribbon=false, alpha=0.9, color=:black)
-	plot!(postmean_scalemix_plot, ts, postmean_ci_lam_scalemix, 
+	plot!(postmean_scalemix_plot, ts, postmean_ci_lam_scalemix,
 		label="Amari",show_ribbon=true, fillcolor=:blue, fillalpha=0.4)
-	plot!(postmean_scalemix_plot, [-3.0;3.0], [-3.0; 3.0], seriestype=:line, 
+	plot!(postmean_scalemix_plot, [-3.0;3.0], [-3.0; 3.0], seriestype=:line,
 		linestyle=:dot, label=nothing, color=:lightgrey)
-	plot!(postmean_scalemix_plot, xlabel = L"z", 
+	plot!(postmean_scalemix_plot, xlabel = L"z",
 		ylabel=L"\EE{\mu \mid Z=z}", size=(380,280))
 end
 
@@ -205,10 +205,10 @@ end
 savefig(postmean_scalemix_plot, "prostate_scalemix_postmean.tikz")
 
 # ╔═╡ 1e0db04c-4bf9-11eb-1bde-9dfa4f81f279
-lfsr_ci_dkw_locmix = confint.(nbhood_method_dkw_locmix, lfsrs, Zs)
+lfsr_ci_dkw_locmix = confint.(floc_method_dkw_locmix, lfsrs, Zs)
 
 # ╔═╡ 2700eeda-4bf9-11eb-27ba-c5c6fe33980d
-lfsr_ci_kde_locmix = confint.(nbhood_method_kde_locmix, lfsrs, Zs)
+lfsr_ci_kde_locmix = confint.(floc_method_kde_locmix, lfsrs, Zs)
 
 # ╔═╡ 2eba35aa-4bf9-11eb-1bf0-0be32d4bff85
 lfsr_ci_lam_locmix = confint.(lam_kde_locmix, lfsrs, Zs)
@@ -217,13 +217,13 @@ lfsr_ci_lam_locmix = confint.(lam_kde_locmix, lfsrs, Zs)
 lfsr_locmix_plot = begin
 	lfsr_locmix_plot = plot([-3;3], [0.5; 0.5], seriestype=:line,
 		linestyle=:dot, label=nothing, color=:lightgrey)
-	plot!(lfsr_locmix_plot, ts, lfsr_ci_kde_locmix, 
+	plot!(lfsr_locmix_plot, ts, lfsr_ci_kde_locmix,
 		label="KDE-F-Loc", fillcolor=:darkorange, fillalpha=0.5, ylim=(0,1))
-	plot!(lfsr_locmix_plot, ts, lfsr_ci_dkw_locmix, 
+	plot!(lfsr_locmix_plot, ts, lfsr_ci_dkw_locmix,
 		label="DKW-F-Loc",show_ribbon=false, alpha=0.9, color=:black)
-	plot!(lfsr_locmix_plot, ts, lfsr_ci_lam_locmix, 
+	plot!(lfsr_locmix_plot, ts, lfsr_ci_lam_locmix,
 		label="Amari",show_ribbon=true, fillcolor=:blue, fillalpha=0.4)
-	plot!(lfsr_locmix_plot, xlabel = L"z", 
+	plot!(lfsr_locmix_plot, xlabel = L"z",
 		ylabel=L"\PP{\mu \geq 0 \mid Z=z}", size=(380,280))
 end
 
@@ -231,10 +231,10 @@ end
 savefig(lfsr_locmix_plot, "prostate_locmix_lfsr.tikz")
 
 # ╔═╡ 9afa4b4a-4bf9-11eb-2a16-531b86e6b9a9
-lfsr_ci_dkw_scalemix = confint.(nbhood_method_dkw_scalemix, lfsrs, Zs)
+lfsr_ci_dkw_scalemix = confint.(floc_method_dkw_scalemix, lfsrs, Zs)
 
 # ╔═╡ 9e06f2b8-4bf9-11eb-1bad-b5a1d26339ee
-lfsr_ci_kde_scalemix = confint.(nbhood_method_kde_scalemix, lfsrs, Zs)
+lfsr_ci_kde_scalemix = confint.(floc_method_kde_scalemix, lfsrs, Zs)
 
 # ╔═╡ a1ba1e12-4bf9-11eb-00c9-496602f4eb5c
 lfsr_ci_lam_scalemix = confint.(lam_kde_scalemix, lfsrs, Zs)

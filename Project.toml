@@ -1,7 +1,7 @@
 name = "Empirikos"
 uuid = "cab608d6-c565-4ea1-96d6-ce5441ba21b0"
 authors = ["Nikos Ignatiadis <nikos.ignatiadis01@gmail.com> and contributors"]
-version = "0.3.0"
+version = "0.4.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -43,7 +43,7 @@ Roots = "1"
 Setfield = "0.7"
 StatsBase = "0.33"
 UnPack = "1.0"
-julia = "1.4"
+julia = "1.5"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
