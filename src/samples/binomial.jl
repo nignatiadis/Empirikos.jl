@@ -173,9 +173,9 @@ end
 
 
 """
-    ChiSquaredNeighborhood(α) <: EBayesNeighborhood
+    ChiSquaredFLocalization(α) <: FLocalization
 
-The ``\\chi^2`` neighborhood at confidence level ``1-\\alpha`` for a discrete random variable
+The ``\\chi^2`` F-localization at confidence level ``1-\\alpha`` for a discrete random variable
 taking values in ``\\{0,\\dotsc, N\\}``. It is equal to:
 ```math
 f: \\sum_{x=0}^N \\frac{(n \\hat{f}_n(x) - n f(x))^2}{n f(x)} \\leq \\chi^2_{N,1-\\alpha},
@@ -185,14 +185,14 @@ distribution with ``N`` degrees of freedom, ``n`` is the sample size,
 ``\\hat{f}_n(x)`` is the proportion of samples equal to ``x`` and ``f(x)`` is then
 population pmf.
 """
-Base.@kwdef struct ChiSquaredNeighborhood{T} <: EBayesNeighborhood
+Base.@kwdef struct ChiSquaredFLocalization{T} <: FLocalization
     α::T = 0.05
 end
 
-vexity(::ChiSquaredNeighborhood) = ConvexVexity()
+vexity(::ChiSquaredFLocalization) = ConvexVexity()
 
 
-struct FittedChiSquaredNeighborhood{T,S,D<:AbstractDict{T,S},C} <: FittedEBayesNeighborhood
+struct FittedChiSquaredFLocalization{T,S,D<:AbstractDict{T,S},C} <: FittedFLocalization
     summary::D
     band::S
     chisq::C
@@ -200,18 +200,18 @@ struct FittedChiSquaredNeighborhood{T,S,D<:AbstractDict{T,S},C} <: FittedEBayesN
     n::Int
 end
 
-vexity(chisq::FittedChiSquaredNeighborhood) = vexity(chisq.chisq)
+vexity(chisq::FittedChiSquaredFLocalization) = vexity(chisq.chisq)
 
-function nominal_alpha(chisq::FittedChiSquaredNeighborhood)
+function nominal_alpha(chisq::FittedChiSquaredFLocalization)
     nominal_alpha(chisq.chisq)
 end
 
 # TODO: Allow this to work more broadly.
-function StatsBase.fit(chisq::ChiSquaredNeighborhood, Zs::AbstractVector{<:BinomialSample})
+function StatsBase.fit(chisq::ChiSquaredFLocalization, Zs::AbstractVector{<:BinomialSample})
     StatsBase.fit(chisq, summarize(Zs))
 end
 
-function StatsBase.fit(chisq::ChiSquaredNeighborhood, Zs_summary::MultinomialSummary)
+function StatsBase.fit(chisq::ChiSquaredFLocalization, Zs_summary::MultinomialSummary)
     n = nobs(Zs_summary)
     _levels = fill_levels(Zs_summary)
     _dof = length(_levels) - 1        #ntrials(_levels[1]) #again maybe Homoskedastic() should return what type of homoskedastic
@@ -219,14 +219,14 @@ function StatsBase.fit(chisq::ChiSquaredNeighborhood, Zs_summary::MultinomialSum
     _dict = SortedDict(keys(Zs_summary.store) .=> empirical_probs)
     α = nominal_alpha(chisq)
     band =  quantile(Chisq(_dof), 1-α)
-    FittedChiSquaredNeighborhood(_dict, band, chisq, _dof, n)
+    FittedChiSquaredFLocalization(_dict, band, chisq, _dof, n)
 end
 
 
 
-function neighborhood_constraint!(
+function flocalization_constraint!(
     model,
-    chisq::FittedChiSquaredNeighborhood,
+    chisq::FittedChiSquaredFLocalization,
     prior::PriorVariable,
 )
     n = chisq.n

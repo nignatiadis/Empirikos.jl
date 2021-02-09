@@ -7,7 +7,7 @@ function Base.show(io::IO, d::InfiniteOrderKernel)
 end
 
 """
-    SincKernel(h)
+    SincKernel(h) <: InfiniteOrderKernel
 
 Implements the `SincKernel` with bandwidth `h` to be used for kernel density estimation
 through the `KernelDensity.jl` package. The sinc kernel is defined as follows:
@@ -48,7 +48,7 @@ end
 # TODO, General FlatTopKernel
 
 """
-    DeLaValleePoussinKernel(h)
+    DeLaValleePoussinKernel(h) <: InfiniteOrderKernel
 
 Implements the `DeLaValleePoussinKernel` with bandwidth `h` to be used for kernel density estimation
 through the `KernelDensity.jl` package. The De La Vallée-Poussin kernel is defined as follows:
@@ -59,7 +59,7 @@ Its use case is similar to the [`SincKernel`](@ref), however it has the advantag
 (in the Lebesgue sense) and having bounded total variation. Its Fourier transform is the following:
 ```math
 K^*_V(t) = \\begin{cases}
- 1, & \\text{ if } x\\in[-1,1] \\\\
+ 1, & \\text{ if } |t|\\leq 1 \\\\
  0, &\\text{ if } |t| \\geq 2 \\\\
  2-|t|,& \\text{ if } |t| \\in [1,2]
  \\end{cases}
@@ -74,13 +74,11 @@ DeLaValleePoussinKernel() = DeLaValleePoussinKernel(DataBasedDefault())
 function Distributions.cf(a::DeLaValleePoussinKernel, t)
    if abs(t * a.h) <= 1
        return(one(Float64))
-   #elseif abs(t * a.h) <=  2
-   #    return(2*one(Float64) - abs(t * a.h))
-    elseif abs(t * a.h) <=  1.1
-        return(one(Float64) - 10*(abs(t * a.h) - one(Float64)))
-    else
-        return(zero(Float64))
-    end
+   elseif abs(t * a.h) <=  2
+       return(2*one(Float64) - abs(t * a.h))
+   else
+       return(zero(Float64))
+   end
 end
 
 function Distributions.pdf(a::DeLaValleePoussinKernel, t)
@@ -91,36 +89,80 @@ function Distributions.pdf(a::DeLaValleePoussinKernel, t)
    end
 end
 
+
+
 """
-InfinityNormDensityBand(; kernel=DeLaValleePoussinKernel
-                             bandwidth = nothing,
-                             a_min,
+    FlatTopKernel(h) < InfiniteOrderKernel
+
+Implements the `FlatTopKernel` with bandwidth `h` to be used for kernel density estimation
+through the `KernelDensity.jl` package. The flat-top kernel is defined as follows:
+```math
+K(x) = \\frac{\\sin^2(1.1x/2)-\\sin^2(\\zo/2)}{\\pi x^2/ 20},
+```
+Its use case is similar to the [`SincKernel`](@ref), however it has the advantage of being integrable
+(in the Lebesgue sense) and having bounded total variation. Its Fourier transform is the following:
+```math
+K^*(t) = \\begin{cases}
+ 1, & \\text{ if } t|\\leq 1 \\\\
+ 0, &\\text{ if } |t| \\geq 1.1 \\\\
+ 11-10|t|,& \\text{ if } |t| \\in [1,1.1]
+ \\end{cases}
+```
+"""
+
+struct FlatTopKernel{H} <: InfiniteOrderKernel
+    h::H
+end
+
+ FlatTopKernel() = FlatTopKernel(DataBasedDefault())
+
+function Distributions.cf(a::FlatTopKernel, t)
+    if abs(t * a.h) <= 1
+        return(one(Float64))
+    elseif abs(t * a.h) <=  1.1
+        return(one(Float64) - 10*(abs(t * a.h) - one(Float64)))
+    else
+        return(zero(Float64))
+    end
+ end
+
+function Distributions.pdf(a::FlatTopKernel, t)
+    if t==zero(Float64)
+        return((0.55^2 - 0.5^2)*20/pi)
+    else
+        return((abs2(sin(0.55*x)) - abs2(sin(0.5*x)))/pi/x^2 * 20)
+    end
+end
+
+
+"""
+    InfinityNormDensityBand(;a_min,
                              a_max,
-                             nboot = 1000)
+                             kernel  =  Empirikos.FlatTopKernel(),
+                             bootstrap = :Multinomial,
+                             nboot = 1000,
+                             α = 0.05,
+                             rng = Random.MersenneTwister(1)
+                        )  <: FLocalization
+
 
 This struct contains hyperparameters that will be used for constructing a neighborhood
 of the marginal density. The steps of the method (and corresponding hyperparameter meanings)
 are as follows
-* First a kernel density estimate ``\\bar{f}`` of the data is fit with `kernel` as the
-kernel and `bandwidth` (the default `bandwidth = nothing` corresponds to automatic
-bandwidth selection).
-* Second, a Poisson bootstrap with `nboot` replication will be used to estimate a ``L_{\\infty}``
-neighborhood ``c_m`` of the true density ``f`` which is such that with probability tending to 1:
+* First a kernel density estimate ``\\bar{f}`` with `kernel` is fit to the data.
+* Second, a `bootstrap` (options: `:Multinomial` or `Poisson`) with `nboot` bootstrap replicates
+will be used to estimate ``c_n``, such that:
 ```math
-\\sup_{x \\in [a_{\\text{min}} , a_{\\text{max}}]} | \\bar{f}(x) - f(x)| \\leq c_m
+\\liminf_{n \\to \\infty}\\mathbb{P}[\\sup_{x \\in [a_{\\text{min}} , a_{\\text{max}}]} | \\bar{f}(x) - f(x)| \\leq c_ n} \\geq 1-\\alpha
 ```
-Note that the bound is valid from `a_min` to `a_max`.
-
-## Reference:
-  > Paul Deheuvels and Gérard Derzko. Asymptotic certainty bands for kernel density
-  > estimators based upon a bootstrap resampling scheme. In Statistical models and methods
-  > for biomedical and technical systems, pages 171–186. Springer, 2008
+Note that the bound is valid from `a_min` to `a_max`. `alpha` is the nominal level and finally
+`rng` sets the seed for the bootstrap samples.
 """
-Base.@kwdef struct InfinityNormDensityBand <: Empirikos.EBayesNeighborhood
+Base.@kwdef struct InfinityNormDensityBand <: FLocalization
    a_min = DataBasedDefault()
    a_max = DataBasedDefault()
    npoints::Integer = 1024
-   kernel = DeLaValleePoussinKernel()
+   kernel = FlatTopKernel()
    bootstrap = :Multinomial
    nboot::Integer = 1000
    α::Float64 = 0.05
@@ -147,16 +189,19 @@ end
 """
     FittedInfinityNormDensityBand
 
-The result of running `StatsBase.fit(opt::KDEInfinityBandOptions, Xs)`. Here `opt` is an instance
-of [`KDEInfinityBandOptions`](@ref) and `Xs` is a vector of samples distributed according to
-a density ```f``.
+The result of running
+```julia
+StatsBase.fit(opt::InfinityNormDensityBand, Zs)```
+Here `opt` is an instance
+of [`InfinityNormDensityBand`](@ref) and `Zs` is a vector of [`AbstractNormalSample`](@ref)s
+distributed according to a density ``f``..
 
 ## Fields:
-* `a_min`,`a_max`, `kernel`: These are the same as the fields in `opt:KDEInfinityBandOptions`.
-* `C∞`: This is the Poisson Bootstrap point estimate of ``\\sup_{x \\in [a_{\\text{min}} , a_{\\text{max}}]} | \\bar{f}(x) - f(x)|``
+* `a_min`,`a_max`, `kernel`: These are the same as the fields in `opt::InfinityNormDensityBand`.
+* `C∞`
 * `fitted_kde`: The fitted `KernelDensity` object.
 """
-Base.@kwdef struct FittedInfinityNormDensityBand{T<:Real, S, K} <: Empirikos.FittedEBayesNeighborhood
+Base.@kwdef struct FittedInfinityNormDensityBand{T<:Real, S, K} <: FittedFLocalization
     C∞::T
     a_min::T
     a_max::T
@@ -281,7 +326,7 @@ end
 
 
 
-function Empirikos.neighborhood_constraint!(
+function Empirikos.flocalization_constraint!(
     model,
     ctband::FittedInfinityNormDensityBand,
     prior::Empirikos.PriorVariable)

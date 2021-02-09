@@ -1,16 +1,16 @@
-Base.@kwdef struct NeighborhoodWorstCase{N,G}
-    neighborhood::N
+Base.@kwdef struct FLocalizationInterval{N,G}
+    flocalization::N
     convexclass::G
     solver
     n_bisection::Int = 100
 end
 
-function Empirikos.nominal_alpha(nbhood::NeighborhoodWorstCase)
-    Empirikos.nominal_alpha(nbhood.neighborhood)
+function Empirikos.nominal_alpha(floc::FLocalizationInterval)
+    Empirikos.nominal_alpha(floc.flocalization)
 end
 
 
-Base.@kwdef struct FittedNeighborhoodWorstCase{T, NW<:NeighborhoodWorstCase, M, P, V}
+Base.@kwdef struct FittedFLocalizationInterval{T, NW<:FLocalizationInterval, M, P, V}
     method::NW
     target::T = nothing
     model::M
@@ -23,30 +23,30 @@ end
 
 
 
-function StatsBase.fit(method::NeighborhoodWorstCase, target, Zs; kwargs...)
+function StatsBase.fit(method::FLocalizationInterval, target, Zs; kwargs...)
     Zs = Empirikos.summarize_by_default(Zs) ? summarize(Zs) : Zs
     method = Empirikos.set_defaults(method, Zs; kwargs...)
 
-    fitted_nbhood = StatsBase.fit(method.neighborhood, Zs)
-    method = @set method.neighborhood = fitted_nbhood
+    fitted_floc = StatsBase.fit(method.flocalization, Zs)
+    method = @set method.flocalization = fitted_floc
 
     StatsBase.fit(method, target)
 end
 
-function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNeighborhood},
+function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.AbstractPosteriorTarget)
-    StatsBase.fit(method, target, Empirikos.vexity(method.neighborhood))
+    StatsBase.fit(method, target, Empirikos.vexity(method.flocalization))
 end
 
-function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNeighborhood},
+function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.AbstractPosteriorTarget, ::Empirikos.LinearVexity)
 
     lfp = LinearFractionalModel(method.solver)
     g = Empirikos.prior_variable!(lfp, method.convexclass)
 
-    Empirikos.neighborhood_constraint!(lfp, method.neighborhood, g)
+    Empirikos.flocalization_constraint!(lfp, method.flocalization, g)
 
-    fitted_worst_case = FittedNeighborhoodWorstCase(method=method,
+    fitted_worst_case = FittedFLocalizationInterval(method=method,
         model=lfp,
         gmodel=g,
         target=target)
@@ -55,12 +55,12 @@ function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNei
 end
 
 
-function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.AbstractPosteriorTarget},
+function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
     target::Empirikos.AbstractPosteriorTarget)
-    StatsBase.fit(method, target, Empirikos.vexity(method.method.neighborhood))
+    StatsBase.fit(method, target, Empirikos.vexity(method.method.flocalization))
 end
 
-function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.AbstractPosteriorTarget},
+function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
                        target::Empirikos.AbstractPosteriorTarget, ::Empirikos.LinearVexity)
 
     g = method.gmodel
@@ -81,7 +81,7 @@ function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.AbstractP
     _max = objective_value(lfp)
     g2 = g()
 
-    FittedNeighborhoodWorstCase(method=method.method,
+    FittedFLocalizationInterval(method=method.method,
         target=target,
         model=lfp,
         gmodel=g,
@@ -91,10 +91,10 @@ function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.AbstractP
         upper=_max)
 end
 
-function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNeighborhood},
+function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.AbstractPosteriorTarget, ::Empirikos.ConvexVexity)
 
-    @unpack n_bisection, solver, convexclass, neighborhood = method
+    @unpack n_bisection, solver, convexclass, flocalization = method
 
     _max_vals = Vector{Float64}(undef, n_bisection)
     _min_vals = Vector{Float64}(undef, n_bisection)
@@ -102,7 +102,7 @@ function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNei
     model = ModelWithParams(solver)
     g = Empirikos.prior_variable!(model, convexclass)
 
-    Empirikos.neighborhood_constraint!(model, neighborhood, g)
+    Empirikos.flocalization_constraint!(model, flocalization, g)
     num_target = numerator(target)
     denom_target = denominator(target)
     @objective(model, Max, denom_target(g))
@@ -129,7 +129,7 @@ function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNei
     _max = maximum(_max_vals)
     _min = minimum(_min_vals)
 
-    FittedNeighborhoodWorstCase(method=method,
+    FittedFLocalizationInterval(method=method,
         target=target,
         model=model,
         gmodel=g,
@@ -139,7 +139,7 @@ function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNei
         upper=_max)
 end
 
-function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.AbstractPosteriorTarget},
+function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
     target::Empirikos.AbstractPosteriorTarget, ::Empirikos.ConvexVexity)
     # TODO: Cache results here too? But maybe wait for ParametricOptInterface first
     StatsBase.fit(method.method, target)
@@ -147,15 +147,15 @@ end
 
 
 
-function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNeighborhood},
+function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.LinearEBayesTarget)
 
     lp = Model(method.solver)
     g = Empirikos.prior_variable!(lp, method.convexclass)
 
-    Empirikos.neighborhood_constraint!(lp, method.neighborhood, g)
+    Empirikos.flocalization_constraint!(lp, method.flocalization, g)
 
-    fitted_worst_case = FittedNeighborhoodWorstCase(method=method,
+    fitted_worst_case = FittedFLocalizationInterval(method=method,
         model=lp,
         gmodel=g,
         target=target)
@@ -163,7 +163,7 @@ function StatsBase.fit(method::NeighborhoodWorstCase{<:Empirikos.FittedEBayesNei
     StatsBase.fit(fitted_worst_case, target)
 end
 
-function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.LinearEBayesTarget},
+function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.LinearEBayesTarget},
                        target::Empirikos.LinearEBayesTarget)
 
     g = method.gmodel
@@ -181,7 +181,7 @@ function StatsBase.fit(method::FittedNeighborhoodWorstCase{<:Empirikos.LinearEBa
     _max = objective_value(lp)
     g2 = g()
 
-    FittedNeighborhoodWorstCase(method=method.method,
+    FittedFLocalizationInterval(method=method.method,
         target=target,
         model=lp,
         gmodel=g,
@@ -195,21 +195,21 @@ end
 
 
 
-function StatsBase.confint(fitted_worst_case::FittedNeighborhoodWorstCase)
+function StatsBase.confint(fitted_worst_case::FittedFLocalizationInterval)
     @unpack target, method, lower, upper = fitted_worst_case
-    α = nominal_alpha(method.neighborhood)
+    α = nominal_alpha(method.flocalization)
     LowerUpperConfidenceInterval(α=α, target=target, lower=lower,
                                  upper=upper)
 end
 
-function StatsBase.confint(nbhood::Union{NeighborhoodWorstCase,FittedNeighborhoodWorstCase}, target, args...)
-    _fit = StatsBase.fit(nbhood, target, args...)
+function StatsBase.confint(floc::Union{FLocalizationInterval,FittedFLocalizationInterval}, target, args...)
+    _fit = StatsBase.fit(floc, target, args...)
     StatsBase.confint(_fit)
 end
 
 
-function Base.broadcasted(::typeof(StatsBase.confint), nbhood::NeighborhoodWorstCase, targets, args...)
-    _fit = StatsBase.fit(nbhood, targets[1], args...)
+function Base.broadcasted(::typeof(StatsBase.confint), floc::FLocalizationInterval, targets, args...)
+    _fit = StatsBase.fit(floc, targets[1], args...)
     confint_vec = fill(confint(_fit), length(targets))
     for (index, target) in enumerate(targets[2:end])
         confint_vec[index+1] = StatsBase.confint(StatsBase.fit(_fit, target))

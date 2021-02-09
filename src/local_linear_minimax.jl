@@ -108,7 +108,7 @@ end
 
 Base.@kwdef struct LocalizedAffineMinimax{N, G, M}
     convexclass::G
-    neighborhood::N
+    flocalization::N
     solver
     discretizer = nothing#DataBasedDefault()
     plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
@@ -123,7 +123,7 @@ end
 function initialize_modulus_model(method::LocalizedAffineMinimax, target::Empirikos.LinearEBayesTarget, δ)
 
     estimated_marginal_density = method.estimated_marginal_density
-    neighborhood = method.neighborhood
+    flocalization = method.flocalization
     gcal = method.convexclass
 
     solver = method.solver
@@ -133,8 +133,8 @@ function initialize_modulus_model(method::LocalizedAffineMinimax, target::Empiri
     g1 = Empirikos.prior_variable!(model, gcal)
     g2 = Empirikos.prior_variable!(model, gcal)
 
-    Empirikos.neighborhood_constraint!(model, neighborhood, g1)
-    Empirikos.neighborhood_constraint!(model, neighborhood, g2)
+    Empirikos.flocalization_constraint!(model, flocalization, g1)
+    Empirikos.flocalization_constraint!(model, flocalization, g2)
 
     Zs = collect(keys(estimated_marginal_density))
     f_sqrt = sqrt.(collect(values(estimated_marginal_density)))
@@ -181,7 +181,7 @@ end
 function initialize_method(method::LocalizedAffineMinimax, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
 
     method = Empirikos.set_defaults(method, Zs; kwargs...)
-    fitted_nbhood = StatsBase.fit(method.neighborhood, Zs; kwargs...)
+    fitted_floc = StatsBase.fit(method.flocalization, Zs; kwargs...)
     if isa(method.plugin_G, Distribution) #TODO SPECIAL CASE this elsewhere?
         fitted_plugin_G = method.plugin_G
     else
@@ -192,7 +192,7 @@ function initialize_method(method::LocalizedAffineMinimax, target::Empirikos.Lin
     # todo: fix this
     fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G.prior, z))
 
-    method = @set method.neighborhood = fitted_nbhood
+    method = @set method.flocalization = fitted_floc
     method = @set method.plugin_G = fitted_plugin_G
     method = @set method.estimated_marginal_density = fitted_density
 
@@ -390,10 +390,10 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
         end
     end
 
-    nbhood_worst_case = NeighborhoodWorstCase(neighborhood = method.neighborhood,
+    floc_worst_case = FLocalizationInterval(flocalization = method.flocalization,
             convexclass = method.convexclass,
             solver= method.solver)
-    outer_ci = StatsBase.confint(nbhood_worst_case, target)
+    outer_ci = StatsBase.confint(floc_worst_case, target)
     outer_ci =  @set outer_ci.α = α
 
     if isnothing(c_lower)
@@ -461,7 +461,7 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
     if c_lower_updated < c_lower || c_upper_updated > c_upper
         return outer_ci
     end
-    #let us assume we have neighborhoods.
+    #let us assume we have flocalizations.
 
     LowerUpperConfidenceInterval(α=α, target=target, method=nothing,
                                  lower=c_lower_updated,

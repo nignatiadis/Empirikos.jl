@@ -86,7 +86,7 @@ function discretize(Zs::AbstractVector; kwargs...)
 end
 
 function summarize(Zs::AbstractVector, discr::Discretizer)
-        summarize(discr.(Zs))
+    summarize(discr.(Zs))
 end
 
 function summarize(Zs::AbstractVector, ws, discr::Discretizer)
@@ -94,7 +94,7 @@ function summarize(Zs::AbstractVector, ws, discr::Discretizer)
 end
 
 function _set_defaults(
-    convexclass::Discretizer,
+    ::Discretizer,
     Zs::AbstractVector;
     hints,
 )

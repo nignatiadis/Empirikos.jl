@@ -5,6 +5,8 @@ using Hypatia
 
 Z = BinomialSample(10)
 
+
+
 betabin = marginalize(Z, Beta(2,1))
 
 Zs = BinomialSample.(rand(MersenneTwister(1), betabin, 100), 10);

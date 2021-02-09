@@ -1,27 +1,27 @@
-abstract type EBayesNeighborhood end
-abstract type FittedEBayesNeighborhood end
+abstract type FLocalization end
+abstract type FittedFLocalization end
 
 # Holy trait
-abstract type NeighborhoodVexity end
-struct LinearVexity <: NeighborhoodVexity end
-struct ConvexVexity <: NeighborhoodVexity end
+abstract type FLocalizationVexity end
+struct LinearVexity <: FLocalizationVexity end
+struct ConvexVexity <: FLocalizationVexity end
 
 
 
-StatsBase.fit(nbhood::FittedEBayesNeighborhood, args...; kwargs...) = nbhood
+StatsBase.fit(floc::FittedFLocalization, args...; kwargs...) = floc
 
-function nominal_alpha(nbhood::EBayesNeighborhood)
-    nbhood.α
+function nominal_alpha(floc::FLocalization)
+    floc.α
 end
 
 
 
-function neighborhood_constraint!(model, nbood, prior::PriorVariable)
+function flocalization_constraint!(model, floc, prior::PriorVariable)
     model
 end
 
 """
-    DvoretzkyKieferWolfowitz(α) <: EBayesNeighborhood
+    DvoretzkyKieferWolfowitz(α) <: FLocalization
 
 The Dvoretzky-Kiefer-Wolfowitz band (based on the Kolmogorov-Smirnov distance)
 at confidence level `1-α` that bounds the distance of the true distribution function
@@ -33,14 +33,14 @@ F \\text{ distribution}:  \\sup_{t \\in \\mathbb R}\\lvert F(t) - \\widehat{F}_n
 ```
 
 """
-Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: EBayesNeighborhood
+Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: FLocalization
     α::T = 0.05
 end
 
 vexity(::DvoretzkyKieferWolfowitz) = LinearVexity()
 
 struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
-       FittedEBayesNeighborhood
+        FittedFLocalization
     summary::D
     band::S
     dkw::DKW
@@ -71,7 +71,7 @@ end
 
 
 
-function neighborhood_constraint!(
+function flocalization_constraint!(
     model,
     dkw::FittedDvoretzkyKieferWolfowitz,
     prior::PriorVariable,
@@ -89,6 +89,7 @@ function neighborhood_constraint!(
     model
 end
 
+# subsampling should probably be part of DKW definition
 @recipe function f(fitted_dkw::FittedDvoretzkyKieferWolfowitz; subsample=100)
     x_dkw_all = response.(collect(keys(fitted_dkw.summary)))
     F_dkw_all = collect(values(fitted_dkw.summary))

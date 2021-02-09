@@ -1,7 +1,6 @@
 # We compare the chi^2 F-localization intervals against the intervals reported
 # by Lord and Cressie.
 
-
 lord_cressie = LordCressie.load_table()
 Zs = LordCressie.ebayes_samples()
 
@@ -13,12 +12,12 @@ upper_test = lord_cressie.Upper1[idx_test]
 gcal = DiscretePriorClass(range(0.0,stop=1.0,length=300));
 
 postmean_targets = Empirikos.PosteriorMean.(BinomialSample.(z_cressie,20));
-chisq_nbhood = Empirikos.ChiSquaredNeighborhood(0.05)
+chisq_floc = Empirikos.ChiSquaredFLocalization(0.05)
 
-nbhood_method_chisq = NeighborhoodWorstCase(neighborhood = chisq_nbhood,
+floc_method_chisq = FLocalizationInterval(flocalization = chisq_floc,
                                        convexclass= gcal, solver=Hypatia.Optimizer)
 
-chisq_cis = confint.(nbhood_method_chisq, postmean_targets, Zs)
+chisq_cis = confint.(floc_method_chisq, postmean_targets, Zs)
 
 lower_chisq_ci = getproperty.(chisq_cis, :lower)
 upper_chisq_ci = getproperty.(chisq_cis, :upper)

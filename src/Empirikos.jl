@@ -36,19 +36,21 @@ include("ebayes_methods.jl")
 include("ebayes_targets.jl")
 include("mixtures.jl")
 include("convex_priors.jl")
-include("neighborhoods.jl")
+include("flocalizations.jl")
 include("NPMLE.jl")
 include("samples/binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
-include("neighborhood_worst_case.jl")
-include("neighborhood_kde.jl")
+include("flocalization_intervals.jl")
+include("flocalization_kde.jl")
 include("local_linear_minimax.jl")
 
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
+
+
 
 export EBayesSample,
     summarize,
@@ -75,9 +77,9 @@ export EBayesSample,
     NPMLE,
     nominal_alpha
 
-# neighborhoods
+# F-Localizations
 export DvoretzkyKieferWolfowitz,
-    ChiSquaredNeighborhood
+    ChiSquaredFLocalization
 
 # utilities
 export DictFunction
@@ -86,6 +88,6 @@ export DictFunction
 
 export DataBasedDefault
 
-export NeighborhoodWorstCase
+export FLocalizationInterval
 
 end
