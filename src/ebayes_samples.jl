@@ -53,7 +53,7 @@ Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 	marginalize(Z::EBayesSample, prior::Distribution)
 
 Given a `prior` distribution ``G`` and  `EBayesSample` ``Z``,
-return that marginal distribution of ``Z``. Works for EBayesSample{Missing},
+return that marginal distribution of ``Z``. Works for `EBayesSample{Missing}``,
 i.e., no realization is needed.
 
 # Examples
@@ -101,8 +101,37 @@ function loglikelihood(Zs::AbstractVector{<:EBayesSample}, prior)
     sum(loglikelihood.(Zs, prior))
 end
 
+"""
+    pdf(prior::Distribution, Z::EBayesSample)
+
+Given a `prior` ``G`` and `EBayesSample` ``Z``, compute the marginal density of `Z`.
+
+# Examples
+```julia-repl
+julia> Z = StandardNormalSample(1.0)
+Z=     1.0 | σ=1.0
+julia> prior = Normal(2.0, sqrt(3))
+Normal{Float64}(μ=2.0, σ=1.7320508075688772)
+julia> pdf(prior, Z)
+0.17603266338214976
+julia> pdf(Normal(2.0, 2.0), 1.0)
+0.17603266338214976
+```
+"""
 pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
-cdf(prior::Distribution, Z::EBayesSample) = _cdf(marginalize(Z, prior), response(Z)) # Turn this also into _cdf eventually.
+"""
+    cdf(prior::Distribution, Z::EBayesSample)
+
+Given a `prior` ``G`` and `EBayesSample` ``Z``, evaluate the CDF of the marginal
+distribution of ``Z`` at `response(Z)`.
+"""
+cdf(prior::Distribution, Z::EBayesSample) = _cdf(marginalize(Z, prior), response(Z))
+"""
+    ccdf(prior::Distribution, Z::EBayesSample)
+
+Given a `prior` ``G`` and `EBayesSample` ``Z``, evaluate the complementary CDF of the marginal
+distribution of ``Z`` at `response(Z)`.
+"""
 ccdf(prior::Distribution, Z::EBayesSample) = _ccdf(marginalize(Z, prior), response(Z))
 
 

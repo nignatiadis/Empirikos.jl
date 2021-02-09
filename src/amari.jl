@@ -2,7 +2,7 @@
 # Structure
 #----------------------------------
 # ModulusModel contains all JuMP related information
-# LocalizedAffineMinimax contains optimization information
+# AMARI contains optimization information
 # SteinMinimaxEstimator contains the fit result
 #
 
@@ -105,8 +105,10 @@ function (half_ci::HalfCIWidth)(bias, unit_var_proxy)
     gaussian_ci(se; maxbias=bias, α=half_ci.α)
 end
 
-
-Base.@kwdef struct LocalizedAffineMinimax{N, G, M}
+"""
+    AMARI
+"""
+Base.@kwdef struct AMARI{N, G, M}
     convexclass::G
     flocalization::N
     solver
@@ -120,7 +122,7 @@ Base.@kwdef struct LocalizedAffineMinimax{N, G, M}
     n = nothing
 end
 
-function initialize_modulus_model(method::LocalizedAffineMinimax, target::Empirikos.LinearEBayesTarget, δ)
+function initialize_modulus_model(method::AMARI, target::Empirikos.LinearEBayesTarget, δ)
 
     estimated_marginal_density = method.estimated_marginal_density
     flocalization = method.flocalization
@@ -178,7 +180,7 @@ end
 
 
 
-function initialize_method(method::LocalizedAffineMinimax, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
+function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
 
     method = Empirikos.set_defaults(method, Zs; kwargs...)
     fitted_floc = StatsBase.fit(method.flocalization, Zs; kwargs...)
@@ -205,14 +207,14 @@ function initialize_method(method::LocalizedAffineMinimax, target::Empirikos.Lin
     modulus_model = initialize_modulus_model(method, target, δ1)
     method = @set method.modulus_model = modulus_model
     method
-end #LocalizedAffineMinimax -> LocalizedAffineMinimax
+end #AMARI -> AMARI
 
-function StatsBase.fit(method::LocalizedAffineMinimax, target, Zs; initialize=true, kwargs...)
+function StatsBase.fit(method::AMARI, target, Zs; initialize=true, kwargs...)
     if initialize
         method = initialize_method(method, target, Zs; kwargs...)
     end
-    _fit_initialized(method::LocalizedAffineMinimax, target, Zs; kwargs...)
-end #LocalizedAffineMinimax ->
+    _fit_initialized(method::AMARI, target, Zs; kwargs...)
+end #AMARI ->
 
 
 
@@ -310,7 +312,7 @@ SteinMinimaxEstimator(
 end
 
 
-function _fit_initialized(method::LocalizedAffineMinimax, target, Zs; kwargs...)
+function _fit_initialized(method::AMARI, target, Zs; kwargs...)
     @unpack modulus_model, delta_grid, delta_objective, n = method
     modulus_model = set_target!(modulus_model, target) #TODO: This is mutating the JuMP.model but not anything else
 
@@ -347,12 +349,12 @@ function StatsBase.confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
                                    α = α, method = nothing, target = target)
 end
 
-function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
+function StatsBase.confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
     _fit = StatsBase.fit(method, target, Zs; kwargs...)
     StatsBase.confint(_fit, target, Zs; kwargs...)
 end
 
-function Base.broadcasted(::typeof(StatsBase.confint), method::LocalizedAffineMinimax,
+function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
                            targets::AbstractVector{<:Empirikos.LinearEBayesTarget}, Zs, args...; kwargs...)
     length(targets) >= 2  || throw(error("use non-broadcasting call to .fit"))
     mid_idx = ceil(Int,median(Base.OneTo(length(targets))))
@@ -375,7 +377,7 @@ function Base.broadcasted(::typeof(StatsBase.confint), method::LocalizedAffineMi
 end
 
 
-function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.AbstractPosteriorTarget, Zs;
+function StatsBase.confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
                           initialized=false, α=0.05, c_lower=nothing, c_upper=nothing, single_delta=false, kwargs...)
     if !initialized
         init_target = Empirikos.PosteriorTargetNullHypothesis(target, 0.0)
@@ -469,7 +471,7 @@ function StatsBase.confint(method::LocalizedAffineMinimax, target::Empirikos.Abs
 end
 
 
-function Base.broadcasted(::typeof(StatsBase.confint), method::LocalizedAffineMinimax,
+function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
             targets::AbstractVector{<:Empirikos.AbstractPosteriorTarget}, Zs, args...; kwargs...)
 
     length(targets) >= 2  || throw(error("use non-broadcasting call to .fit"))

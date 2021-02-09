@@ -1,4 +1,11 @@
+"""
+   Abstract type representing F-Localizations.
+"""
 abstract type FLocalization end
+"""
+   Abstract type representing a fitted F-Localization
+   (i.e., wherein the F-localization has already been determined by data).
+"""
 abstract type FittedFLocalization end
 
 # Holy trait

@@ -97,7 +97,7 @@ end
 Implements the `FlatTopKernel` with bandwidth `h` to be used for kernel density estimation
 through the `KernelDensity.jl` package. The flat-top kernel is defined as follows:
 ```math
-K(x) = \\frac{\\sin^2(1.1x/2)-\\sin^2(\\zo/2)}{\\pi x^2/ 20},
+K(x) = \\frac{\\sin^2(1.1x/2)-\\sin^2(x/2)}{\\pi x^2/ 20}.
 ```
 Its use case is similar to the [`SincKernel`](@ref), however it has the advantage of being integrable
 (in the Lebesgue sense) and having bounded total variation. Its Fourier transform is the following:
@@ -109,7 +109,6 @@ K^*(t) = \\begin{cases}
  \\end{cases}
 ```
 """
-
 struct FlatTopKernel{H} <: InfiniteOrderKernel
     h::H
 end
@@ -150,12 +149,11 @@ This struct contains hyperparameters that will be used for constructing a neighb
 of the marginal density. The steps of the method (and corresponding hyperparameter meanings)
 are as follows
 * First a kernel density estimate ``\\bar{f}`` with `kernel` is fit to the data.
-* Second, a `bootstrap` (options: `:Multinomial` or `Poisson`) with `nboot` bootstrap replicates
-will be used to estimate ``c_n``, such that:
+* Second, a `bootstrap` (options: `:Multinomial` or `Poisson`) with `nboot` bootstrap replicates will be used to estimate ``c_n``, such that:
 ```math
-\\liminf_{n \\to \\infty}\\mathbb{P}[\\sup_{x \\in [a_{\\text{min}} , a_{\\text{max}}]} | \\bar{f}(x) - f(x)| \\leq c_ n} \\geq 1-\\alpha
+\\liminf_{n \\to \\infty}\\mathbb{P}\\left[\\sup_{x \\in [a_{\\text{min}} , a_{\\text{max}}]} | \\bar{f}(x) - f(x)| \\leq c_ n\\right] \\geq 1-\\alpha
 ```
-Note that the bound is valid from `a_min` to `a_max`. `alpha` is the nominal level and finally
+Note that the bound is valid from `a_min` to `a_max`. `α` is the nominal level and finally
 `rng` sets the seed for the bootstrap samples.
 """
 Base.@kwdef struct InfinityNormDensityBand <: FLocalization

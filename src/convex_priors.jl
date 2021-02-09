@@ -1,6 +1,4 @@
 """
-    ConvexPriorClass
-
 Abstract type representing convex classes of probability distributions ``\\mathcal{G}``.
 """
 abstract type ConvexPriorClass end

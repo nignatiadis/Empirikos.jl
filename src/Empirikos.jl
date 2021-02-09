@@ -45,7 +45,7 @@ include("example_priors.jl")
 include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
-include("local_linear_minimax.jl")
+include("amari.jl")
 
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
@@ -79,7 +79,8 @@ export EBayesSample,
 
 # F-Localizations
 export DvoretzkyKieferWolfowitz,
-    ChiSquaredFLocalization
+    ChiSquaredFLocalization,
+    InfinityNormDensityBand
 
 # utilities
 export DictFunction
@@ -88,6 +89,7 @@ export DictFunction
 
 export DataBasedDefault
 
-export FLocalizationInterval
+export FLocalizationInterval,
+       AMARI
 
 end

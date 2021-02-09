@@ -1,3 +1,18 @@
+"""
+    FLocalizationInterval(flocalization::Empirikos.FLocalization,
+                          convexclass::Empirikos.ConvexPriorClass,
+                          solver,
+                          n_bisection = 100)
+
+Method for computing frequentist confidence intervals for empirical Bayes
+estimands. Here `flocalization` is a  [`Empirikos.FLocalization`](@ref), `convexclass` is
+a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
+
+`n_bisection` is relevant only for combinations of `flocalization` and `convexclass` for
+    which the Charnes-Cooper transformation is not applicable. Instead, a quasi-convex
+    optimization problem is solved by bisection and increasing `n_bisection` increases
+    accuracy (at the cost of more computation).
+"""
 Base.@kwdef struct FLocalizationInterval{N,G}
     flocalization::N
     convexclass::G
