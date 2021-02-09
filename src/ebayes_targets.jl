@@ -1,6 +1,4 @@
 """
-	EBayesTarget
-
 Abstract type that describes Empirical Bayes estimands (which we want to estimate or conduct inference for).
 """
 abstract type EBayesTarget end
@@ -14,6 +12,12 @@ end
 abstract type AbstractPosteriorTarget <: EBayesTarget end
 abstract type BasicPosteriorTarget <: AbstractPosteriorTarget end
 
+"""
+    LinearEBayesTarget <: EBayesTarget
+
+Abstract type that describes Empirical Bayes estimands that are linear functionals of the
+prior `G`.
+"""
 abstract type LinearEBayesTarget <: EBayesTarget end
 
 Base.extrema(::EBayesTarget) = (-Inf, +Inf) # allow distribution-dependent choice?
@@ -30,6 +34,7 @@ struct LinearOverLinear{N,D} <: AbstractTargetComputation
     num::N
     denom::D
 end
+
 Base.numerator(lin::LinearOverLinear) = lin.num
 Base.denominator(lin::LinearOverLinear) = lin.denom
 
@@ -133,14 +138,14 @@ Base.extrema(target::PriorDensity) = (0, Inf)
 MarginalDensity(StandardNormalSample(2.0))
 ```
 ## Description
-Describes the marginal density evaluated at ``Z=z``  (e.g. ``Z=2`` in the example above)
-of a sample drawn from the hierarchical model
+Describes the marginal density evaluated at ``Z=z``  (e.g. ``Z=2`` in the example above).
+In the example above the sample is drawn from the hierarchical model
 ```math
 \\mu \\sim G, Z \\sim \\mathcal{N}(0,1)
 ```
-In other words, letting ``\\phi`` the Standard Normal pdf
+In other words, letting ``\\varphi`` the Standard Normal pdf
 ```math
-L(G) = \\phi \\star dG(z)
+L(G) = \\varhi \\star dG(z)
 ```
 Note that `2.0` has to be wrapped inside `StandardNormalSample(2.0)` since this target
 depends not only on `G` and the location, but also on the likelihood.
@@ -163,6 +168,20 @@ end
 
 
 location(target::AbstractPosteriorTarget) = target.Z
+
+
+"""
+    Base.denominator(target::AbstractPosteriorTarget)
+
+Suppose a posterior target ``\\theta_G(z)``, such as the posterior mean can be written as:
+```math
+\\theta_G(z) = \\frac{ a_G(z)}{f_G(z)} = \\frac{ \\int h(\\mu)dG(\\mu)}{\\int p(z \\mid \\mu)dG(\\mu)}.
+```
+
+For example, for the posterior mean ``h(\\mu) =  \\mu \\cdot p(z \\mid \\mu)``. Then `Base.denominator`
+returns the linear functional representing ``G \\mapsto f_G(z)`` (i.e., typically the marginal density).
+Also see [`Base.numerator(::AbstractPosteriorTarget)`](@ref).
+"""
 Base.denominator(target::AbstractPosteriorTarget) = MarginalDensity(location(target))
 
 struct PosteriorTargetNumerator{T} <: LinearEBayesTarget
@@ -186,6 +205,17 @@ function (post_numerator::PosteriorTargetNumerator)(μ::Number)
     post_numerator.posterior_target(μ) * denominator(_post)(μ)
 end
 
+"""
+    Base.numerator(target::AbstractPosteriorTarget)
+
+Suppose a posterior target ``\\theta_G(z)``, such as the posterior mean can be written as:
+```math
+\\theta_G(z) = \\frac{ a_G(z)}{f_G(z)} = \\frac{ \\int h(\\mu)dG(\\mu)}{\\int p(z \\mid \\mu)dG(\\mu)}.
+```
+
+For example, for the posterior mean ``h(\\mu) =  \\mu \\cdot p(z \\mid \\mu)``. Then `Base.numerator`
+returns the linear functional representing ``G \\mapsto a_G(z)``.
+"""
 Base.numerator(target::AbstractPosteriorTarget) = PosteriorTargetNumerator(target)
 
 
@@ -215,7 +245,6 @@ Type representing the posterior mean, i.e.,
 ```math
 E_G[\\mu_i \\mid Z_i = z]
 ```
-
 """
 struct PosteriorMean{T} <: BasicPosteriorTarget
     Z::T

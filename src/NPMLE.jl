@@ -1,7 +1,7 @@
 abstract type ConvexMinimumDistanceMethod <: EBayesMethod end
 
 """
-    NPMLE(convexclass, solver)
+    NPMLE(convexclass, solver) <: Empirikos.EBayesMethod
 
 Given ``n`` independent samples ``Z_i`` from the empirical Bayes problem with prior ``G`` known to lie
 in the `convexclass` ``\\mathcal{G}``, estimate ``G`` by Nonparametric Maximum Likelihood (NPMLE)
@@ -67,7 +67,7 @@ function _fit(npmle::NPMLE, Zs)
 end
 
 """
-    KolmogorovSmirnovMinimumDistance(convexclass, solver)
+    KolmogorovSmirnovMinimumDistance(convexclass, solver) <: Empirikos.EBayesMethod
 
 Given ``n`` i.i.d. samples from the empirical Bayes problem with prior ``G`` known to lie
 in the `convexclass` ``\\mathcal{G}`` , estimate ``G`` as follows:
@@ -80,6 +80,10 @@ struct KolmogorovSmirnovMinimumDistance{C} <: ConvexMinimumDistanceMethod
     convexclass::C
     solver::Any
     dict::Any
+end
+
+function KolmogorovSmirnovMinimumDistance(convexclass, solver)
+    KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
 end
 
 function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)

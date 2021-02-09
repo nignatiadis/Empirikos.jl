@@ -1,6 +1,10 @@
 using Documenter
 using DocumenterCitations
+using DocumenterTools: Themes
 using Empirikos
+
+Themes.compile(joinpath(@__DIR__,"src/assets/light.scss"), joinpath(@__DIR__,"src/assets/themes/documenter-light.css"))
+
 
 bib = CitationBibliography(joinpath(@__DIR__, "ebayes.bib"))
 
@@ -12,11 +16,13 @@ makedocs(
     ),
     modules = [Empirikos],
     pages    = [
-        "index.md",
-        "samples.md",
-        "convexpriors.md",
-        "estimation.md",
-        "neighborhoods.md"
+        "Introduction" => "index.md",
+        "Manual" => ["samples.md",
+            "convexpriors.md",
+            "estimation.md",
+            "flocalizations.md",
+            "estimands.md",
+            "intervals.md"]
     ]
 )
 

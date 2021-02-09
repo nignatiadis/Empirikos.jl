@@ -1,3 +1,6 @@
+"""
+Abstract type representing empirical Bayes estimation methods.
+"""
 abstract type EBayesMethod end
 
 function StatsBase.fit(mom::EBayesMethod, Zs)

@@ -106,14 +106,23 @@ function (half_ci::HalfCIWidth)(bias, unit_var_proxy)
 end
 
 """
-    AMARI
+    AMARI(convexclass::Empirikos.ConvexPriorClass,
+          flocalization::Empirikos.FLocalization,
+          solver,
+          plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver))
+
+Affine Minimax Anderson-Rubin intervals for empirical Bayes estimands.
+Here `flocalization` is a  pilot [`Empirikos.FLocalization`](@ref), `convexclass` is
+a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
+`plugin_G` is a [`Empirikos.EBayesMethod`](@ref) used as an initial estimate of the marginal
+distribution of the i.i.d. samples ``Z``.
 """
 Base.@kwdef struct AMARI{N, G, M}
     convexclass::G
     flocalization::N
     solver
     discretizer = nothing#DataBasedDefault()
-    plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
+    plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver)
     data_split = :none
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
@@ -376,7 +385,15 @@ function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
     confint_vec
 end
 
+"""
+    StatsBase.confint(method::AMARI,
+                      target::Empirikos.EBayesTarget,
+                      Zs;
+                      α=0.05)
 
+Form a confidence interval for the [`Empirikos.EBayesTarget`](@ref) `target` with coverage
+    `1-α` based on the samples `Zs` using the [`AMARI`](@ref) `method`.
+"""
 function StatsBase.confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
                           initialized=false, α=0.05, c_lower=nothing, c_upper=nothing, single_delta=false, kwargs...)
     if !initialized

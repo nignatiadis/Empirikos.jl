@@ -1,4 +1,8 @@
-# Estimation
+# Prior Estimation
+
+```@docs
+Empirikos.EBayesMethod
+```
 
 ## Nonparametric estimation
 
@@ -7,10 +11,35 @@ The typical call for estimating the prior $G$ based on empirical Bayes samples `
 ```julia
 StatsBase.fit(method, Zs)
 ```
-Above, `method` is a type that specifies both the assumptions made on $G$ (say, the convex prior class $\mathcal{G}$ in which $G$ lies), as well as details concerning the computation (typically a JuMP.jl compatible convex programming solver). The following methods for nonparametric estimation are currently available.
+Above, `method` is a type that specifies both the assumptions made on $G$ (say, the convex prior class $\mathcal{G}$ in which $G$ lies), as well as details concerning the computation (typically a [JuMP.jl](https://jump.dev/JuMP.jl/v0.21.6/installation/#Supported-solvers) compatible convex programming solver). 
+
+### Nonparametric Maximum Likelihood estimation (NPMLE)
+For example, let us consider the nonparametric maximum likelihood estimator:
 
 ```@docs
 NPMLE
+```
+
+Suppose we have Poisson samples `Zs`, each with a different mean $\mu_i$ drawn from $G=U[1,5]$:
+```julia
+using Distributions
+n = 1000
+μs = rand(Uniform(1,5), n)
+Zs = PoissonSample.(rand.(Poisson.(μs)))
+```
+We can then estimate $G$ as follows using Mosek:
+```julia
+using MosekTools
+g_hat = fit(NPMLE(DiscretePriorClass(), Mosek.Optimizer), Zs)
+```
+Or we can use the open-source [Hypatia.jl](https://github.com/chriscoey/Hypatia.jl) solver:
+```julia
+using Hypatia
+g_hat = fit(NPMLE(DiscretePriorClass(), Hypatia.Optimizer), Zs)
+```
+
+### Other available nonparametric methods
+```@docs
 Empirikos.KolmogorovSmirnovMinimumDistance
 ```
 
