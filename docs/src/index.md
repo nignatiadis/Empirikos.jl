@@ -9,14 +9,9 @@ Here $G$ is the unknown prior (effect size distribution) and $p_i(\cdot \mid \mu
 This package provides a unified framework for estimation and inference under the above setting, which is known as the empirical Bayes problem [[robbins1956empirical](@cite)].
 
 
-!!! note "Modularity"
-      This package has been designed with the goal of modularity. 
-      Specialized code (using Julia's multiple dispatch) handles different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently).
-
-
 ## Installation
 
-The package is available from the Julia registry. It may be installed as follows:
+The package is available from the Julia registry. It may be installed on Julia version 1.5 as follows:
 ```julia
 using Pkg
 Pkg.add("Empirikos")
@@ -33,6 +28,13 @@ Below are some vignettes using this package for empirical Bayes tasks. There are
   * [Posterior mean in a Binomial dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/lord_cressie.jl.html)
   * [Posterior mean in a Poisson dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/bichsel.jl.html)
 
+
+
+!!! note "Modularity"
+      This package has been designed with the goal of modularity. 
+      Specialized code (using Julia's multiple dispatch) handles different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently).
+
+      
 ## Related packages
 
 ### In R:
