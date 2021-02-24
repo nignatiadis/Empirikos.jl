@@ -30,6 +30,7 @@ using UnPack
 
 include("set_defaults.jl")
 include("ebayes_samples.jl")
+include("compound.jl")
 include("interval_discretizer.jl")
 include("dict_function.jl")
 include("ebayes_methods.jl")
@@ -49,6 +50,7 @@ include("amari.jl")
 
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
+include("datasets/Neighborhoods/neighborhoods.jl")
 
 
 
@@ -59,6 +61,7 @@ export EBayesSample,
     BinomialSample,
     PoissonSample,
     marginalize,
+    compound,
     discretize,
     summarize,
     likelihood,

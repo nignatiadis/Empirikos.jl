@@ -49,6 +49,12 @@ end
 Base.isnan(Z::EBayesSample) = Base.isnan(response(Z))
 Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 
+# default fallback
+function Base.isless(a::EBayesSample, b::EBayesSample)
+    Base.isless(response(a), response(b))
+end
+
+
 """
 	marginalize(Z::EBayesSample, prior::Distribution)
 

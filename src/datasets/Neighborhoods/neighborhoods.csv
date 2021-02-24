@@ -1,0 +1,742 @@
+CZ ,Name_of_CZ,Census_2000_population,State_Abbrev.,State,Urban_Areas,p25_coef,p25_se,p25_se_boot
+100,Johnson City,576081,TN,Tennessee,1,-0.416,0.250,0.273
+200,Morristown,227816,TN,Tennessee,1,-0.043,0.249,0.266
+301,Middlesborough,66708,TN,Tennessee,0,0.428,0.568,0.578
+302,Knoxville,727600,TN,Tennessee,1,-0.055,0.183,0.187
+401,Winston-Salem,493180,NC,North Carolina,1,-0.443,0.199,0.201
+402,Martinsville,92753,VA,Virginia,0,-0.470,0.413,0.411
+500,Greensboro,1055133,NC,North Carolina,1,-0.347,0.132,0.134
+601,North Wilkesboro,90016,NC,North Carolina,0,0.237,0.572,0.519
+602,Galax,64676,VA,Virginia,0,-1.085,0.692,0.806
+700,Spartanburg,354533,SC,South Carolina,1,-0.233,0.230,0.243
+800,Gastonia,413331,NC,North Carolina,1,-0.402,0.200,0.181
+900,Charlotte,1423942,NC,North Carolina,1,-0.248,0.096,0.095
+1001,Boone,77361,NC,North Carolina,0,0.860,0.601,0.649
+1002,Morganton,164760,NC,North Carolina,1,-0.386,0.353,0.369
+1100,Hickory,375363,NC,North Carolina,1,-0.007,0.222,0.211
+1201,Franklin,44861,NC,North Carolina,0,-0.693,0.763,1.211
+1202,Sylva,54082,NC,North Carolina,0,0.692,0.848,0.888
+1203,Asheville,398505,NC,North Carolina,1,-0.425,0.239,0.217
+1204,Andrews,59681,NC,North Carolina,0,-0.172,0.759,0.868
+1301,Bennettsville,71586,SC,South Carolina,0,0.052,0.358,0.323
+1302,Florence,548986,SC,South Carolina,1,-0.205,0.144,0.163
+1400,Fayetteville,644101,NC,North Carolina,1,-0.241,0.128,0.139
+1500,Wilmington,361559,NC,North Carolina,1,-0.381,0.194,0.166
+1600,Wilson,216840,NC,North Carolina,1,0.073,0.245,0.243
+1701,Raleigh,1412127,NC,North Carolina,1,-0.278,0.105,0.112
+1702,Henderson,62926,NC,North Carolina,0,-0.567,0.397,0.398
+1800,Goldsboro,222553,NC,North Carolina,1,-0.054,0.252,0.239
+1900,Jacksonville,536909,NC,North Carolina,1,0.298,0.162,0.160
+2000,Virginia Beach,1119468,VA,Virginia,1,-0.160,0.109,0.109
+2100,Washington,124216,NC,North Carolina,0,0.037,0.318,0.306
+2200,South Boston,158234,VA,Virginia,0,0.013,0.285,0.295
+2300,Lynchburg,228616,VA,Virginia,1,-0.090,0.293,0.310
+2400,Richmond,1040192,VA,Virginia,1,-0.011,0.135,0.153
+2500,Newport News,570854,VA,Virginia,1,0.064,0.150,0.177
+2600,Roanoke Rapids,139055,NC,North Carolina,0,0.335,0.286,0.287
+2700,Gulfport,458674,MS,Mississippi,1,-0.100,0.202,0.226
+2800,Laurel,120505,MS,Mississippi,0,0.128,0.393,0.441
+2900,Hattiesburg,157181,MS,Mississippi,1,-0.362,0.324,0.335
+3001,Kosciusko,41270,MS,Mississippi,0,-0.448,0.500,0.608
+3002,Yazoo City,39355,MS,Mississippi,1,-0.572,0.517,0.543
+3003,Jackson,546560,MS,Mississippi,1,-0.326,0.195,0.181
+3101,McComb,103602,MS,Mississippi,0,-0.282,0.377,0.392
+3102,Brookhaven,46424,MS,Mississippi,0,-0.536,0.520,0.581
+3201,Jena,25202,LA,Louisiana,0,0.052,0.787,1.026
+3202,Natchez,69653,MS,Mississippi,0,0.156,0.498,0.635
+3203,Vicksburg,84943,MS,Mississippi,0,-0.261,0.510,0.520
+3300,New Orleans,1381652,LA,Louisiana,1,-0.391,0.111,0.111
+3400,Houma,271365,LA,Louisiana,1,0.119,0.273,0.231
+3500,Baton Rouge,806561,LA,Louisiana,1,-0.366,0.161,0.143
+3600,Alexandria,186516,LA,Louisiana,1,-0.481,0.286,0.320
+3700,Lake Charles,335960,LA,Louisiana,1,0.324,0.245,0.266
+3800,Lafayette,548154,LA,Louisiana,1,0.034,0.222,0.209
+3901,Monroe,253878,LA,Louisiana,1,0.342,0.277,0.259
+3902,Lake Providence,21735,LA,Louisiana,0,,,
+4001,Magnolia,34162,AR,Arkansas,0,-0.153,0.631,0.734
+4002,Shreveport,499101,LA,Louisiana,1,0.148,0.183,0.176
+4003,Ruston,74800,LA,Louisiana,0,0.471,0.437,0.406
+4004,Many,23459,LA,Louisiana,0,,,
+4101,Crossett,24209,AR,Arkansas,0,,,
+4102,Pine Bluff,168122,AR,Arkansas,1,0.360,0.311,0.484
+4103,El Dorado,89373,AR,Arkansas,0,0.981,0.452,0.496
+4200,Little Rock,630854,AR,Arkansas,1,0.095,0.184,0.203
+4301,Stuttgart,40542,AR,Arkansas,0,0.547,0.547,0.529
+4302,Searcy,94324,AR,Arkansas,0,1.063,0.411,0.434
+4401,London,144931,KY,Kentucky,0,0.255,0.406,0.427
+4402,Richmond,116256,KY,Kentucky,0,0.830,0.438,0.454
+4501,West Liberty,49887,KY,Kentucky,0,0.971,0.728,0.917
+4502,Hazard,117919,KY,Kentucky,0,1.168,0.585,0.704
+4601,Campbellsville,83451,KY,Kentucky,0,-0.049,0.535,0.560
+4602,Somerset,123981,KY,Kentucky,0,0.917,0.467,0.534
+4701,Greenwood,84168,MS,Mississippi,0,-0.295,0.390,0.462
+4702,Clarksdale,141711,MS,Mississippi,0,-0.084,0.272,0.309
+4800,Greenville,146833,MS,Mississippi,0,0.298,0.286,0.283
+4901,Jackson,198166,TN,Tennessee,1,-0.532,0.331,0.316
+4902,Dyersburg,92131,TN,Tennessee,0,-0.507,0.394,0.433
+4903,Lexington,44884,TN,Tennessee,0,-0.854,0.784,0.935
+5000,Tupelo,197774,MS,Mississippi,0,0.034,0.345,0.332
+5100,Corinth,129508,MS,Mississippi,0,-0.005,0.408,0.417
+5201,New Albany,54214,MS,Mississippi,1,0.585,0.462,0.438
+5202,Memphis,1154338,TN,Tennessee,1,-0.121,0.126,0.143
+5300,West Memphis,138746,AR,Arkansas,1,-0.122,0.273,0.289
+5401,Bowling Green,164944,KY,Kentucky,1,-0.050,0.364,0.408
+5402,Glasgow,92394,KY,Kentucky,0,-0.277,0.483,0.486
+5500,Columbia,159374,TN,Tennessee,1,-0.467,0.298,0.292
+5600,Nashville,1246338,TN,Tennessee,1,-0.041,0.129,0.143
+5700,Tullahoma,130610,TN,Tennessee,0,-0.565,0.345,0.385
+5800,Dickson,138212,TN,Tennessee,1,-0.692,0.345,0.388
+5900,Clarksville,252059,TN,Tennessee,1,0.231,0.309,0.444
+6000,Huntsville,519583,AL,Alabama,1,-0.222,0.199,0.226
+6100,Gadsden,304068,AL,Alabama,1,-0.182,0.246,0.241
+6200,Florence,230941,AL,Alabama,1,-0.432,0.340,0.338
+6301,McMinnville,84309,TN,Tennessee,0,0.503,0.449,0.440
+6302,Cookeville,98362,TN,Tennessee,0,0.654,0.525,0.454
+6401,Chattanooga,490863,TN,Tennessee,1,-0.024,0.227,0.260
+6402,Crossville,104194,TN,Tennessee,0,0.424,0.436,0.438
+6501,Ellijay,43254,GA,Georgia,0,-0.789,0.582,0.630
+6502,Cleveland,203077,TN,Tennessee,1,0.200,0.300,0.310
+6600,Rome,418304,GA,Georgia,1,-0.283,0.197,0.223
+6700,Tampa,2395997,FL,Florida,1,-0.138,0.068,0.061
+6800,Lakeland,598228,FL,Florida,1,-0.121,0.129,0.143
+6900,Sarasota,763795,FL,Florida,1,-0.259,0.136,0.146
+7000,Miami,3955969,FL,Florida,1,-0.021,0.063,0.053
+7100,Port St. Lucie,1533306,FL,Florida,1,-0.263,0.090,0.083
+7200,Cape Coral,692265,FL,Florida,1,-0.121,0.128,0.138
+7300,Palm Bay,589177,FL,Florida,1,-0.221,0.142,0.124
+7400,Orlando,1697906,FL,Florida,1,-0.189,0.069,0.072
+7500,Deltona,563598,FL,Florida,1,-0.349,0.128,0.113
+7600,Jacksonville,1176696,FL,Florida,1,0.050,0.100,0.095
+7700,Lake City,149695,FL,Florida,0,0.022,0.261,0.280
+7800,Ocala,377001,FL,Florida,1,0.172,0.154,0.187
+7900,Gainesville,320199,FL,Florida,1,0.044,0.192,0.179
+8000,Sumter,209914,SC,South Carolina,1,-0.196,0.243,0.287
+8100,Columbia,722201,SC,South Carolina,1,-0.164,0.142,0.139
+8201,Barnwell,72733,SC,South Carolina,0,-0.062,0.369,0.329
+8202,Charleston,587297,SC,South Carolina,1,-0.080,0.160,0.151
+8300,Greenville,894291,SC,South Carolina,1,-0.334,0.154,0.169
+8401,Aiken,525842,GA,Georgia,1,-0.236,0.177,0.188
+8402,Washington,35518,GA,Georgia,1,-0.354,0.556,0.518
+8501,Fitzgerald,27415,GA,Georgia,0,-0.198,0.812,0.991
+8502,Cordele,42098,GA,Georgia,0,0.288,0.538,0.616
+8503,Valdosta,241530,GA,Georgia,1,-0.344,0.267,0.297
+8601,Waycross,113122,GA,Georgia,0,-0.543,0.382,0.385
+8602,Brunswick,93044,GA,Georgia,1,-0.737,0.440,0.435
+8701,Hinesville,131279,GA,Georgia,1,-0.278,0.291,0.319
+8702,Statesboro,111346,GA,Georgia,0,-0.325,0.358,0.316
+8800,Savannah,434615,GA,Georgia,1,-0.164,0.179,0.197
+8900,Macon,386870,GA,Georgia,1,0.192,0.219,0.228
+9001,Vidalia,108438,GA,Georgia,0,-0.409,0.376,0.408
+9002,Milledgeville,83808,GA,Georgia,0,-0.584,0.402,0.426
+9003,Dublin,74610,GA,Georgia,0,-0.790,0.457,0.444
+9100,Atlanta,3798017,GA,Georgia,1,-0.093,0.055,0.051
+9200,Griffin,135136,GA,Georgia,1,-0.153,0.257,0.228
+9301,Winder,212223,GA,Georgia,1,-0.207,0.271,0.242
+9302,Toccoa,89228,GA,Georgia,0,-0.445,0.428,0.457
+9400,Gainesville,272150,GA,Georgia,1,-0.101,0.243,0.246
+9500,Talladega,148252,AL,Alabama,0,0.558,0.312,0.279
+9600,LaGrange,457299,GA,Georgia,1,-0.213,0.171,0.147
+9701,Columbus,303656,GA,Georgia,1,0.050,0.211,0.240
+9702,Americus,65826,GA,Georgia,1,-0.327,0.457,0.499
+9800,Auburn,150911,AL,Alabama,1,0.095,0.322,0.324
+9900,Tallahassee,426634,FL,Florida,1,0.252,0.195,0.204
+10000,Panama City,172606,FL,Florida,1,-0.155,0.318,0.359
+10101,Bainbridge,43992,GA,Georgia,0,0.603,0.676,1.026
+10102,Thomasville,66396,GA,Georgia,0,0.058,0.432,0.536
+10200,Albany,181765,GA,Georgia,1,0.297,0.313,0.327
+10301,Eufaula,61458,GA,Georgia,0,0.180,0.495,0.550
+10302,Dothan,223605,AL,Alabama,1,0.463,0.295,0.312
+10400,Meridian,157091,MS,Mississippi,0,-0.494,0.363,0.414
+10501,Columbus,95083,MS,Mississippi,1,-0.016,0.467,0.433
+10502,Starkville,105093,MS,Mississippi,0,-0.050,0.423,0.415
+10600,Jasper,161169,AL,Alabama,1,-0.688,0.348,0.378
+10700,Birmingham,1038182,AL,Alabama,1,-0.049,0.152,0.171
+10801,Tuscaloosa,261112,AL,Alabama,1,0.028,0.249,0.243
+10802,Demopolis,63233,AL,Alabama,0,-0.072,0.438,0.421
+10900,Pensacola,623252,FL,Florida,1,-0.136,0.150,0.152
+11001,Mobile,599405,AL,Alabama,1,0.039,0.178,0.214
+11002,Atmore,76853,AL,Alabama,0,-0.282,0.473,0.484
+11101,Montgomery,367927,AL,Alabama,1,0.316,0.221,0.267
+11102,Troy,80901,AL,Alabama,0,0.418,0.418,0.477
+11201,Bluefield,199334,VA,Virginia,0,0.261,0.383,0.426
+11202,Welch,53037,WV,West Virginia,0,1.682,0.713,0.710
+11203,Big Stone Gap,84011,VA,Virginia,0,0.230,0.613,0.558
+11301,Fredericksburg,241044,VA,Virginia,1,-0.219,0.231,0.237
+11302,Baltimore,2512431,MD,Maryland,1,-0.068,0.100,0.116
+11303,Colonial Beach,59342,VA,Virginia,0,0.102,0.489,0.532
+11304,Washington DC,4632415,DC,District of Columbia,1,0.163,0.077,0.067
+11401,Marquette,121919,MI,Michigan,0,0.468,0.568,0.651
+11402,Marinette,114408,MI,Michigan,0,0.414,0.480,0.515
+11403,Sault Ste. Marie,57510,MI,Michigan,0,1.420,0.794,0.887
+11500,Jackson,303839,MI,Michigan,1,0.161,0.267,0.258
+11600,Detroit,5327827,MI,Michigan,1,-0.092,0.081,0.073
+11700,Lansing,447728,MI,Michigan,1,0.003,0.223,0.226
+11800,Mount Pleasant,136888,MI,Michigan,0,0.038,0.340,0.337
+11900,Saginaw,540707,MI,Michigan,1,0.237,0.209,0.209
+12001,Big Rapids,120045,MI,Michigan,0,0.032,0.336,0.284
+12002,Ludington,52801,MI,Michigan,0,-0.650,0.488,0.438
+12100,Kalamazoo,509606,MI,Michigan,1,0.011,0.203,0.181
+12200,Grand Rapids,1286045,MI,Michigan,1,0.024,0.155,0.144
+12301,Traverse City,154452,MI,Michigan,0,-0.243,0.366,0.381
+12302,Petoskey,83975,MI,Michigan,0,-0.281,0.468,0.430
+12401,Alpena,84783,MI,Michigan,0,-0.285,0.432,0.455
+12402,Grayling charter,104421,MI,Michigan,0,0.198,0.309,0.311
+12501,Dayton,1179009,OH,Ohio,1,0.098,0.152,0.161
+12502,Washington Court House,109851,OH,Ohio,0,-0.137,0.309,0.301
+12600,Wayne,104034,IN,Indiana,1,-0.073,0.461,0.499
+12701,Cincinnati,1954800,OH,Ohio,1,0.030,0.130,0.142
+12702,Maysville,52963,KY,Kentucky,1,0.928,0.560,0.508
+12800,Washington,134026,IN,Indiana,1,-0.790,0.319,0.283
+12901,Lexington-Fayette,525970,KY,Kentucky,1,0.458,0.236,0.285
+12902,Mount Sterling,40195,KY,Kentucky,0,0.898,0.600,0.559
+12903,Danville,86667,KY,Kentucky,0,0.762,0.431,0.473
+13000,Elizabethtown,176597,KY,Kentucky,1,0.026,0.323,0.320
+13101,Louisville,1100767,KY,Kentucky,1,0.120,0.175,0.204
+13102,Madison,49985,IN,Indiana,1,0.413,0.499,0.478
+13103,Bardstown,66605,KY,Kentucky,0,0.151,0.429,0.439
+13200,Owensboro,177640,KY,Kentucky,1,0.090,0.440,0.409
+13300,Findlay,246623,OH,Ohio,0,0.645,0.299,0.274
+13400,Lima,260393,OH,Ohio,1,0.673,0.333,0.368
+13501,Toledo,834343,OH,Ohio,1,0.087,0.191,0.189
+13502,Defiance,98981,OH,Ohio,0,0.494,0.511,0.490
+13600,South Bend,657906,IN,Indiana,1,-0.250,0.178,0.173
+13700,Concord,372184,IN,Indiana,1,0.212,0.229,0.224
+13800,Wayne,129528,IN,Indiana,0,0.163,0.383,0.408
+13900,Center,192308,IN,Indiana,1,0.387,0.350,0.373
+14000,Muncie,415487,IN,Indiana,1,-0.138,0.241,0.293
+14100,Fort Wayne,557161,IN,Indiana,1,-0.092,0.226,0.273
+14200,Indianapolis,1507346,IN,Indiana,1,-0.059,0.129,0.146
+14300,Columbus,163284,IN,Indiana,1,-0.022,0.372,0.329
+14400,Terre Haute,261832,IN,Indiana,1,0.090,0.298,0.312
+14500,Lafayette,347966,IN,Indiana,1,0.459,0.266,0.275
+14600,Bloomington,280923,IN,Indiana,1,0.541,0.316,0.326
+14700,Evansville,388604,IN,Indiana,1,0.389,0.366,0.392
+14801,Olney,55642,IL,Illinois,0,0.524,0.732,0.871
+14802,Vincennes,54708,IN,Indiana,0,-0.340,0.690,1.081
+14900,Gary,675971,IN,Indiana,1,0.025,0.144,0.145
+15000,Canton,700866,OH,Ohio,1,0.159,0.187,0.189
+15100,Lorain,423702,OH,Ohio,1,0.036,0.207,0.194
+15200,Cleveland,2661167,OH,Ohio,1,0.124,0.107,0.100
+15300,Parkersburg,202967,WV,West Virginia,1,-0.046,0.401,0.419
+15400,Zanesville,188410,OH,Ohio,1,0.253,0.274,0.308
+15500,Steubenville,132008,OH,Ohio,1,0.129,0.398,0.380
+15600,Wheeling,195637,WV,West Virginia,1,0.666,0.395,0.504
+15700,Scioto,225682,OH,Ohio,0,-0.171,0.283,0.283
+15800,Athens,142321,OH,Ohio,0,-0.147,0.387,0.421
+15900,Columbus,1663807,OH,Ohio,1,-0.016,0.122,0.129
+16000,Mansfield,326186,OH,Ohio,1,0.131,0.262,0.241
+16100,State College,310658,PA,Pennsylvania,1,0.065,0.296,0.286
+16200,Altoona,411749,PA,Pennsylvania,1,0.418,0.275,0.261
+16300,Pittsburgh,2561364,PA,Pennsylvania,1,-0.056,0.125,0.112
+16400,Youngstown,809682,OH,Ohio,1,-0.167,0.166,0.159
+16500,Erie,659098,PA,Pennsylvania,1,0.226,0.199,0.190
+16600,Roanoke,468038,VA,Virginia,1,-0.001,0.247,0.270
+16701,Elkins,60271,WV,West Virginia,0,-1.365,0.964,1.021
+16702,Morgantown,259942,WV,West Virginia,1,0.353,0.444,0.539
+16703,Buckhannon,40323,WV,West Virginia,0,1.923,0.893,0.945
+16801,Beckley,174251,WV,West Virginia,1,0.664,0.489,0.605
+16802,Summersville,58143,WV,West Virginia,0,1.393,0.822,0.917
+16901,Charleston,347345,WV,West Virginia,1,0.239,0.338,0.395
+16902,Spencer,23028,WV,West Virginia,0,,,
+17000,Pikeville,204354,KY,Kentucky,0,0.802,0.435,0.508
+17100,Huntington,344380,KY,Kentucky,1,0.281,0.314,0.332
+17200,Harrisonburg,174641,VA,Virginia,1,-0.103,0.388,0.436
+17300,Staunton,188559,VA,Virginia,1,0.342,0.383,0.384
+17400,Hagerstown,408535,PA,Pennsylvania,1,-0.229,0.210,0.205
+17501,Cumberland,155822,MD,Maryland,1,-0.334,0.402,0.430
+17502,Winchester,115649,VA,Virginia,1,-0.486,0.344,0.298
+17600,Charlottesville,273489,VA,Virginia,1,-0.380,0.267,0.255
+17700,Syracuse,1080612,NY,New York,1,0.246,0.155,0.166
+17800,Oneonta,161132,NY,New York,0,0.835,0.320,0.338
+17900,Union,294558,NY,New York,1,-0.493,0.262,0.253
+18000,Buffalo,2369699,NY,New York,1,0.084,0.112,0.121
+18100,Elmira,346894,NY,New York,1,0.056,0.246,0.316
+18201,Olean,197898,NY,New York,0,-0.024,0.298,0.282
+18202,St. Marys,41086,PA,Pennsylvania,0,0.387,0.977,1.248
+18300,Watertown,250613,NY,New York,1,0.537,0.349,0.389
+18400,Plattsburgh,169879,NY,New York,0,0.585,0.437,0.400
+18500,Amsterdam,110160,NY,New York,0,0.578,0.397,0.380
+18600,Albany,1061509,NY,New York,1,-0.199,0.159,0.181
+18700,Sunbury,191962,PA,Pennsylvania,1,0.150,0.334,0.350
+18800,Scranton,857487,PA,Pennsylvania,1,-0.032,0.136,0.115
+18900,Williamsport,227275,PA,Pennsylvania,1,-0.404,0.307,0.336
+19000,Allentown,637958,PA,Pennsylvania,1,-0.057,0.156,0.171
+19100,Reading,1114959,PA,Pennsylvania,1,0.188,0.135,0.128
+19200,Harrisburg,1051424,PA,Pennsylvania,1,0.011,0.145,0.149
+19300,Poughkeepsie,873232,NY,New York,1,-0.333,0.132,0.129
+19400,New York,1.18E+07,NY,New York,1,-0.148,0.047,0.044
+19500,Toms River,1126217,NJ,New Jersey,1,0.032,0.144,0.155
+19600,Newark,5822286,NJ,New Jersey,1,0.008,0.064,0.066
+19700,Philadelphia,5602247,PA,Pennsylvania,1,0.022,0.071,0.083
+19800,Wilmington,586216,DE,Delaware,1,-0.010,0.170,0.150
+19901,Dover,439269,DE,Delaware,1,-0.498,0.193,0.190
+19902,Easton,154018,MD,Maryland,1,-0.766,0.328,0.290
+19903,Chincoteague,51398,VA,Virginia,0,-0.673,0.594,0.621
+20001,Bangor,289843,ME,Maine,1,0.030,0.276,0.277
+20002,Calais,33941,ME,Maine,0,-0.469,0.693,0.793
+20003,Presque Isle,73938,ME,Maine,0,0.451,0.478,0.394
+20100,Portland,690459,ME,Maine,1,0.171,0.201,0.223
+20200,Burlington,321496,VT,Vermont,1,-0.110,0.331,0.312
+20301,Berlin,95549,VT,Vermont,0,-0.042,0.381,0.390
+20302,Claremont,265884,VT,Vermont,0,0.045,0.273,0.278
+20401,Providence,1582997,RI,Rhode Island,1,-0.053,0.130,0.122
+20402,Nantucket,9520,MA,Massachusetts,0,,,
+20403,Oak Bluffs,14987,MA,Massachusetts,0,,,
+20500,Boston,4974945,MA,Massachusetts,1,0.038,0.089,0.093
+20600,Manchester,1193391,NH,New Hampshire,1,-0.102,0.139,0.151
+20700,Keene,118041,NH,New Hampshire,0,0.253,0.373,0.411
+20800,Springfield,680014,MA,Massachusetts,1,-0.237,0.188,0.188
+20901,Bridgeport,3405565,CT,Connecticut,1,-0.115,0.093,0.088
+20902,Pittsfield,171947,MA,Massachusetts,1,-0.642,0.393,0.375
+21001,Ashland,47701,WI,Wisconsin,0,1.107,0.674,0.907
+21002,Houghton,47063,MI,Michigan,0,1.702,1.561,1.733
+21003,Ironwood,32049,MI,Michigan,0,1.879,1.792,1.657
+21004,Rhinelander,67833,WI,Wisconsin,0,-0.122,0.537,0.569
+21101,Rice Lake,92542,WI,Wisconsin,0,0.260,0.403,0.437
+21102,Amery,56993,WI,Wisconsin,0,0.991,0.439,0.480
+21201,Hutchinson,72898,MN,Minnesota,1,1.671,0.518,0.518
+21202,Redwood Falls,33969,MN,Minnesota,0,2.066,0.711,0.964
+21301,Mankato,149925,MN,Minnesota,1,0.891,0.455,0.457
+21302,Owatonna,109871,MN,Minnesota,0,0.503,0.513,0.547
+21400,St. Cloud,254139,MN,Minnesota,1,-0.051,0.276,0.301
+21501,Minneapolis,2904389,MN,Minnesota,1,0.116,0.120,0.115
+21502,Pine City,41526,MN,Minnesota,0,0.054,0.472,0.425
+21600,Brainerd,141542,MN,Minnesota,0,0.130,0.354,0.321
+21701,Rochester,228867,MN,Minnesota,1,0.556,0.364,0.347
+21702,Austin,71187,MN,Minnesota,0,0.124,0.618,0.718
+21801,Mason City,78179,IA,Iowa,0,0.027,0.675,0.780
+21802,Decorah,72111,IA,Iowa,0,1.364,0.602,0.651
+21900,Marshalltown,113442,IA,Iowa,0,0.714,0.509,0.573
+22001,Waterloo,222112,IA,Iowa,1,0.546,0.434,0.473
+22002,Iowa Falls,29516,IA,Iowa,0,0.029,0.949,1.232
+22100,Iowa City,203768,IA,Iowa,1,0.275,0.389,0.447
+22200,Cedar Rapids,252901,IA,Iowa,1,0.386,0.389,0.479
+22300,Ottumwa,142385,IA,Iowa,0,0.828,0.485,0.596
+22400,Sheboygan,195533,WI,Wisconsin,1,-0.207,0.400,0.416
+22500,Oshkosh,549651,WI,Wisconsin,1,0.284,0.237,0.248
+22601,Green Bay,310560,WI,Wisconsin,1,0.329,0.297,0.243
+22602,Shawano,65966,WI,Wisconsin,0,-0.767,0.452,0.450
+22700,Wausau,370092,WI,Wisconsin,1,0.563,0.270,0.305
+22800,Eau Claire,305307,WI,Wisconsin,1,0.338,0.284,0.297
+22900,La Crosse,220109,WI,Wisconsin,1,0.371,0.324,0.342
+23000,Monroe,116624,WI,Wisconsin,1,0.028,0.382,0.399
+23100,Madison,590755,WI,Wisconsin,1,0.065,0.219,0.214
+23200,Dubuque,163189,IA,Iowa,1,0.525,0.423,0.454
+23301,Charleston,101161,IL,Illinois,0,0.372,0.504,0.521
+23302,Douglas,101195,IL,Illinois,0,-1.000,0.501,0.510
+23400,Bloomington,206909,IL,Illinois,1,0.378,0.349,0.330
+23500,Decatur,382083,IL,Illinois,1,0.082,0.254,0.252
+23600,Burlington,136489,IA,Iowa,0,0.628,0.484,0.507
+23700,Galesburg,145734,IL,Illinois,0,0.710,0.399,0.400
+23801,Davenport,382351,IL,Illinois,1,0.114,0.277,0.288
+23802,Clinton,70445,IA,Iowa,0,1.392,0.513,0.615
+23900,Peoria,529703,IL,Illinois,1,0.019,0.233,0.243
+24000,Kenosha,584474,WI,Wisconsin,1,-0.179,0.176,0.180
+24100,Milwaukee,1660659,WI,Wisconsin,1,0.045,0.135,0.123
+24200,Bourbonnais,135167,IL,Illinois,1,0.486,0.319,0.287
+24300,Chicago,8183799,IL,Illinois,1,-0.180,0.059,0.061
+24400,Rockford,622573,IL,Illinois,1,-0.141,0.180,0.192
+24500,Rolla,111509,MO,Missouri,0,0.622,0.345,0.384
+24600,Farmington,137456,MO,Missouri,0,0.087,0.311,0.321
+24701,St. Louis,2325609,MO,Missouri,1,-0.025,0.120,0.126
+24702,Mexico,37989,MO,Missouri,0,-0.405,0.557,0.532
+24801,Jacksonville,84748,IL,Illinois,0,0.557,0.502,0.561
+24802,Springfield,267992,IL,Illinois,1,-0.293,0.292,0.308
+24900,Edwardsville,382997,IL,Illinois,1,0.048,0.233,0.198
+25000,Quincy,152421,IL,Illinois,0,-0.267,0.466,0.488
+25101,Mountain Home,64068,AR,Arkansas,0,0.148,0.490,0.537
+25102,West Plains,90551,MO,Missouri,0,1.350,0.408,0.512
+25103,Harrison,76174,AR,Arkansas,0,-0.344,0.448,0.520
+25104,Heber Springs,51737,AR,Arkansas,0,0.222,0.530,0.532
+25105,Batesville,64601,AR,Arkansas,0,0.649,0.562,0.618
+25200,Henderson,151629,KY,Kentucky,1,0.312,0.493,0.470
+25300,Union City,117387,TN,Tennessee,0,-0.628,0.511,0.558
+25401,Paducah,138654,KY,Kentucky,0,-0.247,0.539,0.580
+25402,Murray,34177,KY,Kentucky,0,-0.021,1.087,1.282
+25500,Centralia,141040,IL,Illinois,1,0.239,0.409,0.372
+25601,Carbondale,265022,IL,Illinois,1,-0.486,0.316,0.311
+25602,Harrisburg,37978,IL,Illinois,0,0.577,1.101,1.314
+25701,Cape Girardeau,184036,MO,Missouri,1,0.146,0.335,0.377
+25702,Poplar Bluff,73576,MO,Missouri,0,0.320,0.442,0.453
+25800,Blytheville,105181,AR,Arkansas,0,0.006,0.387,0.410
+25900,Jonesboro,198671,AR,Arkansas,1,-0.109,0.334,0.326
+26001,Roseau,20860,MN,Minnesota,0,,,
+26002,Duluth,286544,MN,Minnesota,1,-0.162,0.357,0.364
+26003,West Cook UT,5168,MN,Minnesota,0,,,
+26004,International Falls,14355,MN,Minnesota,0,,,
+26101,Moberly,56535,MO,Missouri,0,-0.294,0.544,0.622
+26102,Marshall,48599,MO,Missouri,0,-0.443,0.576,0.712
+26103,Brookfield,22192,MO,Missouri,0,,,
+26104,Trenton,14189,MO,Missouri,0,,,
+26105,Polk,12442,MO,Missouri,0,,,
+26106,Centerville,29873,IA,Iowa,0,-0.721,0.851,1.035
+26107,Kirksville,38491,MO,Missouri,0,-0.656,3.668,5.134
+26201,Bismarck,114739,ND,North Dakota,1,0.744,0.874,0.868
+26202,East Grant UT,2841,ND,North Dakota,0,,,
+26203,Linton,10029,ND,North Dakota,0,,,
+26204,Steele,2753,ND,North Dakota,0,,,
+26301,Devils Lake,22745,ND,North Dakota,0,,,
+26302,Carrington,6516,ND,North Dakota,0,,,
+26303,Turtle Mountain UT,16550,ND,North Dakota,0,,,
+26304,Minot,74541,ND,North Dakota,0,1.680,0.996,1.127
+26305,Rugby,11487,ND,North Dakota,0,,,
+26401,Ekalaka,2713,SD,South Dakota,0,,,
+26402,Baker,2837,MT,Montana,0,,,
+26403,Bowman,4009,ND,North Dakota,0,,,
+26404,Lemmon,8671,ND,North Dakota,0,,,
+26405,Scobey,2017,MT,Montana,0,,,
+26406,Wolf Point,12597,MT,Montana,0,,,
+26407,Plentywood,4105,MT,Montana,0,,,
+26408,Glasgow,12276,MT,Montana,0,,,
+26409,Glendive,12051,MT,Montana,0,,,
+26410,Dickinson,27124,ND,North Dakota,0,0.941,1.659,1.799
+26411,Sidney,22035,ND,North Dakota,0,,,
+26412,Williston,24286,ND,North Dakota,0,,,
+26501,Brookings,40630,SD,South Dakota,0,0.457,0.955,1.189
+26502,Madison,14160,SD,South Dakota,0,,,
+26503,Sioux Falls,200630,SD,South Dakota,1,1.051,0.450,0.496
+26504,Watertown,40078,SD,South Dakota,0,2.149,1.075,1.785
+26601,Milbank,17801,MN,Minnesota,0,,,
+26602,Sisseton,20859,SD,South Dakota,0,,,
+26603,East Corson UT,8225,SD,South Dakota,1,,,
+26604,Mobridge,7756,SD,South Dakota,0,,,
+26605,Aberdeen,52825,SD,South Dakota,0,2.760,1.253,1.314
+26701,Bemidji,101639,MN,Minnesota,0,0.117,0.429,0.393
+26702,Grafton,31090,ND,North Dakota,0,0.096,1.079,1.087
+26703,Thief River Falls,28038,MN,Minnesota,0,1.401,1.261,1.018
+26704,Grand Forks,108213,ND,North Dakota,1,1.533,0.633,0.621
+26801,Fargo,206945,ND,North Dakota,1,0.824,0.510,0.504
+26802,Lisbon,16013,ND,North Dakota,0,,,
+26803,Jamestown,38384,ND,North Dakota,0,1.056,1.284,1.270
+26804,Cooperstown,2754,ND,North Dakota,0,,,
+26901,Fergus Falls,117558,MN,Minnesota,0,0.432,0.427,0.488
+26902,Little Falls,69851,MN,Minnesota,0,-0.273,0.438,0.431
+27001,O'Neill,14875,NE,Nebraska,0,,,
+27002,Ord,9975,NE,Nebraska,0,,,
+27003,Ainsworth,6264,NE,Nebraska,0,,,
+27004,Winner,11222,SD,South Dakota,0,,,
+27005,Yankton,47901,SD,South Dakota,0,1.226,0.794,0.927
+27006,Mitchell,27613,SD,South Dakota,0,1.406,1.221,1.621
+27007,Huron,19318,SD,South Dakota,0,,,
+27008,Parkston,20883,SD,South Dakota,0,,,
+27009,Chamberlain,11291,SD,South Dakota,0,,,
+27010,Miller,5412,SD,South Dakota,0,,,
+27011,Pierre,20809,SD,South Dakota,0,,,
+27012,Gettysburg,2693,SD,South Dakota,0,,,
+27101,Willmar,85394,MN,Minnesota,0,0.908,0.616,0.688
+27102,Marshall,51470,MN,Minnesota,0,1.563,0.689,0.834
+27201,Sioux Center,58454,IA,Iowa,0,1.718,0.792,0.887
+27202,Worthington,60435,MN,Minnesota,0,2.822,0.975,1.079
+27301,Spencer,61106,IA,Iowa,0,1.407,0.669,0.716
+27302,Fairmont,49010,MN,Minnesota,0,1.093,0.814,0.946
+27401,Storm Lake,52812,IA,Iowa,0,1.632,0.734,0.898
+27402,Fort Dodge,101165,IA,Iowa,0,0.832,0.631,0.689
+27501,Des Moines,595842,IA,Iowa,1,-0.042,0.284,0.365
+27502,Creston,35600,IA,Iowa,0,-0.492,0.818,0.777
+27503,Atlantic,34687,IA,Iowa,0,0.397,0.776,0.920
+27504,Carroll,48729,IA,Iowa,0,0.159,0.696,0.868
+27601,Rapid City,158442,SD,South Dakota,1,0.046,0.511,0.534
+27602,Eagle Butte,8491,SD,South Dakota,0,,,
+27603,Southwest Jackson UT,5126,SD,South Dakota,0,,,
+27604,Murdo,1193,SD,South Dakota,0,,,
+27605,Mission,11133,SD,South Dakota,0,,,
+27701,Scottsbluff,65903,NE,Nebraska,0,0.747,0.643,0.803
+27702,Cheyenne,95526,WY,Wyoming,1,1.025,0.570,0.581
+27703,Torrington,21345,WY,Wyoming,0,,,
+27704,Gordon,22238,SD,South Dakota,0,,,
+27801,Virginia Beach,56990,NE,Nebraska,0,0.768,0.709,0.891
+27802,Columbus,61167,NE,Nebraska,0,0.448,0.600,0.714
+27901,Hastings,42251,NE,Nebraska,0,-0.023,0.887,1.019
+27902,York,26871,NE,Nebraska,0,2.957,0.906,1.025
+27903,Grand Island,77708,NE,Nebraska,1,0.950,0.621,0.876
+28001,Sioux City,187773,IA,Iowa,1,1.072,0.410,0.487
+28002,West Point,25165,NE,Nebraska,0,0.098,0.764,0.834
+28101,Lincoln,311956,NE,Nebraska,1,0.168,0.366,0.475
+28102,Nebraska City,40078,NE,Nebraska,0,0.803,0.713,0.886
+28201,Red Oak,48197,IA,Iowa,0,0.128,0.743,0.833
+28202,Omaha,803201,NE,Nebraska,1,0.199,0.214,0.244
+28301,Sterling,39751,CO,Colorado,0,-0.222,0.721,0.748
+28302,Ogallala,16920,NE,Nebraska,0,,,
+28303,Oshkosh,2292,NE,Nebraska,0,,,
+28304,Valentine,8122,NE,Nebraska,0,,,
+28305,Broken Bow,13105,NE,Nebraska,0,,,
+28306,North Platte,35939,NE,Nebraska,0,3.007,1.229,1.529
+28401,Colorado Springs,587132,CO,Colorado,1,-0.202,0.161,0.168
+28402,Limon,6087,CO,Colorado,0,,,
+28501,Springfield,4517,CO,Colorado,0,,,
+28502,Pueblo,187782,CO,Colorado,1,0.026,0.316,0.360
+28503,Trinidad,23069,CO,Colorado,0,,,
+28504,Burlington,11864,CO,Colorado,0,,,
+28601,Oberlin,6438,KS,Kansas,0,,,
+28602,Norton,5953,KS,Kansas,0,,,
+28603,Phillipsburg,10537,KS,Kansas,0,,,
+28604,Colby,17107,KS,Kansas,0,,,
+28605,Goodland,8509,KS,Kansas,0,,,
+28606,Wano,5457,KS,Kansas,0,,,
+28607,McCook,19695,NE,Nebraska,0,,,
+28608,Kearney,56033,NE,Nebraska,0,1.374,0.714,0.981
+28609,Lexington,48464,NE,Nebraska,0,3.016,0.891,1.221
+28701,Salida,16242,CO,Colorado,0,,,
+28702,Glenwood Springs,131682,CO,Colorado,0,0.288,0.437,0.505
+28703,Granby,12442,CO,Colorado,0,,,
+28704,Laramie,33591,WY,Wyoming,0,1.816,1.904,1.876
+28800,Fort Collins,459601,CO,Colorado,1,0.219,0.200,0.222
+28900,Denver,2449044,CO,Colorado,1,0.042,0.101,0.115
+29001,Pratt,18232,KS,Kansas,0,,,
+29002,Coldwater,1967,KS,Kansas,0,,,
+29003,Dodge City,42837,KS,Kansas,0,-0.521,1.154,1.462
+29004,Great Bend,47227,KS,Kansas,0,-0.271,0.797,1.046
+29005,Hutchinson,82076,KS,Kansas,0,0.712,0.628,0.630
+29006,Hays,38196,KS,Kansas,0,-0.124,2.168,2.837
+29007,Township 11,8631,KS,Kansas,0,,,
+29008,Center,5609,KS,Kansas,0,,,
+29101,Concordia,19894,KS,Kansas,0,,,
+29102,Superior,11112,NE,Nebraska,0,,,
+29103,Beloit,11384,KS,Kansas,0,,,
+29104,Salina,63338,KS,Kansas,0,0.046,0.705,0.701
+29201,Hiawatha,21441,KS,Kansas,0,,,
+29202,Marysville,17448,KS,Kansas,0,,,
+29203,Manhattan,143269,KS,Kansas,1,0.573,0.498,0.524
+29204,Topeka,324513,KS,Kansas,1,-0.236,0.305,0.345
+29301,Wichita,553506,KS,Kansas,1,0.154,0.237,0.248
+29302,Newton,75784,KS,Kansas,1,1.188,0.557,0.515
+29303,Winfield,51584,KS,Kansas,0,-0.048,0.584,0.537
+29401,Ottawa,51067,KS,Kansas,0,-0.137,0.489,0.626
+29402,Emporia,47830,KS,Kansas,0,-0.768,0.707,0.958
+29403,Bartlesville,145981,KS,Kansas,0,0.013,0.306,0.354
+29501,Leavenworth,85465,KS,Kansas,1,0.301,0.456,0.483
+29502,Kansas City,1762873,MO,Missouri,1,0.067,0.126,0.125
+29503,St. Joseph,158300,MO,Missouri,1,0.148,0.366,0.409
+29504,Sedalia,88232,MO,Missouri,0,0.108,0.359,0.437
+29505,Polk,33693,MO,Missouri,0,0.373,0.995,1.060
+29506,Bethany,18093,MO,Missouri,0,,,
+29601,Columbia,302388,MO,Missouri,1,0.049,0.274,0.270
+29602,Eldon,79924,MO,Missouri,0,-0.602,0.362,0.472
+29700,Springfield,440866,MO,Missouri,1,0.318,0.200,0.270
+29800,Aurora,137575,MO,Missouri,0,0.454,0.296,0.381
+29901,Joplin,266742,MO,Missouri,1,0.190,0.244,0.228
+29902,Center,54651,MO,Missouri,0,0.444,0.474,0.458
+30000,Russellville,138646,AR,Arkansas,0,1.047,0.343,0.331
+30100,Fort Smith,332832,AR,Arkansas,1,0.404,0.231,0.244
+30200,Muskogee,152466,OK,Oklahoma,0,0.096,0.258,0.257
+30300,Fayetteville,384122,AR,Arkansas,1,0.029,0.186,0.199
+30401,Stillwater,79601,OK,Oklahoma,0,-0.045,0.427,0.452
+30402,Tulsa,921246,OK,Oklahoma,1,0.170,0.146,0.149
+30403,Okmulgee,51499,OK,Oklahoma,1,0.558,0.391,0.398
+30501,Woodward,26123,OK,Oklahoma,0,0.510,1.314,1.376
+30502,Enid,102415,OK,Oklahoma,0,0.509,0.432,0.501
+30601,El Paso,857648,TX,Texas,1,-0.079,0.129,0.128
+30602,Alamogordo,81709,NM,New Mexico,0,-0.018,0.501,0.492
+30603,Truth or Consequences,13270,NM,New Mexico,0,,,
+30604,Deming,61950,NM,New Mexico,0,-0.160,0.430,0.437
+30605,Van Horn,2975,TX,Texas,0,,,
+30701,Roswell,113040,NM,New Mexico,0,0.499,0.387,0.446
+30702,Santa Rosa,6920,NM,New Mexico,0,,,
+30801,Hobbs,90061,NM,New Mexico,0,0.774,0.414,0.459
+30802,Lubbock,287568,TX,Texas,1,0.166,0.245,0.251
+30901,Clovis,73078,NM,New Mexico,0,-0.489,0.493,0.539
+30902,Littlefield,29588,TX,Texas,0,0.281,0.721,0.720
+30903,Amarillo,240752,TX,Texas,1,-0.117,0.296,0.360
+30904,Pampa,57355,TX,Texas,1,0.632,0.731,0.717
+30905,Wellington,8490,TX,Texas,0,,,
+30906,Memphis,9400,TX,Texas,0,,,
+30907,Matador,1426,TX,Texas,0,,,
+30908,Plainview,52751,TX,Texas,0,0.338,0.487,0.506
+31001,Garden City,52031,KS,Kansas,0,0.364,1.254,1.376
+31002,Ulysses,15778,KS,Kansas,0,,,
+31003,Scott City,9185,KS,Kansas,0,,,
+31004,Liberal,32998,KS,Kansas,0,-2.416,1.744,5.381
+31005,Perryton,17432,TX,Texas,0,,,
+31006,Guymon,29937,OK,Oklahoma,0,-1.735,3.093,6.572
+31007,Dumas,31880,TX,Texas,0,-1.029,0.916,1.052
+31101,Victoria,165277,TX,Texas,1,-0.219,0.298,0.331
+31102,La Grange,42194,TX,Texas,0,0.029,0.505,0.517
+31103,Gonzales,18628,TX,Texas,0,,,
+31201,Austin,1298076,TX,Texas,1,-0.171,0.115,0.118
+31202,Burnet,51191,TX,Texas,0,-0.166,0.527,0.516
+31301,San Antonio,1724863,TX,Texas,1,-0.206,0.098,0.105
+31302,Beeville,47805,TX,Texas,0,0.960,0.514,0.501
+31303,Kerrville,64467,TX,Texas,0,-0.200,0.461,0.508
+31304,Mason,3738,TX,Texas,0,,,
+31401,Midland,262282,TX,Texas,1,0.835,0.270,0.293
+31402,Pecos,31286,TX,Texas,0,1.281,0.674,0.602
+31403,Fort Stockton,20908,TX,Texas,0,,,
+31404,Alpine,18377,TX,Texas,0,,,
+31501,Crystal City,21848,TX,Texas,0,,,
+31502,Pearsall,22118,TX,Texas,0,,,
+31503,Laredo,210580,TX,Texas,1,-0.133,0.295,0.299
+31600,Brownsville,978369,TX,Texas,1,0.113,0.134,0.147
+31700,Corpus Christi,503493,TX,Texas,1,0.270,0.170,0.176
+31800,College Station,208437,TX,Texas,1,-0.537,0.265,0.234
+31900,Pearland,320912,TX,Texas,1,0.064,0.186,0.196
+32000,Houston,4504013,TX,Texas,1,-0.039,0.069,0.065
+32100,Beaumont,497770,TX,Texas,1,0.277,0.192,0.199
+32201,Huntsville,191792,TX,Texas,0,-0.294,0.241,0.237
+32202,Nacogdoches,103842,TX,Texas,0,0.352,0.333,0.325
+32301,San Angelo,113973,TX,Texas,1,-0.331,0.368,0.448
+32302,Brady,23666,TX,Texas,0,,,
+32303,Junction,6828,TX,Texas,0,,,
+32304,Uvalde,35212,TX,Texas,0,0.622,0.693,0.957
+32305,Del Rio,49316,TX,Texas,0,0.935,0.681,0.799
+32306,Eagle Pass,47297,TX,Texas,0,-0.355,0.619,0.650
+32401,Big Spring,54073,TX,Texas,0,1.435,0.622,0.837
+32402,Sweetwater,20146,TX,Texas,0,,,
+32403,Snyder,26918,TX,Texas,0,3.341,0.956,1.858
+32501,Abilene,191518,TX,Texas,1,0.766,0.296,0.358
+32502,Childress,9592,TX,Texas,0,,,
+32503,Haskell,15157,TX,Texas,0,,,
+32601,Wichita Falls,151524,TX,Texas,1,0.166,0.428,0.556
+32602,Graham,28556,TX,Texas,0,0.244,0.661,0.760
+32603,Seymour,4093,TX,Texas,0,,,
+32604,Vernon,21022,TX,Texas,0,,,
+32701,Brownwood,58246,TX,Texas,0,0.694,0.530,0.537
+32702,Stephenville,55256,TX,Texas,0,-0.293,0.582,0.712
+32801,Waco,281618,TX,Texas,1,0.187,0.217,0.210
+32802,Corsicana,100377,TX,Texas,0,-0.025,0.324,0.313
+32900,Killeen,330714,TX,Texas,1,-0.066,0.187,0.205
+33000,Fort Worth,1804370,TX,Texas,1,0.121,0.090,0.097
+33100,Dallas,3405666,TX,Texas,1,-0.027,0.073,0.077
+33200,Paris,185835,TX,Texas,1,0.171,0.241,0.200
+33300,Tyler,434643,TX,Texas,1,0.499,0.169,0.181
+33400,Longview,289849,TX,Texas,1,0.338,0.229,0.212
+33500,Texarkana,235988,TX,Texas,1,-0.138,0.257,0.228
+33601,Lawton,171610,OK,Oklahoma,1,-0.002,0.307,0.386
+33602,Altus,48010,OK,Oklahoma,0,1.719,0.669,0.795
+33603,Frederick,9287,OK,Oklahoma,0,,,
+33700,Ardmore,117982,OK,Oklahoma,0,-0.065,0.334,0.382
+33801,Elk City,60885,OK,Oklahoma,0,0.451,0.548,0.582
+33802,Chickasha,75666,OK,Oklahoma,1,-0.249,0.353,0.409
+33803,Oklahoma City,1154246,OK,Oklahoma,1,-0.036,0.132,0.133
+33901,Ada,69207,OK,Oklahoma,0,0.421,0.400,0.404
+33902,Sherman,178371,TX,Texas,1,0.127,0.259,0.262
+34001,Hot Springs,210357,AR,Arkansas,1,0.031,0.303,0.320
+34002,Idabel,97397,OK,Oklahoma,0,0.606,0.396,0.483
+34101,Sand Point,2697,AK,Alaska,0,,,
+34102,Anchorage,369296,AK,Alaska,1,0.029,0.269,0.313
+34103,Valdez,10195,AK,Alaska,0,,,
+34104,Bristol Bay,1258,AK,Alaska,0,,,
+34105,Kotzebue,7208,AK,Alaska,0,,,
+34106,Nome,9196,AK,Alaska,0,,,
+34107,Dillingham,6745,AK,Alaska,0,,,
+34108,Kodiak,13913,AK,Alaska,0,,,
+34109,Juneau,37347,AK,Alaska,0,-0.369,0.954,1.214
+34110,Sitka,15519,AK,Alaska,0,,,
+34111,Ketchikan,20216,AK,Alaska,0,,,
+34112,Bethel,23034,AK,Alaska,0,,,
+34113,Barrow,7385,AK,Alaska,0,,,
+34114,Unalaska,5465,AK,Alaska,0,,,
+34115,Fairbanks,97458,AK,Alaska,1,-0.927,0.647,0.671
+34201,Havre,25840,MT,Montana,0,1.862,1.475,2.032
+34202,Shelby,24938,MT,Montana,0,,,
+34203,Great Falls,95101,MT,Montana,1,0.966,0.596,0.725
+34204,Lewistown,12386,MT,Montana,0,,,
+34301,Cody,37247,WY,Wyoming,0,-0.959,1.432,2.820
+34302,Worland,13171,WY,Wyoming,0,,,
+34303,Riverton,35804,WY,Wyoming,0,2.325,1.270,1.775
+34304,Sheridan,46306,WY,Wyoming,0,0.323,0.822,1.083
+34305,Miles City,12895,MT,Montana,0,,,
+34306,Jordan,1279,MT,Montana,0,,,
+34307,Colstrip,12102,MT,Montana,0,,,
+34308,Billings,152638,MT,Montana,1,0.090,0.474,0.607
+34309,Harlowton,4191,MT,Montana,0,,,
+34401,Dillon,9202,MT,Montana,0,,,
+34402,Bozeman,93985,MT,Montana,0,0.460,0.661,0.687
+34403,Helena,70150,MT,Montana,0,0.261,0.591,0.589
+34404,Butte-Silver Bow,54033,MT,Montana,0,-0.214,0.792,0.784
+34501,Bonners Ferry,9871,ID,Idaho,0,,,
+34502,Libby,18837,MT,Montana,0,,,
+34503,Kalispell,111205,MT,Montana,0,0.415,0.428,0.387
+34504,Missoula,135756,MT,Montana,1,-0.248,0.392,0.362
+34601,Gillette,46229,WY,Wyoming,0,1.897,0.877,1.270
+34602,Rawlins,15639,WY,Wyoming,0,,,
+34603,Casper,78585,WY,Wyoming,1,1.245,0.735,0.989
+34604,Lusk,2407,WY,Wyoming,0,,,
+34701,Honolulu,876156,HI,Hawaii,1,0.159,0.181,0.185
+34702,Kapaa,58463,HI,Hawaii,0,0.410,0.705,0.742
+34703,Kahului,128241,HI,Hawaii,1,0.293,0.431,0.411
+34801,Las Vegas,49495,NM,New Mexico,0,0.542,0.509,0.523
+34802,Santa Fe,218804,NM,New Mexico,1,0.435,0.282,0.284
+34803,Tucumcari,10965,NM,New Mexico,0,,,
+34804,Clayton,4174,NM,New Mexico,0,,,
+34805,Alamosa,46190,CO,Colorado,0,0.025,0.664,0.632
+34901,Albuquerque,755244,NM,New Mexico,1,-0.112,0.153,0.158
+34902,Socorro,21621,NM,New Mexico,0,,,
+35001,Phoenix,3303211,AZ,Arizona,1,0.000,0.065,0.063
+35002,Safford,42036,AZ,Arizona,0,-0.210,0.515,0.507
+35100,Tucson,999882,AZ,Arizona,1,-0.136,0.127,0.105
+35201,Grand Junction,187857,CO,Colorado,1,0.525,0.302,0.320
+35202,Gunnison,14746,CO,Colorado,0,,,
+35300,Farmington,168198,NM,New Mexico,1,-0.271,0.243,0.265
+35401,Flagstaff,289883,AZ,Arizona,1,0.039,0.185,0.191
+35402,Cortez,40087,CO,Colorado,0,-0.164,0.674,0.797
+35500,Gallup,241691,AZ,Arizona,0,-0.369,0.184,0.174
+35600,Hilo,148677,HI,Hawaii,0,0.085,0.324,0.318
+35701,Twin Falls,120807,ID,Idaho,0,0.760,0.364,0.365
+35702,Burley,41590,ID,Idaho,0,0.127,0.578,0.575
+35801,Boise City,493970,ID,Idaho,1,0.052,0.195,0.217
+35802,Ontario,62170,OR,Oregon,0,0.405,0.443,0.462
+35803,McCall,11127,ID,Idaho,0,,,
+35901,St. George,130138,UT,Utah,1,-0.472,0.271,0.298
+35902,Price,54045,UT,Utah,0,0.123,0.436,0.445
+35903,Moab,8485,UT,Utah,0,,,
+35904,Richfield,25012,UT,Utah,0,0.921,0.736,0.715
+35905,Loa,2509,UT,Utah,0,,,
+36000,Provo,389179,UT,Utah,1,0.315,0.220,0.236
+36100,Salt Lake City,1426729,UT,Utah,1,0.063,0.129,0.121
+36200,Logan,149590,UT,Utah,1,0.195,0.326,0.342
+36301,Pocatello,269722,ID,Idaho,1,0.098,0.277,0.297
+36302,Salmon,12148,ID,Idaho,0,,,
+36303,Jackson,24250,WY,Wyoming,0,,,
+36401,Steamboat Springs,38860,CO,Colorado,0,0.289,0.820,0.929
+36402,Vernal,39595,UT,Utah,0,0.870,0.654,0.661
+36403,Soda Springs,13715,ID,Idaho,0,,,
+36404,Rock Springs,80730,WY,Wyoming,0,0.103,0.554,0.657
+36501,Klamath Falls,151353,CA,California,0,0.372,0.245,0.259
+36502,Burns,7609,OR,Oregon,0,,,
+36503,Lakeview,7422,OR,Oregon,0,,,
+36600,Redding,219295,CA,California,1,0.082,0.226,0.210
+36700,Eureka,139540,CA,California,0,0.280,0.330,0.336
+36800,Medford,256995,OR,Oregon,1,-0.215,0.206,0.208
+36901,Crescent City,48644,CA,California,0,-0.078,0.461,0.670
+36902,Roseburg,163178,OR,Oregon,0,0.050,0.244,0.251
+37000,Modesto,729182,CA,California,1,-0.004,0.128,0.119
+37100,Bakersfield,661645,CA,California,1,0.028,0.128,0.125
+37200,Fresno,1419998,CA,California,1,-0.377,0.100,0.100
+37300,Chico,387577,CA,California,1,0.072,0.183,0.195
+37400,Sacramento,2570609,CA,California,1,-0.012,0.081,0.086
+37500,San Jose,2393183,CA,California,1,-0.011,0.101,0.112
+37601,Elko,61917,NV,Nevada,0,0.775,0.479,0.526
+37602,Winnemucca,22799,NV,Nevada,0,,,
+37603,Portola,24379,CA,California,0,,,
+37604,Reno,453825,NV,Nevada,1,0.260,0.168,0.183
+37700,Santa Rosa,603188,CA,California,1,-0.117,0.184,0.195
+37800,San Francisco,4642561,CA,California,1,0.017,0.083,0.093
+37901,Las Vegas,1568418,NV,Nevada,1,0.088,0.071,0.081
+37902,Reno,5071,NV,Nevada,0,,,
+37903,Mammoth Lakes,30798,CA,California,0,0.045,0.776,0.810
+38000,San Diego,2813833,CA,California,1,0.054,0.080,0.075
+38100,Yuma,302387,CA,California,1,-0.216,0.172,0.175
+38200,Santa Barbara,646028,CA,California,1,-0.040,0.170,0.165
+38300,Los Angeles,1.64E+07,CA,California,1,-0.170,0.040,0.043
+38401,Lewiston,88546,ID,Idaho,1,1.370,0.482,0.487
+38402,Pullman,75675,WA,Washington,0,1.448,0.549,0.579
+38501,Moses Lake,91126,WA,Washington,0,0.426,0.380,0.438
+38502,Wenatchee,99219,WA,Washington,1,-0.216,0.374,0.395
+38601,Spokane,608317,WA,Washington,1,-0.020,0.167,0.162
+38602,Colville,86890,WA,Washington,1,0.002,0.312,0.305
+38700,Longview,220580,WA,Washington,1,0.358,0.214,0.223
+38801,Portland,1842889,OR,Oregon,1,0.102,0.114,0.122
+38802,The Dalles,65297,OR,Oregon,0,0.141,0.510,0.556
+38901,Eugene,936387,OR,Oregon,1,-0.053,0.135,0.136
+38902,Newport,68741,OR,Oregon,0,-0.258,0.348,0.369
+39000,Yakima,255943,WA,Washington,1,0.243,0.248,0.257
+39100,Kennewick,332609,WA,Washington,1,-0.171,0.212,0.216
+39201,La Grande,41271,OR,Oregon,0,0.807,0.590,0.710
+39202,Enterprise,7226,OR,Oregon,0,,,
+39203,Bend,153558,OR,Oregon,1,0.190,0.258,0.250
+39204,Condon,3462,OR,Oregon,0,,,
+39205,John Day,7935,OR,Oregon,0,,,
+39301,Friday Harbor,14077,WA,Washington,0,,,
+39302,Bellingham,166814,WA,Washington,1,0.331,0.355,0.333
+39303,Port Angeles,90478,WA,Washington,0,0.723,0.424,0.438
+39400,Seattle,3775744,WA,Washington,1,0.229,0.082,0.089

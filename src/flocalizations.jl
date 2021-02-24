@@ -51,6 +51,7 @@ struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
     summary::D
     band::S
     dkw::DKW
+    homoskedastic::Bool
 end
 
 vexity(dkw::FittedDvoretzkyKieferWolfowitz) = vexity(dkw.dkw)
@@ -72,8 +73,15 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     _dict = SortedDict(Dict(keys(Zs_summary.store) .=> cdf_probs))
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
-    band = sqrt(log(2 / α) / (2n))
-    FittedDvoretzkyKieferWolfowitz(_dict, band, dkw)
+    if skedasticity(Zs_summary) === Homoskedastic()
+        homoskedastic = true
+        multiplier = 1
+    else
+        homoskedastic = false
+        multiplier = exp(1)
+    end
+    band = sqrt(log(2 *multiplier / α) / (2n))
+    FittedDvoretzkyKieferWolfowitz(_dict, band, dkw, homoskedastic)
 end
 
 
