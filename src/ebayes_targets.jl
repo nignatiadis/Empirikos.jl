@@ -5,7 +5,7 @@ abstract type EBayesTarget end
 
 Base.broadcastable(target::EBayesTarget) = Ref(target)
 
-function (targets::AbstractVector{<:EBayesTarget})(prior)
+function (targets::AbstractArray{<:EBayesTarget})(prior)
     [target(prior) for target in targets]
 end
 
@@ -110,25 +110,30 @@ PriorDensity(2.0)
 This is the evaluation functional of the density of ``G`` at `z`, i.e.,
 ``L(G) = G'(z) = g(z)`` or in Julia code `L(G) = pdf(G, z)`.
 """
-struct PriorDensity{T<:Real} <: LinearEBayesTarget
+struct PriorDensity{T} <: LinearEBayesTarget
     μ::T
 end
 
 location(target::PriorDensity) = target.μ
 
-function Distributions.cf(target::PriorDensity, t)
+function Distributions.cf(target::PriorDensity{<:Real}, t)
     exp(im * location(target) * t)
 end
 
-function (target::PriorDensity)(μ::Number)
+function (target::PriorDensity{<:Real})(μ::Number)
     location(target) == μ ? one(μ) : zero(μ)
 end
 
+function (target::PriorDensity{<:Interval})(μ::Number)
+    in(μ, location(target)) ? one(μ) : zero(μ)
+end
+
 function (target::PriorDensity)(prior::Distribution)
-    pdf(prior, location(target))
+    _pdf(prior, location(target))
 end
 
 Base.extrema(target::PriorDensity) = (0, Inf)
+Base.extrema(target::PriorDensity{<:AbstractInterval}) = (0, 1)
 
 
 """

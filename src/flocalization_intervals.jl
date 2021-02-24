@@ -225,7 +225,7 @@ end
 
 function Base.broadcasted(::typeof(StatsBase.confint), floc::FLocalizationInterval, targets, args...)
     _fit = StatsBase.fit(floc, targets[1], args...)
-    confint_vec = fill(confint(_fit), length(targets))
+    confint_vec = fill(confint(_fit), axes(targets))
     for (index, target) in enumerate(targets[2:end])
         confint_vec[index+1] = StatsBase.confint(StatsBase.fit(_fit, target))
     end

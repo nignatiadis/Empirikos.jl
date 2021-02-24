@@ -85,9 +85,9 @@ function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
     print(io, rpad(round(std(Z), digits = 3),5))
 end
 
-function Base.isless(a::AbstractNormalSample, b::AbstractNormalSample)
-    std(a) <= std(b) && response(a) < response(b)
-end
+#function Base.isless(a::AbstractNormalSample, b::AbstractNormalSample)
+    #std(a) <= std(b) && response(a) < response(b)
+#end
 
 
 
