@@ -33,3 +33,8 @@ end
 @testset "Chi-squared F localization" begin
     include("test_lord_cressie.jl")
 end
+
+
+@testset "Compound and DKW F localization" begin
+    include("test_compound.jl")
+end
