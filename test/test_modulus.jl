@@ -9,22 +9,22 @@ Random.seed!(1)
 
 Zs = StandardNormalSample.(rand(F_G, 1000))
 
-gcal = MixturePriorClass(Normal.(-3:0.05:3, 0.2))
+gcal = MixturePriorClass(Normal.(-3:0.5:3, 0.2))
 
 ghat = StatsBase.fit( NPMLE(;convexclass=gcal, solver=Hypatia.Optimizer),  Zs)
 
 
 
-floc = StatsBase.fit(DvoretzkyKieferWolfowitz(0.01), Zs)
+floc = StatsBase.fit(DvoretzkyKieferWolfowitz(;α=0.01), Zs)
 
 
-discr = Empirikos.Discretizer(-3:0.01:3)
+discr = Empirikos.Discretizer(-3:0.2:3)
 
 amari_withF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
-              plugin_G = ghat, modulus_model=Empirikos.ModulusModelWithF)
+              plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithF)
 
 amari_withoutF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
-              plugin_G = ghat, modulus_model=Empirikos.ModulusModelWithoutF)
+              plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithoutF)
 
 target = MarginalDensity(NormalSample(1.0, 0.5))
 target(G)
@@ -32,6 +32,7 @@ target(G)
 
 fit_withoutF = StatsBase.fit(amari_withoutF, target, Zs)
 fit_withF = StatsBase.fit(amari_withF, target, Zs)
+
 
 @test fit_withoutF.Q(StandardNormalSample(2.0)) ≈ fit_withF.Q(StandardNormalSample(2.0)) atol = 0.001
 
@@ -42,6 +43,7 @@ ci_withoutF = confint(amari_withoutF, target, Zs)
 @test ci_withF.upper ≈ ci_withoutF.upper rtol =0.001
 @test ci_withF.halflength ≈ ci_withoutF.halflength rtol =0.001
 @test ci_withF.estimate ≈ ci_withoutF.estimate rtol =0.001
+@test ci_withF.maxbias ≈ ci_withoutF.maxbias rtol =0.001
 
 
 _init_with_F = Empirikos.initialize_method(amari_withF, target, Zs)

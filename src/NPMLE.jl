@@ -98,7 +98,7 @@ function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
 
     π = Empirikos.prior_variable!(model, convexclass)
 
-    dkw = fit(DvoretzkyKieferWolfowitz(), Zs)
+    dkw = fit(DvoretzkyKieferWolfowitz(;max_constraints=Inf), Zs)
 
     F = cdf.(π, keys(dkw.summary))
     Fhat = collect(values(dkw.summary))

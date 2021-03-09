@@ -28,6 +28,9 @@ nuisance_parameter(Z::PoissonSample) = Z.E
 
 likelihood_distribution(Z::PoissonSample, λ) = Poisson(λ * nuisance_parameter(Z))
 
+summarize_by_default(Zs::Vector{<:PoissonSample}) = skedasticity(Zs) == Homoskedastic()
+
+
 function Base.show(io::IO, Z::PoissonSample)
     resp_Z = response(Z)
     if ismissing(resp_Z) || isa(resp_Z, Interval)
@@ -39,10 +42,6 @@ function Base.show(io::IO, Z::PoissonSample)
     print(io, "Z=", resp_Z, spaces, "| ", "E=", Z.E)
 end
 
-# how to break ties on n?
-function Base.isless(a::PoissonSample, b::PoissonSample)
-    a.E <= b.E && response(a) < response(b)
-end
 
 # Conjugate computations
 

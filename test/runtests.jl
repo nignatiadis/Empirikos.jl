@@ -18,6 +18,11 @@ end
     include("test_intervals.jl")
 end
 
+
+@testset "Sample ordering" begin
+    include("test_ordering.jl")
+end
+
 @testset "Binomial samples" begin
     include("test_binomial.jl")
 end

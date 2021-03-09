@@ -39,7 +39,15 @@ julia> response(StandardNormalSample(1.0))
 1.0
 ```
 """
-function response end
+#function response(Z::EBayesSample)
+#    Z.Z # implicitly assuming Z is that slot
+#end
+
+function set_response(Z::EBayesSample, znew=missing)
+    Z = @set Z.Z = znew
+end
+
+
 function nuisance_parameter end
 
 function Base.Float64(Z::EBayesSample{<:Number})
@@ -51,7 +59,8 @@ Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 
 # default fallback
 function Base.isless(a::EBayesSample, b::EBayesSample)
-    Base.isless(response(a), response(b))
+    Base.isless( (response(a), nuisance_parameter(a)),
+                 (response(b), nuisance_parameter(b)) )
 end
 
 

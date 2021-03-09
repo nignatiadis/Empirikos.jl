@@ -1,24 +1,52 @@
-struct CompoundSample{T, EBS} <: EBayesSample{T}
+struct CompoundSample{T, EBS, S} <: EBayesSample{T}
     vec::AbstractVector{EBS}
+    probs::AbstractVector{S}
     Z::T
 end
 
+response(Z::CompoundSample) = Z.Z
+nuisance_parameter(Z::CompoundSample) = (Z.vec, Z.probs)
+
+
+function Base.isless(a::CompoundSample, b::CompoundSample)
+    nuisance_parameter(a) == nuisance_parameter(b) ||
+        throw(ArgumentError("Comparison only implemented for homoskedastic compound samples"))
+    Base.isless(response(a), response(b))
+end
+
+
 function compound(Zs::AbstractVector{<:EBayesSample})
-    CompoundSample.(Ref(Zs), response.(Zs))
+    n = nobs(Zs)
+    Zs_no_data = set_response.(Zs)
+    Zs_unique_dict = countmap(Zs_no_data)
+    Zs_unique = collect(keys(Zs_unique_dict))
+    Zs_unique_prob = values(Zs_unique_dict)./n
+    CompoundSample.(Ref(Zs_unique), Ref(Zs_unique_prob), response.(Zs))
 end
 
-Empirikos.response(Z::CompoundSample) = Z.Z
+function compound(Zs::MultinomialSummary{<:EBayesSample})
+    n = nobs(Zs)
+    Zs_no_data = set_response.(collect(keys(Zs)))
+    _mult = fweights(multiplicity(Zs))
+    Zs_unique_dict = countmap(Zs_no_data, _mult)
+    Zs_unique = collect(keys(Zs_unique_dict))
+    Zs_unique_prob = collect(values(Zs_unique_dict))./n
+    Zs_compound = CompoundSample.(Ref(Zs_unique), Ref(Zs_unique_prob), response.(collect(keys(Zs))))
+    summarize(Zs_compound, _mult)
+end
 
-function Empirikos.likelihood_distribution(Z::CompoundSample, μ)
+
+function likelihood_distribution(Z::CompoundSample, μ)
     n = length(Z.vec)
-    MixtureModel(likelihood_distribution.(Z.vec, μ), fill(1/n, n))
+    MixtureModel(likelihood_distribution.(Z.vec, μ), Z.probs)
 end
 
-function Empirikos.marginalize(Z::CompoundSample, prior::Distribution)
+function marginalize(Z::CompoundSample, prior::Distribution)
     n = length(Z.vec)
-    MixtureModel(marginalize.(Z.vec, Ref(prior)),  fill(1/n, n))
+    MixtureModel(marginalize.(Z.vec, Ref(prior)),  Z.probs)
 end
 
-function Empirikos.skedasticity(Zs::AbstractArray{<:CompoundSample,1})
-    Empirikos.Heteroskedastic()
+# TODO: # beware a bit of this, hopefully compound won't be used too much
+function skedasticity(Zs::AbstractArray{<:CompoundSample,1})
+    Empirikos.Homoskedastic()
 end

@@ -55,7 +55,6 @@ include("datasets/Neighborhoods/neighborhoods.jl")
 
 
 export EBayesSample,
-    summarize,
     NormalSample,
     StandardNormalSample,
     BinomialSample,

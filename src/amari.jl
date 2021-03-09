@@ -275,7 +275,12 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
     modulus_model = method.modulus_model
     # todo: fix this
     #if isa(modulus_model, Type{ModulusModelWithF})
-    fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G.prior, z))
+
+    if isa(method.plugin_G, Distribution) #TODO SPECIAL CASE this elsewhere?
+        fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G, z))
+    else
+        fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G.prior, z))
+    end
 
 
     method = @set method.flocalization = fitted_floc

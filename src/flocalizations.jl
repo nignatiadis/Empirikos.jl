@@ -28,7 +28,7 @@ function flocalization_constraint!(model, floc, prior::PriorVariable)
 end
 
 """
-    DvoretzkyKieferWolfowitz(α) <: FLocalization
+    DvoretzkyKieferWolfowitz(;α = 0.05, max_constraints = 1000) <: FLocalization
 
 The Dvoretzky-Kiefer-Wolfowitz band (based on the Kolmogorov-Smirnov distance)
 at confidence level `1-α` that bounds the distance of the true distribution function
@@ -38,11 +38,15 @@ constant derived by Massart:
 ```math
 F \\text{ distribution}:  \\sup_{t \\in \\mathbb R}\\lvert F(t) - \\widehat{F}_n(t) \\rvert  \\leq  \\sqrt{\\log(2/\\alpha)/(2n)}
 ```
-
+The supremum above is enforced discretely on at most `max_constraints` number of points.
 """
-Base.@kwdef struct DvoretzkyKieferWolfowitz{T} <: FLocalization
+Base.@kwdef struct DvoretzkyKieferWolfowitz{T,N} <: FLocalization
     α::T = 0.05
+    max_constraints::N = 1000
 end
+
+# for backwards compatibility
+DvoretzkyKieferWolfowitz(α) = DvoretzkyKieferWolfowitz(;α=α)
 
 vexity(::DvoretzkyKieferWolfowitz) = LinearVexity()
 
@@ -67,10 +71,6 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs::AbstractVector{<:EBaye
 end
 
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
-    cdf_probs = cumsum([v for (k, v) in Zs_summary.store])
-    cdf_probs /= cdf_probs[end]
-    # TODO: report issue with SortedDict upstream
-    _dict = SortedDict(Dict(keys(Zs_summary.store) .=> cdf_probs))
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
     if skedasticity(Zs_summary) === Homoskedastic()
@@ -79,8 +79,26 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
     else
         homoskedastic = false
         multiplier = exp(1)
+        Zs = compound(Zs_summary)
     end
     band = sqrt(log(2 *multiplier / α) / (2n))
+
+    cdf_probs = cumsum([v for (k, v) in Zs_summary.store]) #SORTED important here
+    cdf_probs /= cdf_probs[end]
+    _Zs = keys(Zs_summary.store)
+
+    max_constraints = dkw.max_constraints
+
+    if max_constraints < n - 10
+        _step = div(n-2, max_constraints)
+        idxs = [1; 2:_step:(n-1); n]
+
+        _Zs = _Zs[idxs]
+        cdf_probs = cdf_probs[idxs]
+    end
+    # TODO: report issue with SortedDict upstream
+    _dict = SortedDict(Dict(_Zs .=> cdf_probs))
+
     FittedDvoretzkyKieferWolfowitz(_dict, band, dkw, homoskedastic)
 end
 
