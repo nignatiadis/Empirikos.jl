@@ -66,3 +66,7 @@ function heteroskedastic(Zs::MultinomialSummary{<:EBayesSample})
     _comp = collect(keys(compound(Zs)))[1]
     HeteroskedasticSamples( _comp.vec, _comp.probs)
 end
+
+function CompoundSample(Zs::HeteroskedasticSamples)
+    CompoundSample(Zs.vec, Zs.probs, missing)
+end

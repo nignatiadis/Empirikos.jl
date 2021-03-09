@@ -1,6 +1,7 @@
 using Hypatia
 using Random
 using Empirikos
+using LinearAlgebra
 using Test
 using JuMP
 G = Normal(1,0.3)
@@ -54,3 +55,61 @@ Empirikos.set_δ!(_init_without_F.modulus_model,  0.01);
 
 
 @test JuMP.dual(_init_with_F.modulus_model.bound_delta) ≈ JuMP.dual(_init_without_F.modulus_model.bound_delta) rtol=0.0001
+
+
+
+amari_withF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
+              plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithF)
+
+amari_withoutF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
+              plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithoutF)
+
+
+
+Random.seed!(1)
+G = Normal(0, 1.0)
+σs = rand(1:10,1000)./5
+zs = rand(G, 1000) .+ randn(1000) .* σs
+Zs = NormalSample.(μs, σs)
+@test length(Empirikos.heteroskedastic(Zs).vec) == 10
+
+gcal_mix = MixturePriorClass(Normal.(-4:0.2:4, 0.5))
+
+discr = Empirikos.Discretizer(-4:0.1:4)
+
+amari  = AMARI(;convexclass=gcal, flocalization=DvoretzkyKieferWolfowitz(;α=0.01),
+              solver=Hypatia.Optimizer, discretizer=discr,
+              plugin_G = NPMLE(;convexclass=gcal, solver=Hypatia.Optimizer))
+
+
+targets = [MarginalDensity( NormalSample(1.0, 0.3)), Empirikos.PriorDensity(  1.5)]
+for target in targets
+    amari_fit = StatsBase.fit(amari, target, Zs)
+    amari_ci = confint(amari_fit, target, Zs)
+    lp_biases = Empirikos.worst_case_bias_lp(amari_fit.method, amari_fit.Q, target)
+    @show target
+    @show lp_biases
+    @test lp_biases.maxbias ≈ amari_ci.maxbias atol = 0.00001
+    @test lp_biases.maxbias ≈ -lp_biases.minbias atol = 0.00001
+end
+
+
+
+postmean_target = PosteriorMean( NormalSample(1.0, 0.5))
+@test_throws String confint(amari_fit, postmean_target, Zs)
+
+postmean_ci = confint(amari, postmean_target, Zs)
+
+
+
+
+
+postmean_ci_01 = confint(amari, postmean_target, Zs; α=0.1)
+@test postmean_ci_01.upper - postmean_ci_01.lower < postmean_ci.upper - postmean_ci.lower
+
+
+#Qs = amari_fit.Q.(Zs)
+
+#X = [fill(1, length(Qs)) Qs]
+#X_hats = diag(X*inv(X'X)*X')
+#scatter( std.(Zs), X_hats)

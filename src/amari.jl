@@ -151,7 +151,7 @@ Base.@kwdef struct AMARI{N, G, M, EB}
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
     representative_eb_samples::EB = nothing
-    modulus_model::M = ModulusModelWithF
+    modulus_model::M = ModulusModelWithoutF
     n = nothing
 end
 
@@ -364,9 +364,11 @@ Base.@kwdef struct QDonoho{G,H,T,D}
     discretizer::D
 end
 
-function (Q::QDonoho)(Z::EBayesSample)
+function (Q::QDonoho)(Z::EBayesSample; discretize=true)
     @unpack g1, g2, plugin_G, mult, offset, discretizer  = Q
-    Z = discretizer(Z)
+    if discretize
+        Z = discretizer(Z)
+    end
     _g1_val = exp(logpdf(g1, Z) - logpdf(plugin_G, Z))
     _g2_val = exp(logpdf(g2, Z) - logpdf(plugin_G, Z))
     offset + mult*(_g2_val - _g1_val)
@@ -496,6 +498,9 @@ end
 
 
 function StatsBase.confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
+    target == Q.modulus_model.target ||
+           throw("Target has changed")
+
     _bias = Q.max_bias
     _Qs = Q.Q.(Zs)
     _wts = StatsBase.weights(Zs)
@@ -572,6 +577,7 @@ function StatsBase.confint(method::AMARI, target::Empirikos.AbstractPosteriorTar
         c_upper = outer_ci.upper
     end
 
+    #@show c_lower, c_upper
     target_lower = Empirikos.PosteriorTargetNullHypothesis(target, c_lower)
     target_upper = Empirikos.PosteriorTargetNullHypothesis(target, c_upper)
 
@@ -665,4 +671,30 @@ function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
         confint_vec[index] = _ci
     end
     confint_vec
+end
+
+
+# used right now only for sanity check in tests
+function worst_case_bias_lp(fitted_amari::AMARI, Q::QDonoho, target; max=true)
+    @unpack convexclass, solver, discretizer, flocalization, representative_eb_samples = fitted_amari
+
+    transposed_intervals = reshape(discretizer.sorted_intervals, 1, length(discretizer.sorted_intervals))
+    Zs = set_response.(representative_eb_samples.vec, transposed_intervals)
+    model = Model(solver)
+
+    g1 = prior_variable!(model, convexclass)
+    flocalization_constraint!(model, flocalization, g1)
+
+    Qs = Q.(Zs, discretize=true)
+    f_G = @expression(model, pdf.(g1, Zs) .* representative_eb_samples.probs)
+
+    @objective(model, Max, dot(f_G, Qs) - target(g1))
+    optimize!(model)
+    maxbias = JuMP.objective_value(model)
+
+    @objective(model, Min, dot(f_G, Qs) - target(g1))
+    optimize!(model)
+    minbias = JuMP.objective_value(model)
+
+    (maxbias = maxbias, minbias = minbias)
 end
