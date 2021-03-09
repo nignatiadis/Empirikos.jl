@@ -1,4 +1,3 @@
-using LinearAlgebra
 using Hypatia
 using Random
 using Empirikos
