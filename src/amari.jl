@@ -6,11 +6,10 @@
 # SteinMinimaxEstimator contains the fit result
 #
 
+abstract type AbstractModulusModel end
 
 
-
-
-Base.@kwdef struct ModulusModel
+Base.@kwdef struct ModulusModelWithF <: AbstractModulusModel
     method
     model
     g1
@@ -25,11 +24,34 @@ Base.@kwdef struct ModulusModel
     target
 end
 
+Base.@kwdef struct ModulusModelWithoutF <: AbstractModulusModel
+    method
+    model
+    g1
+    g2
+    δ_max
+    δ_up
+    bound_delta
+    target
+    ebsample_grid
+end
+
+function Base.show(io::IO, model::AbstractModulusModel)
+    println(io, "Modulus model with target:")
+    show(io, model.target)
+end
+
+
 function get_δ(Δf)
     norm(JuMP.value.(Δf))
 end
 
-function get_δ(model::ModulusModel; recalculate_δ = false)
+# TODO: recalculate δ for general case?
+function get_δ(model::AbstractModulusModel)
+      JuMP.value(model.δ_up)
+end
+
+function get_δ(model::ModulusModelWithF; recalculate_δ = false)
     if recalculate_δ
         get_δ(model.Δf)
     else
@@ -50,7 +72,7 @@ abstract type DeltaTuner end
 
 abstract type BiasVarAggregate <: DeltaTuner end
 
-function get_bias_var(modulus_model::ModulusModel)
+function get_bias_var(modulus_model::AbstractModulusModel)
     @unpack model = modulus_model
     δ = get_δ(modulus_model)
     ω_δ = objective_value(model)
@@ -60,7 +82,7 @@ function get_bias_var(modulus_model::ModulusModel)
     max_bias, unit_var_proxy
 end
 
-function (bv::BiasVarAggregate)(modulus_model::ModulusModel)
+function (bv::BiasVarAggregate)(modulus_model::AbstractModulusModel)
     bv(get_bias_var(modulus_model)...)
 end
 
@@ -127,11 +149,11 @@ Base.@kwdef struct AMARI{N, G, M}
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
     estimated_marginal_density = nothing
-    modulus_model::M = nothing
+    modulus_model::M = ModulusModelWithF
     n = nothing
 end
 
-function initialize_modulus_model(method::AMARI, target::Empirikos.LinearEBayesTarget, δ)
+function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, target::Empirikos.LinearEBayesTarget, δ)
 
     estimated_marginal_density = method.estimated_marginal_density
     flocalization = method.flocalization
@@ -164,19 +186,70 @@ function initialize_modulus_model(method::AMARI, target::Empirikos.LinearEBayesT
 
     @constraint(model, bound_delta, δ_up <= δ)
 
-    ModulusModel(method=method, model=model, g1=g1, g2=g2, f1=f1, f2=f2,
+    ModulusModelWithF(method=method, model=model, g1=g1, g2=g2, f1=f1, f2=f2,
         f_sqrt=f_sqrt, Δf=Δf, δ_max=Inf, δ_up=δ_up,
         bound_delta=bound_delta, target=target)
 end
 
+function modulus_cholesky_factor(gcal::AbstractSimplexPriorClass, plugin_G, discr)
+    K = nparams(gcal)
+    chr = cholesky(zeros(K, K) + I)
+    cache_vec = zeros(K)
+    fill!(chr.factors, 0)
+    cache_vec  = zeros(K)
+    for _interval in discr.sorted_intervals
+        z = StandardNormalSample(_interval)
+        cache_vec .= exp.(logpdf.(components(gcal), z) .- logpdf(plugin_G, z)/2)
+        lowrankupdate!(chr, cache_vec)
+    end
+    chr
+end
 
-function set_δ!(modulus_model, δ)
+
+function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithoutF}, target::Empirikos.LinearEBayesTarget, δ)
+
+    flocalization = method.flocalization
+    gcal = method.convexclass
+    discr = method.discretizer
+
+    plugin_G = method.plugin_G
+    solver = method.solver
+
+    model = Model(solver)
+
+    g1 = Empirikos.prior_variable!(model, gcal)
+    g2 = Empirikos.prior_variable!(model, gcal)
+
+    Empirikos.flocalization_constraint!(model, flocalization, g1)
+    Empirikos.flocalization_constraint!(model, flocalization, g2)
+
+    @variable(model, δ_up)
+
+    K_chol = modulus_cholesky_factor(gcal, plugin_G, discr)
+    KΔg = @expression(model, K_chol.U * (g1.finite_param - g2.finite_param))
+
+    @constraint(model, pseudo_chisq_constraint,
+           [δ_up; KΔg] in SecondOrderCone())
+
+    @objective(model, Max, target(g2) - target(g1))
+    @constraint(model, bound_delta, δ_up <= δ)
+
+    ModulusModelWithoutF(method=method, model=model, g1=g1, g2=g2,
+        δ_max=Inf, δ_up=δ_up,
+        bound_delta=bound_delta, target=target,
+        ebsample_grid = StandardNormalSample.(discr.sorted_intervals)) #FIXME potentially
+end
+
+
+
+
+function set_δ!(modulus_model::AbstractModulusModel, δ)
     set_normalized_rhs(modulus_model.bound_delta, δ)
     optimize!(modulus_model.model)
     modulus_model
 end
 
-function set_target!(modulus_model, target::Empirikos.LinearEBayesTarget)
+function set_target!(modulus_model::AbstractModulusModel, target::Empirikos.LinearEBayesTarget)
     #if modulus_model.target == target
     #   return modulus_model
     #end
@@ -199,9 +272,11 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
         fitted_plugin_G = StatsBase.fit(method.plugin_G, Zs; kwargs...)
     end
     discr = method.discretizer #TODO SPECIAL CASE for ::Distribution
-
+    modulus_model = method.modulus_model
     # todo: fix this
+    #if isa(modulus_model, Type{ModulusModelWithF})
     fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G.prior, z))
+
 
     method = @set method.flocalization = fitted_floc
     method = @set method.plugin_G = fitted_plugin_G
@@ -213,7 +288,7 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
     @unpack delta_grid = method
 
     δ1 = delta_grid[1]
-    modulus_model = initialize_modulus_model(method, target, δ1)
+    modulus_model = initialize_modulus_model(method, modulus_model, target, δ1)
     method = @set method.modulus_model = modulus_model
     method
 end #AMARI -> AMARI
@@ -273,9 +348,71 @@ end
 #for estimating a linear `target` over `prior_class` based on [`DiscretizedStandardNormalSamples`](@ref)
 #`Zs_discr`.
 
+Base.@kwdef struct QDonoho{G,H,T,D}
+    g1::G
+    g2::G
+    plugin_G::H
+    mult::T
+    offset::T
+    discretizer::D
+end
+
+function (Q::QDonoho)(Z::EBayesSample)
+    @unpack g1, g2, plugin_G, mult, offset, discretizer  = Q
+    Z = discretizer(Z)
+    _g1_val = exp(logpdf(g1, Z) - logpdf(plugin_G, Z))
+    _g2_val = exp(logpdf(g2, Z) - logpdf(plugin_G, Z))
+    offset + mult*(_g2_val - _g1_val)
+end
 
 
-function SteinMinimaxEstimator(modulus_model::ModulusModel)
+function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
+    @unpack model, method, target, ebsample_grid  = modulus_model
+    @unpack convexclass, estimated_marginal_density, plugin_G, discretizer = method
+
+    δ = get_δ(modulus_model)
+    ω_δ = objective_value(model)
+    ω_δ_prime = -JuMP.dual(modulus_model.bound_delta)
+
+    g1 = modulus_model.g1()
+    g2 = modulus_model.g2()
+
+    L1 = target(g1)
+    L2 = target(g2)
+
+    offset_sum = sum(ebsample_grid) do z
+        f2_z = pdf(g2, z)
+        f1_z = pdf(g1, z)
+        barf_z = pdf(plugin_G, z)
+        (f2_z - f1_z) * (f2_z + f1_z) / barf_z
+    end
+
+    offset =  (L1+L2)/2 - ω_δ_prime/(2*δ)*offset_sum
+    mult = ω_δ_prime/δ
+
+    Q = QDonoho(;g1 = g1, g2 = g2, plugin_G = plugin_G,
+                offset = offset, mult = mult,
+                discretizer = discretizer)
+
+    max_bias = (ω_δ - δ*ω_δ_prime)/2
+    unit_var_proxy = ω_δ_prime^2
+
+    SteinMinimaxEstimator(
+              target=target,
+              δ=δ,
+              ω_δ=ω_δ,
+              ω_δ_prime=ω_δ_prime,
+              g1=g1,
+              g2=g2,
+              Q=Q,
+              max_bias=max_bias,
+              unit_var_proxy=unit_var_proxy,
+              method=method,
+              modulus_model=modulus_model
+        )
+end
+
+function SteinMinimaxEstimator(modulus_model::ModulusModelWithF)
     @unpack model, method, target = modulus_model
     @unpack convexclass, estimated_marginal_density = method
 
@@ -306,7 +443,7 @@ function SteinMinimaxEstimator(modulus_model::ModulusModel)
     unit_var_proxy = ω_δ_prime^2
 
 
-SteinMinimaxEstimator(
+    SteinMinimaxEstimator(
               target=target,
               δ=δ,
               ω_δ=ω_δ,
@@ -317,7 +454,8 @@ SteinMinimaxEstimator(
               max_bias=max_bias,
               unit_var_proxy=unit_var_proxy,
               method=method,
-              modulus_model=modulus_model)
+              modulus_model=modulus_model
+        )
 end
 
 

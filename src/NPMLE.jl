@@ -18,6 +18,7 @@ struct NPMLE{C} <: ConvexMinimumDistanceMethod
 end
 
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
+NPMLE(;convexclass, solver, kwargs...) = NPMLE(convexclass, solver; kwargs)
 
 struct FittedConvexMinimumDistance{D,N<:ConvexMinimumDistanceMethod}
     prior::D
@@ -37,8 +38,13 @@ function (target::EBayesTarget)(fitted_method::FittedConvexMinimumDistance, args
     target(fitted_method.prior, args...)
 end
 
+
+# TODO: macro to all of pdf, cdf,...
 Distributions.pdf(fitted_method::FittedConvexMinimumDistance, Z) =
     Distributions.pdf(fitted_method.prior, Z)
+Distributions.logpdf(fitted_method::FittedConvexMinimumDistance, Z) =
+    Distributions.logpdf(fitted_method.prior, Z)
+
 
 # seems like template that could be useful more generally..
 function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs; kwargs...)

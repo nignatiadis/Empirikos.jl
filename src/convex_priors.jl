@@ -61,9 +61,11 @@ end
 
 support(convexclass::DiscretePriorClass) = convexclass.support
 nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
+Distributions.components(convexclass::DiscretePriorClass) = Dirac.(support(convexclass))
+
 
 function Base.show(io::IO, gcal::DiscretePriorClass)
-    print(io, "DiscretePriorClass | suport = ")
+    print(io, "DiscretePriorClass | support = ")
     show(IOContext(io, :compact => true), support(gcal))
 end
 
@@ -128,11 +130,11 @@ end
 
 MixturePriorClass() = MixturePriorClass(nothing)
 Distributions.components(mixclass::MixturePriorClass) = mixclass.components
-function Distributions.component(mixclass::AbstractMixturePriorClass, i::Integer)
+function Distributions.component(mixclass::AbstractSimplexPriorClass, i::Integer)
     Distributions.components(mixclass)[i]
 end
 nparams(mixclass::AbstractMixturePriorClass) = length(components(mixclass))
-Distributions.ncomponents(mixclass::MixturePriorClass) = nparams(mixclass)
+Distributions.ncomponents(mixclass::AbstractSimplexPriorClass) = nparams(mixclass)
 function (mixclass::AbstractMixturePriorClass)(p::AbstractVector{<:Real})
     MixtureModel(components(mixclass), fix_πs(p))
 end

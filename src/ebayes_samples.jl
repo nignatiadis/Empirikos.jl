@@ -70,6 +70,10 @@ Normal{Float64}(μ=2.0, σ=1.9999999999999998)
 """
 function marginalize end
 
+function marginalize(Z::EBayesSample, G::Dirac)
+    likelihood_distribution(Z, G.value)
+end
+
 function posterior end
 
 Broadcast.broadcastable(Z::EBayesSample) = Ref(Z)
@@ -140,7 +144,7 @@ distribution of ``Z`` at `response(Z)`.
 """
 ccdf(prior::Distribution, Z::EBayesSample) = _ccdf(marginalize(Z, prior), response(Z))
 
-
+logpdf(prior::Distribution, Z::EBayesSample) = _logpdf(marginalize(Z, prior), response(Z))
 
 
 

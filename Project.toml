@@ -28,7 +28,7 @@ UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 [compat]
 CSV = "0.8"
 DataStructures = "0.17,0.18"
-Distributions = "0.23, 0.24"
+Distributions = "0.24.7"
 Intervals = "1.4"
 JuMP = "0.21"
 KernelDensity = "0.6"

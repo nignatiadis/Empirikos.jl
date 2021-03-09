@@ -84,6 +84,23 @@ function compute_target(lin::QuadgkQuadrature, target::LinearEBayesTarget, sampl
 end
 
 
+
+Base.@kwdef struct AffineTransformedLinearTarget{T, I, S} <: LinearEBayesTarget
+    a::I = 0
+    b::S = 1
+    target::T
+end
+
+import Base.:*
+
+function Base.:*(s::Number, t::LinearEBayesTarget)
+    AffineTransformedLinearTarget(;b=s, target=t)
+end
+
+Base.:*(t::LinearEBayesTarget, s::Number) = s*t
+
+(t::AffineTransformedLinearTarget)(prior::Union{<:Number, <:Distribution}) = t.b * t.target(prior)
+
 """
 	cf(::LinearEBayesTarget, t)
 

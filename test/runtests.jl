@@ -34,6 +34,9 @@ end
     include("test_lord_cressie.jl")
 end
 
+@testset "Two kinds of modulus problems" begin
+    include("test_modulus.jl")
+end
 
 @testset "Compound and DKW F localization" begin
     include("test_compound.jl")
