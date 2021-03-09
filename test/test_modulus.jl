@@ -86,21 +86,13 @@ for target in targets
     @test sqrt(lp_biases.expected_var / 1000) ≈ amari_ci.se rtol=0.1
 end
 
-target = targets[1]
-amari_fit = StatsBase.fit(amari, target, Zs)
-amari_ci = confint(amari_fit, target, Zs)
-lp_biases = Empirikos.worst_case_bias_lp(amari_fit.method, amari_fit.Q, target)
 
-_Z_comp = Empirikos.CompoundSample(amari_fit.method.representative_eb_samples)
-marginalize(Z_)
+
 
 postmean_target = PosteriorMean( NormalSample(1.0, 0.5))
 @test_throws String confint(amari_fit, postmean_target, Zs)
 
 postmean_ci = confint(amari, postmean_target, Zs)
-
-
-
 
 
 postmean_ci_01 = confint(amari, postmean_target, Zs; α=0.1)
