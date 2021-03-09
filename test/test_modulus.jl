@@ -57,20 +57,11 @@ Empirikos.set_δ!(_init_without_F.modulus_model,  0.01);
 @test JuMP.dual(_init_with_F.modulus_model.bound_delta) ≈ JuMP.dual(_init_without_F.modulus_model.bound_delta) rtol=0.0001
 
 
-
-amari_withF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
-              plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithF)
-
-amari_withoutF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
-              plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithoutF)
-
-
-
 Random.seed!(1)
 G = Normal(0, 1.0)
 σs = rand(1:10,1000)./5
 zs = rand(G, 1000) .+ randn(1000) .* σs
-Zs = NormalSample.(μs, σs)
+Zs = NormalSample.(zs, σs)
 @test length(Empirikos.heteroskedastic(Zs).vec) == 10
 
 gcal_mix = MixturePriorClass(Normal.(-4:0.2:4, 0.5))
@@ -91,9 +82,17 @@ for target in targets
     @show lp_biases
     @test lp_biases.maxbias ≈ amari_ci.maxbias atol = 0.00001
     @test lp_biases.maxbias ≈ -lp_biases.minbias atol = 0.00001
+    # high tolerance for this test
+    @test sqrt(lp_biases.expected_var / 1000) ≈ amari_ci.se rtol=0.1
 end
 
+target = targets[1]
+amari_fit = StatsBase.fit(amari, target, Zs)
+amari_ci = confint(amari_fit, target, Zs)
+lp_biases = Empirikos.worst_case_bias_lp(amari_fit.method, amari_fit.Q, target)
 
+_Z_comp = Empirikos.CompoundSample(amari_fit.method.representative_eb_samples)
+marginalize(Z_)
 
 postmean_target = PosteriorMean( NormalSample(1.0, 0.5))
 @test_throws String confint(amari_fit, postmean_target, Zs)

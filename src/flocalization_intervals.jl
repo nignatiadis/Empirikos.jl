@@ -114,7 +114,7 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
     _max_vals = Vector{Float64}(undef, n_bisection)
     _min_vals = Vector{Float64}(undef, n_bisection)
 
-    model = ModelWithParams(solver)
+    model = Model(solver)
     g = Empirikos.prior_variable!(model, convexclass)
 
     Empirikos.flocalization_constraint!(model, flocalization, g)
@@ -128,11 +128,11 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
     _min_denom = JuMP.objective_value(model)
 
     _denom_range = range(_min_denom, stop=_max_denom, length=n_bisection)
-    t = add_parameter(model, _min_denom)
+    @variable(model, t == _min_denom, Param())
     @constraint(model, denom_target(g) == t)
 
     for (i, _denom) in enumerate(_denom_range)
-        fix(t, _denom)
+        set_value(t, _denom)
         @objective(model, Max, num_target(g))
         optimize!(model)
         _max_vals[i] = target(g())

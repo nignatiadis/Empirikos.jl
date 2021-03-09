@@ -150,8 +150,8 @@ Base.@kwdef struct AMARI{N, G, M, EB}
     data_split = :none
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
-    representative_eb_samples::EB = nothing
     modulus_model::M = ModulusModelWithoutF
+    representative_eb_samples::EB = nothing
     n = nothing
 end
 
@@ -364,11 +364,9 @@ Base.@kwdef struct QDonoho{G,H,T,D}
     discretizer::D
 end
 
-function (Q::QDonoho)(Z::EBayesSample; discretize=true)
+function (Q::QDonoho)(Z::EBayesSample)
     @unpack g1, g2, plugin_G, mult, offset, discretizer  = Q
-    if discretize
-        Z = discretizer(Z)
-    end
+    Z = discretizer(Z)
     _g1_val = exp(logpdf(g1, Z) - logpdf(plugin_G, Z))
     _g2_val = exp(logpdf(g2, Z) - logpdf(plugin_G, Z))
     offset + mult*(_g2_val - _g1_val)
@@ -685,7 +683,7 @@ function worst_case_bias_lp(fitted_amari::AMARI, Q::QDonoho, target; max=true)
     g1 = prior_variable!(model, convexclass)
     flocalization_constraint!(model, flocalization, g1)
 
-    Qs = Q.(Zs, discretize=true)
+    Qs = Q.(Zs)
     f_G = @expression(model, pdf.(g1, Zs) .* representative_eb_samples.probs)
 
     @objective(model, Max, dot(f_G, Qs) - target(g1))
@@ -696,5 +694,8 @@ function worst_case_bias_lp(fitted_amari::AMARI, Q::QDonoho, target; max=true)
     optimize!(model)
     minbias = JuMP.objective_value(model)
 
-    (maxbias = maxbias, minbias = minbias)
+    expected_var = dot(Qs.^2, pdf.(fitted_amari.plugin_G, Zs) .* representative_eb_samples.probs)
+
+
+    (maxbias = maxbias, minbias = minbias, expected_var = expected_var)
 end
