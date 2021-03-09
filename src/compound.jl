@@ -50,3 +50,19 @@ end
 function skedasticity(Zs::AbstractArray{<:CompoundSample,1})
     Empirikos.Homoskedastic()
 end
+
+# hard code as missing.
+struct HeteroskedasticSamples{EBS <: EBayesSample{Missing}, S}
+    vec::AbstractVector{EBS}
+    probs::AbstractVector{S}
+end
+
+function heteroskedastic(Zs::AbstractVector{<:EBayesSample})
+    _comp = compound(Zs)[1]
+    HeteroskedasticSamples( _comp.vec, _comp.probs)
+end
+
+function heteroskedastic(Zs::MultinomialSummary{<:EBayesSample})
+    _comp = collect(keys(compound(Zs)))[1]
+    HeteroskedasticSamples( _comp.vec, _comp.probs)
+end

@@ -17,6 +17,7 @@ Base.@kwdef struct ModulusModelWithF <: AbstractModulusModel
     f1
     f2
     f_sqrt
+    estimated_marginal_density
     Δf
     δ_max
     δ_up
@@ -33,7 +34,8 @@ Base.@kwdef struct ModulusModelWithoutF <: AbstractModulusModel
     δ_up
     bound_delta
     target
-    ebsample_grid
+    discretizer
+    representative_eb_samples
 end
 
 function Base.show(io::IO, model::AbstractModulusModel)
@@ -139,7 +141,7 @@ a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
 `plugin_G` is a [`Empirikos.EBayesMethod`](@ref) used as an initial estimate of the marginal
 distribution of the i.i.d. samples ``Z``.
 """
-Base.@kwdef struct AMARI{N, G, M}
+Base.@kwdef struct AMARI{N, G, M, EB}
     convexclass::G
     flocalization::N
     solver
@@ -148,23 +150,29 @@ Base.@kwdef struct AMARI{N, G, M}
     data_split = :none
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
-    estimated_marginal_density = nothing
+    representative_eb_samples::EB = nothing
     modulus_model::M = ModulusModelWithF
     n = nothing
 end
 
 function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, target::Empirikos.LinearEBayesTarget, δ)
 
-    estimated_marginal_density = method.estimated_marginal_density
-    flocalization = method.flocalization
-    gcal = method.convexclass
+    #TODO: perhaps this can also be moved..
+    @unpack discretizer, solver, convexclass, flocalization, representative_eb_samples = method
 
-    solver = method.solver
+    length(representative_eb_samples.vec) == 1 ||
+            throw(ArgumentError("ModulusModelWithF only works for Homoskedastic samples."))
+    Z = first(representative_eb_samples.vec)
+    if isa(method.plugin_G, Distribution) #TODO SPECIAL CASE this elsewhere?
+        estimated_marginal_density = Empirikos.dictfun(discretizer, Z, z-> pdf(method.plugin_G, z))
+    else
+        estimated_marginal_density = Empirikos.dictfun(discretizer, Z, z-> pdf(method.plugin_G.prior, z))
+    end
 
     model = Model(solver)
 
-    g1 = Empirikos.prior_variable!(model, gcal)
-    g2 = Empirikos.prior_variable!(model, gcal)
+    g1 = Empirikos.prior_variable!(model, convexclass)
+    g2 = Empirikos.prior_variable!(model, convexclass)
 
     Empirikos.flocalization_constraint!(model, flocalization, g1)
     Empirikos.flocalization_constraint!(model, flocalization, g2)
@@ -187,20 +195,24 @@ function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, targ
     @constraint(model, bound_delta, δ_up <= δ)
 
     ModulusModelWithF(method=method, model=model, g1=g1, g2=g2, f1=f1, f2=f2,
-        f_sqrt=f_sqrt, Δf=Δf, δ_max=Inf, δ_up=δ_up,
+        f_sqrt=f_sqrt, estimated_marginal_density=estimated_marginal_density,
+        Δf=Δf, δ_max=Inf, δ_up=δ_up,
         bound_delta=bound_delta, target=target)
 end
 
-function modulus_cholesky_factor(gcal::AbstractSimplexPriorClass, plugin_G, discr)
-    K = nparams(gcal)
+function modulus_cholesky_factor(convexclass::AbstractSimplexPriorClass, plugin_G, discr,
+            eb_samples::HeteroskedasticSamples)
+    K = nparams(convexclass)
     chr = cholesky(zeros(K, K) + I)
     cache_vec = zeros(K)
     fill!(chr.factors, 0)
     cache_vec  = zeros(K)
     for _interval in discr.sorted_intervals
-        z = StandardNormalSample(_interval)
-        cache_vec .= exp.(logpdf.(components(gcal), z) .- logpdf(plugin_G, z)/2)
-        lowrankupdate!(chr, cache_vec)
+        for (z, pr) in zip(eb_samples.vec, eb_samples.probs)
+            z = set_response(z, _interval)
+            cache_vec .= sqrt(pr) .* exp.(logpdf.(components(convexclass), z) .- logpdf(plugin_G, z)/2)
+            lowrankupdate!(chr, cache_vec)
+        end
     end
     chr
 end
@@ -208,24 +220,20 @@ end
 
 function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithoutF}, target::Empirikos.LinearEBayesTarget, δ)
 
-    flocalization = method.flocalization
-    gcal = method.convexclass
-    discr = method.discretizer
 
-    plugin_G = method.plugin_G
-    solver = method.solver
+    @unpack flocalization, convexclass, discretizer, plugin_G, solver, representative_eb_samples = method
 
     model = Model(solver)
 
-    g1 = Empirikos.prior_variable!(model, gcal)
-    g2 = Empirikos.prior_variable!(model, gcal)
+    g1 = Empirikos.prior_variable!(model, convexclass)
+    g2 = Empirikos.prior_variable!(model, convexclass)
 
     Empirikos.flocalization_constraint!(model, flocalization, g1)
     Empirikos.flocalization_constraint!(model, flocalization, g2)
 
     @variable(model, δ_up)
 
-    K_chol = modulus_cholesky_factor(gcal, plugin_G, discr)
+    K_chol = modulus_cholesky_factor(convexclass, plugin_G, discretizer, representative_eb_samples)
     KΔg = @expression(model, K_chol.U * (g1.finite_param - g2.finite_param))
 
     @constraint(model, pseudo_chisq_constraint,
@@ -237,9 +245,9 @@ function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithoutF}, t
     ModulusModelWithoutF(method=method, model=model, g1=g1, g2=g2,
         δ_max=Inf, δ_up=δ_up,
         bound_delta=bound_delta, target=target,
-        ebsample_grid = StandardNormalSample.(discr.sorted_intervals)) #FIXME potentially
+        discretizer = discretizer, representative_eb_samples = representative_eb_samples
+        ) #FIXME potentially
 end
-
 
 
 
@@ -276,16 +284,10 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
     # todo: fix this
     #if isa(modulus_model, Type{ModulusModelWithF})
 
-    if isa(method.plugin_G, Distribution) #TODO SPECIAL CASE this elsewhere?
-        fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G, z))
-    else
-        fitted_density = Empirikos.dictfun(discr, Zs, z-> pdf(fitted_plugin_G.prior, z))
-    end
-
+    method = @set method.representative_eb_samples = heteroskedastic(Zs)
 
     method = @set method.flocalization = fitted_floc
     method = @set method.plugin_G = fitted_plugin_G
-    method = @set method.estimated_marginal_density = fitted_density
 
     n = nobs(Zs) #TODO: length or nobs?
     method = @set method.n = n
@@ -372,8 +374,10 @@ end
 
 
 function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
-    @unpack model, method, target, ebsample_grid  = modulus_model
-    @unpack convexclass, estimated_marginal_density, plugin_G, discretizer = method
+    @unpack model, method, target, discretizer, representative_eb_samples  = modulus_model
+    @unpack convexclass, plugin_G = method
+
+    discretizer == method.discretizer || throw("Internal discretizer modified.")
 
     δ = get_δ(modulus_model)
     ω_δ = objective_value(model)
@@ -385,11 +389,14 @@ function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
     L1 = target(g1)
     L2 = target(g2)
 
-    offset_sum = sum(ebsample_grid) do z
-        f2_z = pdf(g2, z)
-        f1_z = pdf(g1, z)
-        barf_z = pdf(plugin_G, z)
-        (f2_z - f1_z) * (f2_z + f1_z) / barf_z
+    offset_sum = sum(discretizer.sorted_intervals) do _int
+        sum(zip(representative_eb_samples.vec, representative_eb_samples.probs)) do (z,pr)
+            z = set_response(z, _int)
+            f2_z = pdf(g2, z)
+            f1_z = pdf(g1, z)
+            barf_z = pdf(plugin_G, z)
+            pr*(f2_z - f1_z) * (f2_z + f1_z) / barf_z
+        end
     end
 
     offset =  (L1+L2)/2 - ω_δ_prime/(2*δ)*offset_sum
@@ -418,8 +425,8 @@ function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
 end
 
 function SteinMinimaxEstimator(modulus_model::ModulusModelWithF)
-    @unpack model, method, target = modulus_model
-    @unpack convexclass, estimated_marginal_density = method
+    @unpack model, method, target, estimated_marginal_density = modulus_model
+    @unpack convexclass = method
 
     δ = get_δ(modulus_model)
     ω_δ = objective_value(model)

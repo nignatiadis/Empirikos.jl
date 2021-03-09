@@ -42,8 +42,12 @@ end
 
 function dictfun(discretizer::Discretizer, Zs::AbstractVector{<:EBayesSample}, f)
     skedasticity(Zs) == Homoskedastic() ||
-        error("Heteroskedastic likelihood not implemented.")
+        error(ArgumentError("Heteroskedastic likelihood not implemented."))
     Z = Zs[1]
+    dictfun(discretizer, Z, f )
+end
+
+function dictfun(discretizer::Discretizer, Z::EBayesSample, f)
     interval_Zs = [@set Z.Z = _int for _int in discretizer.sorted_intervals]
     if !isa(f, AbstractVector)
         f = f.(interval_Zs)

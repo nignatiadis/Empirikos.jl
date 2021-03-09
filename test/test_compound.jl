@@ -14,8 +14,8 @@ Zs_standard_compound = compound(Zs_standard)
 @test pdf.(Normal(0,2), Zs_standard) == pdf.(Normal(0,2), Zs_standard)
 
 
-dkw_loc_standard_compound = fit(DvoretzkyKieferWolfowitz(0.05*exp(1)), Zs_standard_compound)
-dkw_loc_standard = fit(DvoretzkyKieferWolfowitz(0.05), Zs_standard)
+dkw_loc_standard_compound = fit(DvoretzkyKieferWolfowitz(α=0.05*exp(1)), Zs_standard_compound)
+dkw_loc_standard = fit(DvoretzkyKieferWolfowitz(α=0.05), Zs_standard)
 
 @test dkw_loc_standard.homoskedastic
 @test !dkw_loc_standard_compound.homoskedastic
@@ -35,11 +35,13 @@ floc_method_compound = FLocalizationInterval(flocalization=DvoretzkyKieferWolfow
 
 ci1 = confint(floc_method_standard, target, Zs_standard)
 ci2 = confint(floc_method_compound, target, Zs_standard_compound)
-
 @test ci1.lower ≈ ci2.lower
 @test ci1.upper ≈ ci2.upper
 @test ci1.α ≈ 0.05
 @test ci2.α ≈ 0.05*exp(1)
+
+# Same with actually heteroskedastic samples
+
 
 Random.seed!(1)
 σs = rand(1:10,1000)
@@ -47,6 +49,16 @@ Random.seed!(1)
 Zs = NormalSample.(μs, σs)
 Zs_compound = compound(Zs)
 @test length(Zs_compound[1].vec) == 10
+
+dkw_loc_not_compound = fit(DvoretzkyKieferWolfowitz(α=0.05), Zs)
+dkw_loc_compound = fit(DvoretzkyKieferWolfowitz(α=0.05), Zs_compound)
+
+@test !dkw_loc_not_compound.homoskedastic
+@test !dkw_loc_compound.homoskedastic
+
+@test dkw_loc_standard.band ≈ dkw_loc_standard_compound.band
+
+
 
 Random.seed!(1)
 Zs_binom_heterosk = BinomialSample.( sample(1:4, 100), sample(20:22,100))
@@ -60,4 +72,5 @@ Zs_binom_comp_summary = summarize(comp_binom)
 
 Zs_binom_summary_comp = compound(Zs_binom_summary)
 @test nobs(Zs_binom_summary_comp) == 100
+
 Empirikos.multiplicity(Zs_binom_comp_summary) == Empirikos.multiplicity(Zs_binom_summary_comp)

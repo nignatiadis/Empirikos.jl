@@ -70,16 +70,21 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs::AbstractVector{<:EBaye
     StatsBase.fit(dkw, summarize(Zs))
 end
 
-function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary)
+function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSummary{T}) where T
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
-    if skedasticity(Zs_summary) === Homoskedastic()
-        homoskedastic = true
-        multiplier = 1
-    else
+    if skedasticity(Zs_summary) === Heteroskedastic()
         homoskedastic = false
         multiplier = exp(1)
-        Zs = compound(Zs_summary)
+        Zs_summary = compound(Zs_summary)
+    elseif skedasticity(Zs_summary) === Homoskedastic()
+        if T<:CompoundSample
+            homoskedastic = false
+            multiplier = exp(1)
+        else
+            homoskedastic = true
+            multiplier = 1
+        end
     end
     band = sqrt(log(2 *multiplier / α) / (2n))
 
