@@ -66,9 +66,12 @@ Base.summarysize(untyped_multinormals)
 # Test some discrete Interval functionality
 tmp = BinomialSample(Interval(0,1), 10)
 @test cdf(Binomial(10, 0.5), 1) == likelihood(tmp, 0.5)
+@test likelihood(BinomialSample(Interval(0,10), 10), 0.6) == 1
 
 
-pdf(BinomialSample(Interval(0,10), 10) ) == 1
+@test pdf(Dirac(0.7), BinomialSample(Interval(9,nothing), 10))  ≈ ccdf(Binomial(10,0.7), 8)
+@test pdf(Dirac(0.7), BinomialSample(Interval(9,nothing), 10))  ≈  pdf(Dirac(0.7), BinomialSample(Interval(9,10), 10))
+
 
 #pdf(DiscreteNonParametric([2.0],[1.0]), PoissonSample(Interval(5,nothing)))
 #ccdf(Poisson(2.0), 4)
