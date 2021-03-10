@@ -68,7 +68,7 @@ nuisance_parameter(Z::AbstractNormalSample) = std(Z)
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 
 
-function Base.show(io::IO, Z::AbstractNormalSample)
+function Base.show(io::IO, Z::AbstractNormalSample{<:Real})
     Zz = response(Z)
     print(io, "Z=")
     print(io, lpad(round(Zz, digits = 4),8))
