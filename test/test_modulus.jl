@@ -19,7 +19,7 @@ ghat = StatsBase.fit( NPMLE(;convexclass=gcal, solver=Hypatia.Optimizer),  Zs)
 floc = StatsBase.fit(DvoretzkyKieferWolfowitz(;α=0.01), Zs)
 
 
-discr = Empirikos.Discretizer(-3:0.2:3)
+discr = interval_discretizer(-3:0.2:3)
 
 amari_withF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
               plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithF)
@@ -66,13 +66,13 @@ Zs = NormalSample.(zs, σs)
 
 gcal_mix = MixturePriorClass(Normal.(-4:0.2:4, 0.5))
 
-discr = Empirikos.Discretizer(-4:0.1:4)
+discr = interval_discretizer(-4:0.1:4)
 
 amari  = AMARI(;convexclass=gcal, flocalization=DvoretzkyKieferWolfowitz(;α=0.01),
               solver=Hypatia.Optimizer, discretizer=discr,
               plugin_G = NPMLE(;convexclass=gcal, solver=Hypatia.Optimizer))
 
-
+postmean_target = PosteriorMean( NormalSample(1.0, 0.5))
 targets = [MarginalDensity( NormalSample(1.0, 0.3)), Empirikos.PriorDensity(  1.5)]
 for target in targets
     amari_fit = StatsBase.fit(amari, target, Zs)
@@ -84,13 +84,12 @@ for target in targets
     @test lp_biases.maxbias ≈ -lp_biases.minbias atol = 0.00001
     # high tolerance for this test
     @test sqrt(lp_biases.expected_var / 1000) ≈ amari_ci.se rtol=0.1
+    @test_throws String confint(amari_fit, postmean_target, Zs)
 end
 
 
 
 
-postmean_target = PosteriorMean( NormalSample(1.0, 0.5))
-@test_throws String confint(amari_fit, postmean_target, Zs)
 
 postmean_ci = confint(amari, postmean_target, Zs)
 
