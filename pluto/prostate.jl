@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.20
+# v0.12.21
 
 using Markdown
 using InteractiveUtils
@@ -101,7 +101,10 @@ gcal_scalemix = Empirikos.set_defaults(GaussianScaleMixtureClass(), Zs; hints = 
 
 
 # ╔═╡ 9b6b8f8a-4bf6-11eb-002d-7fa04ddde0d3
-discr = Empirikos.Discretizer(-3.0:0.005:3.0)
+discr = interval_discretizer(-3.0:0.005:3.0)
+
+# ╔═╡ 68f0af78-8165-11eb-2a88-efd9f9743eec
+discr.sorted_intervals[1]
 
 # ╔═╡ ce945cca-4bf6-11eb-29bc-4b2514ae395d
 floc_method_dkw_locmix = FLocalizationInterval(flocalization = dkw_floc,
@@ -279,6 +282,7 @@ savefig(lfsr_scalemix_plot, "prostate_scalemix_lfsr.tikz")
 # ╠═c4bc3468-4bf4-11eb-1710-f7638d026b91
 # ╠═bd7a5362-4bf4-11eb-1f2c-79ff3e915f89
 # ╠═9b6b8f8a-4bf6-11eb-002d-7fa04ddde0d3
+# ╠═68f0af78-8165-11eb-2a88-efd9f9743eec
 # ╠═ce945cca-4bf6-11eb-29bc-4b2514ae395d
 # ╠═e9e81b9c-4bf6-11eb-1c3c-d56076f6858b
 # ╠═04c72ec6-4bf7-11eb-3265-5f69502b9f0b

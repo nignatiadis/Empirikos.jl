@@ -268,6 +268,11 @@ function set_target!(modulus_model::AbstractModulusModel, target::Empirikos.Line
     modulus_model
 end
 
+function default_support_discretizer(Zs::AbstractVector{<:AbstractNormalSample})
+    _low,_up = quantile(response.(Zs), (0.02, 0.98))
+    _step = mean( std.(Zs))/100
+    interval_discretizer(range(_low; stop=_up, step=_step))
+end
 
 
 function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
@@ -280,6 +285,10 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
         fitted_plugin_G = StatsBase.fit(method.plugin_G, Zs; kwargs...)
     end
     discr = method.discretizer #TODO SPECIAL CASE for ::Distribution
+    if isnothing(discr)
+        discr = default_support_discretizer(Zs)
+        method = @set method.discretizer = discr
+    end
     modulus_model = method.modulus_model
     # todo: fix this
     #if isa(modulus_model, Type{ModulusModelWithF})

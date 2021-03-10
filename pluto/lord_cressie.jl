@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.20
+# v0.12.21
 
 using Markdown
 using InteractiveUtils
@@ -64,24 +64,22 @@ lord_cressie_freq = plot(
 # ╔═╡ 7e1c518e-4bd4-11eb-0b09-75616ed63a2e
 md"""
 ## Construct confidence intervals
+
+We first create a discretization object that will combine all counts ≤ 1.
 """
 
+# ╔═╡ d3f6af54-8161-11eb-0dd9-41ae82c23455
+discr = integer_discretizer(1:20) 
+
 # ╔═╡ caaf9fce-4bd4-11eb-3c4e-318bd5bc838b
-Zs_collapse = begin
-	Zs_collapse = deepcopy(Zs)
-	n0 = pop!(Zs_collapse.store, BinomialSample(0, 20))
-	n1 = pop!(Zs_collapse.store, BinomialSample(1, 20))
-	updated_keys =  [BinomialSample(Interval(0,1), 20); collect(keys(Zs_collapse))]
-	updated_values = [n0+n1; collect(values(Zs_collapse))]
-	Empirikos.MultinomialSummary(updated_keys, updated_values)
-end;
+Zs_collapse = discr(Zs)
 
 # ╔═╡ 955f125c-4bd2-11eb-2e6d-195f45c0fb6d
 quiet_mosek = optimizer_with_attributes(Mosek.Optimizer, "QUIET" => true)
 
 
 # ╔═╡ 98836b02-4bd4-11eb-3f00-f118ee2aa731
-gcal = DiscretePriorClass(range(0.0,stop=1.0,length=300));
+𝒢 = DiscretePriorClass(range(0.0,stop=1.0,length=300));
 
 # ╔═╡ 9dd42a9c-4bd4-11eb-0c4a-f59835f20ed0
 postmean_targets = Empirikos.PosteriorMean.(BinomialSample.(0:20,20));
@@ -94,7 +92,7 @@ chisq_floc = Empirikos.ChiSquaredFLocalization(0.05)
 
 # ╔═╡ aa690a8e-4bd4-11eb-3f7c-c36955f21c08
 floc_method_chisq = FLocalizationInterval(flocalization = chisq_floc,
-                                       convexclass= gcal, solver=quiet_mosek)
+                                       convexclass= 𝒢, solver=quiet_mosek)
 
 # ╔═╡ c24e0e60-4bd4-11eb-048c-0b02d946fc95
 chisq_cis = confint.(floc_method_chisq, postmean_targets, Zs_collapse)
@@ -118,7 +116,7 @@ md""" ### DKW $F$-localization intervals"""
 # ╔═╡ ecca61e8-4bd4-11eb-1f1d-5f7a677e157c
 floc_method_dkw = FLocalizationInterval(
 							flocalization = DvoretzkyKieferWolfowitz(0.05),
-                            convexclass= gcal, solver=quiet_mosek)
+                            convexclass = 𝒢, solver=quiet_mosek)
 
 
 # ╔═╡ 0316c28e-4bd5-11eb-00c2-2150f66f1721
@@ -136,10 +134,11 @@ md"""### Amari intervals"""
 
 # ╔═╡ dec4fae4-4bd5-11eb-337d-0152aba1d793
 lam_chisq = Empirikos.AMARI(
-							convexclass=gcal,
+							convexclass = 𝒢,
                             flocalization = Empirikos.ChiSquaredFLocalization(0.01),
-                            solver=quiet_mosek, discretizer=nothing)
-
+                            solver=quiet_mosek,
+                            discretizer=discr
+                            )
 
 
 # ╔═╡ 64050d52-4bd6-11eb-2fa6-8bf4fbee5ba3
@@ -193,6 +192,7 @@ savefig(postmean_plot, "lord_cressie_posterior_mean.tikz")
 # ╠═a197f656-4bd2-11eb-1d34-15acb373e216
 # ╠═39c4faae-4bd4-11eb-2de6-0fb52b666531
 # ╟─7e1c518e-4bd4-11eb-0b09-75616ed63a2e
+# ╠═d3f6af54-8161-11eb-0dd9-41ae82c23455
 # ╠═caaf9fce-4bd4-11eb-3c4e-318bd5bc838b
 # ╠═955f125c-4bd2-11eb-2e6d-195f45c0fb6d
 # ╠═98836b02-4bd4-11eb-3f00-f118ee2aa731
@@ -209,7 +209,7 @@ savefig(postmean_plot, "lord_cressie_posterior_mean.tikz")
 # ╠═0316c28e-4bd5-11eb-00c2-2150f66f1721
 # ╠═b7f27c2a-4bd5-11eb-3b2b-63532c39571b
 # ╠═be60c940-4bd5-11eb-0972-377395236cff
-# ╠═c26c3fb0-4bd5-11eb-3607-05043b4df440
+# ╟─c26c3fb0-4bd5-11eb-3607-05043b4df440
 # ╠═dec4fae4-4bd5-11eb-337d-0152aba1d793
 # ╠═64050d52-4bd6-11eb-2fa6-8bf4fbee5ba3
 # ╠═6d844faa-4bd6-11eb-236b-314232fdc8dc

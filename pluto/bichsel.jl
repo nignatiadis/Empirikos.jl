@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.20
+# v0.12.21
 
 using Markdown
 using InteractiveUtils
@@ -35,13 +35,13 @@ Zs = Empirikos.MultinomialSummary(Zs_keys, Ns)
 postmean_targets = PosteriorMean.(PoissonSample.(0:4))
 
 # ╔═╡ 8296520a-6a24-11eb-0eae-d713be4fe37b
-gcal = DiscretePriorClass(0.0:0.01:5.0)
+𝒢 = DiscretePriorClass(0.0:0.01:5.0)
 
 # ╔═╡ 7fc2212a-6a25-11eb-0c9a-5376243ea49a
 md"### Compute NPMLE prior and plug-in posterior mean estimates"
 
 # ╔═╡ 8c025154-6a24-11eb-040e-f17b8c9542b0
-npmle_fit = fit(NPMLE(gcal, quiet_mosek), Zs)
+npmle_fit = fit(NPMLE(𝒢, quiet_mosek), Zs)
 
 # ╔═╡ b394759e-6a24-11eb-39c1-c7ccb51a35df
 plot(support(npmle_fit.prior), probs(npmle_fit.prior), seriestype=:sticks,
@@ -58,7 +58,7 @@ chisq_floc = Empirikos.ChiSquaredFLocalization(0.05)
 
 # ╔═╡ 788609c6-6a25-11eb-177c-7feb1c426574
 floc_method_chisq = FLocalizationInterval(flocalization = chisq_floc,
-                                       convexclass= gcal, solver=quiet_mosek)
+                                       convexclass= 𝒢, solver=quiet_mosek)
 
 # ╔═╡ 7b4c29ba-6a25-11eb-3cf7-a906cdf5a9d5
 chisq_cis = confint.(floc_method_chisq, postmean_targets, Zs)
@@ -66,10 +66,13 @@ chisq_cis = confint.(floc_method_chisq, postmean_targets, Zs)
 # ╔═╡ b4185b24-6a25-11eb-36d7-4bfeea3b1ef9
 md"### AMARI intervals"
 
+# ╔═╡ 0923c5a0-8168-11eb-1fc0-9bbb21f27683
+discr = integer_discretizer(0:5)
+
 # ╔═╡ bc521d32-6a25-11eb-06e5-81664a86a473
 amari_chisq = AMARI(
     flocalization = fit(Empirikos.ChiSquaredFLocalization(0.01), Zs),
-    solver=quiet_mosek, convexclass=gcal, discretizer=nothing)
+    solver=quiet_mosek, convexclass=𝒢, discretizer=discr)
 
 # ╔═╡ d74a0246-6a25-11eb-05f9-79366bc3aed7
 postmean_ci_amari = confint.(amari_chisq, postmean_targets, Zs)
@@ -104,6 +107,7 @@ DataFrame(z=0:4, N=Ns[1:5],
 # ╠═788609c6-6a25-11eb-177c-7feb1c426574
 # ╠═7b4c29ba-6a25-11eb-3cf7-a906cdf5a9d5
 # ╟─b4185b24-6a25-11eb-36d7-4bfeea3b1ef9
+# ╠═0923c5a0-8168-11eb-1fc0-9bbb21f27683
 # ╠═bc521d32-6a25-11eb-06e5-81664a86a473
 # ╠═d74a0246-6a25-11eb-05f9-79366bc3aed7
 # ╟─f5fb418c-6a25-11eb-0a75-6d96d3fc03c6
