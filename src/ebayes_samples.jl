@@ -270,6 +270,9 @@ function _pdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded})
     ccdf(dbn, first(interval)) + pdf(dbn, first(interval))
 end
 
+function _logpdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
+    log(_pdf(dbn, interval))
+end
 
 
 function _support(d::Distribution)
@@ -302,6 +305,8 @@ end
 
 Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
 Base.values(Zs_summary::MultinomialSummary) = Base.values(Zs_summary.store)
+Base.length(Zs_summary::MultinomialSummary) = Base.length(Zs_summary.store)
+
 
 function Base.broadcasted(::typeof(response), Zs_summary::MultinomialSummary)
     response.(keys(Zs_summary))

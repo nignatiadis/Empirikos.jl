@@ -56,8 +56,8 @@ dkw_loc_compound = fit(DvoretzkyKieferWolfowitz(α=0.05), Zs_compound)
 @test !dkw_loc_not_compound.homoskedastic
 @test !dkw_loc_compound.homoskedastic
 
-@test dkw_loc_standard.band ≈ dkw_loc_standard_compound.band
-
+@test dkw_loc_not_compound.band ≈ dkw_loc_compound.band
+@test length(dkw_loc_not_compound.summary) == length(dkw_loc_compound.summary)
 
 
 Random.seed!(1)

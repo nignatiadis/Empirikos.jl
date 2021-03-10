@@ -73,11 +73,14 @@ export EBayesSample,
     PosteriorMean,
     PosteriorVariance,
     MarginalDensity,
+    PriorDensity,
     DiscretePriorClass,
     MixturePriorClass,
     GaussianScaleMixtureClass,
     NPMLE,
-    nominal_alpha
+    nominal_alpha,
+    integer_discretizer,
+    interval_discretizer
 
 # F-Localizations
 export DvoretzkyKieferWolfowitz,

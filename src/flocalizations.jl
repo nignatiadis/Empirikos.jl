@@ -73,6 +73,7 @@ end
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSummary{T}) where T
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
+
     if skedasticity(Zs_summary) === Heteroskedastic()
         homoskedastic = false
         multiplier = exp(1)
@@ -86,17 +87,19 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
             multiplier = 1
         end
     end
+    n_constraints = length(Zs_summary)
+
     band = sqrt(log(2 *multiplier / α) / (2n))
 
     cdf_probs = cumsum([v for (k, v) in Zs_summary.store]) #SORTED important here
     cdf_probs /= cdf_probs[end]
-    _Zs = keys(Zs_summary.store)
+    _Zs = collect(keys(Zs_summary.store))
 
     max_constraints = dkw.max_constraints
 
-    if max_constraints < n - 10
-        _step = div(n-2, max_constraints)
-        idxs = [1; 2:_step:(n-1); n]
+    if max_constraints < n_constraints - 10
+        _step = div(n_constraints-2, max_constraints)
+        idxs = [1; 2:_step:(n_constraints-1); n_constraints]
 
         _Zs = _Zs[idxs]
         cdf_probs = cdf_probs[idxs]

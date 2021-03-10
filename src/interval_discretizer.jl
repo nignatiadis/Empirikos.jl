@@ -1,4 +1,7 @@
-struct Discretizer{S}
+abstract type AbstractDiscretizer end
+
+
+struct Discretizer{S} <: AbstractDiscretizer
     sorted_intervals::S
 end
 
@@ -9,7 +12,7 @@ Discretizer() = Discretizer(DataBasedDefault())
 
 Base.keys(discr::Discretizer) = discr.sorted_intervals
 
-function Discretizer(grid::AbstractVector; closed = :right, unbounded = :both)
+function interval_discretizer(grid::AbstractVector; closed = :right, unbounded = :both)
     if (closed === :right) && (unbounded === :both)
         ints = EBInterval{eltype(grid)}[
             Interval{Unbounded,Closed}(nothing, grid[1])
@@ -25,6 +28,8 @@ function Discretizer(grid::AbstractVector; closed = :right, unbounded = :both)
 end
 
 # TODO: What if x does not fall into any of the intervals?
+_right_endpoint(int::Interval) = Intervals.RightEndpoint(int)
+_right_endpoint(x::Real) = x
 
 function _discretize(sorted_intervals, x)
     n = length(sorted_intervals)
@@ -35,7 +40,7 @@ function _discretize(sorted_intervals, x)
         middle_interval = sorted_intervals[middle]
         if x ∈ middle_interval
             return middle_interval
-        elseif isless(x, Intervals.RightEndpoint(middle_interval))
+        elseif isless(x, _right_endpoint(middle_interval))
             right = middle - 1
         else
             left = middle + 1
@@ -52,6 +57,13 @@ function (discr::Discretizer)(Z::EBayesSample)
     # define response! instead?
     @set Z.Z = discr(Z.Z)
 end
+
+
+function (discr::Discretizer)(Z::MultinomialSummary)
+    # define response! instead?
+    summarize( discr.(keys(Z)), fweights(multiplicity(Z)))
+end
+
 
 # or maybe I should do sth else here?
 # TODO: Check interval already exists in discretizer
@@ -70,13 +82,13 @@ end
 function default_discretizer(Zs::AbstractVector{<:EBayesSample}; eps = 1e-6, nbins = 300)
     _sample_min, _sample_max = extrema(response.(Zs))
     _grid = range(_sample_min - eps; stop = _sample_max + eps, length = nbins)
-    Discretizer(_grid; unbounded = :none)
+    interval_discretizer(_grid; unbounded = :none)
 end
 
 function default_discretizer(Zs::AbstractVector{<:Number}; eps = 1e-6, nbins = 300)
     _sample_min, _sample_max = extrema(Zs)
     _grid = range(_sample_min - eps; stop = _sample_max + eps, length = nbins)
-    Discretizer(_grid; unbounded = :none)
+    interval_discretizer(_grid; unbounded = :none)
 end
 #-------------------------------------------------------------------------------------------
 
@@ -103,13 +115,15 @@ function _set_defaults(
 
     default_discretizer(Zs; eps=eps, nbins=nbins)
 end
-#function broadcasted(discr::Discretizer{T,C,S}, Zs::AbstractVector{<:EBayesSample}) where {T,C,S}
-#    C[discr(x) for x in xs]
-#end
 
-# Why not SetDefault for this? uhm...
 
-#function broadcasted(discr::Discretizer{T,C,S},
-#                  xs::AbstractVector{<:EBayesSample}) where {T,C,S}
-#   C[discr(x) for x in xs]
-#end
+function integer_discretizer(grid::AbstractVector{Int}; unbounded = :both)
+    unbounded === :both || throw(ArgumentError("only positive boundary implemented"))
+
+    ints = Union{Int, Interval{Int64,Unbounded,Closed}, Interval{Int64,Closed,Unbounded}}[
+                Interval(nothing, first(grid))
+                grid[2:(end-1)]
+                Interval(last(grid), nothing)
+    ]
+    Discretizer{typeof(ints)}(ints)
+end
