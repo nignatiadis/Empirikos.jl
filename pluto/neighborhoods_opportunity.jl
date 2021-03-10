@@ -24,7 +24,10 @@ Load packages
 md"Load the Moving to Opportunities neighborhoods dataset (Chetty and Hendren, 2018) and remove missing entries"
 
 # ╔═╡ 61ace78c-7665-11eb-14c0-0964539796fa
-nbhood_csv = Empirikos.Neighborhoods.load_table() |> DataFrame |> dropmissing
+nbhood_csv = Empirikos.Neighborhoods.load_table() |> DataFrame |> dropmissing;
+
+# ╔═╡ ea0c5878-8188-11eb-205c-c95e406496f9
+first(nbhood_csv,4)
 
 # ╔═╡ d0a1ce7a-7665-11eb-12be-a3510bc83fc1
 md"Wrap the data in a type that represents the Gaussian likelihood:"
@@ -80,11 +83,10 @@ floc_method_smooth = FLocalizationInterval(;
     flocalization = DvoretzkyKieferWolfowitz(0.05),
     convexclass = gcal_smooth,
     solver = Mosek.Optimizer,
-)
+);
 
 # ╔═╡ ab5dd40a-7666-11eb-39da-81b36a92c705
-postmean_cis_smooth = confint.(floc_method_smooth, targets,Zs)
-
+postmean_cis_smooth = confint.(floc_method_smooth, targets,Zs);
 
 # ╔═╡ 7ddc4a5e-7667-11eb-0990-135e43d168b3
 md" Also evaluate the plugin estimates based on the NPMLE and finally plot everything (interval bands in blue, NPMLE estimate in dashed purple and z ↦ z dotted black)."
@@ -144,16 +146,16 @@ floc_method_discrete = FLocalizationInterval(;
     flocalization = DvoretzkyKieferWolfowitz(0.05),
     convexclass = discrete_class,
     solver = Mosek.Optimizer,
-)
+);
 
 # ╔═╡ bce4edc8-7667-11eb-0d6c-5d7b99fead6c
 
 
 # ╔═╡ c2316fb8-7667-11eb-00a9-1bef1ce72652
-postmean_cis_discrete = confint.(floc_method_discrete, targets, Zs)
+postmean_cis_discrete = confint.(floc_method_discrete, targets, Zs);
 
 # ╔═╡ c52a446a-7667-11eb-344b-4124556ca32a
-targets_discrete_npmle = targets.(npmle_discrete_fit.prior)
+targets_discrete_npmle = targets.(npmle_discrete_fit.prior);
 
 # ╔═╡ ca99b43a-7667-11eb-04f9-ff24c8341d77
 begin
@@ -182,9 +184,6 @@ plot!.(
 )
 plot(plots_discrete..., ylabel = target_names, layout=(1,3), size=(600,200))
 end
-
-# ╔═╡ 63b6965e-8182-11eb-02ec-efde92c45120
-[[-3σ;3σ] for σ ∈ σs]
 
 # ╔═╡ faf674d6-816d-11eb-2e3e-335dd6bd5008
 md"""# AMARI intervals
@@ -218,7 +217,7 @@ md"And finally the AMARI interval."
 amari = AMARI(; convexclass = discrete_class,
 				flocalization = DvoretzkyKieferWolfowitz(0.01),
 		        plugin_G = npmle_discrete_fit,
-	            solver=Mosek.Optimizer)
+	            solver=Mosek.Optimizer);
 
 # ╔═╡ 64cc087a-816f-11eb-327a-91ab08149d0e
 ci_amari = confint(amari, yuma_posterior_mean, Zs)
@@ -231,9 +230,10 @@ md"The AMARI interval does not contain zero (and so we can reject the null that 
 # ╠═1cae6098-7665-11eb-171c-39b12a001162
 # ╟─c20e1e20-7665-11eb-31d0-a9bbe2952d95
 # ╠═61ace78c-7665-11eb-14c0-0964539796fa
+# ╠═ea0c5878-8188-11eb-205c-c95e406496f9
 # ╟─d0a1ce7a-7665-11eb-12be-a3510bc83fc1
 # ╠═65596c02-7665-11eb-24a6-53194a8ef2ec
-# ╠═75a30c76-7665-11eb-1a42-5fb73c3fd435
+# ╟─75a30c76-7665-11eb-1a42-5fb73c3fd435
 # ╠═6a5dce64-7665-11eb-0640-074cb387b172
 # ╠═6d2de886-7665-11eb-38b2-918706170dab
 # ╠═70a14292-7665-11eb-37bc-078e81fad4ce
@@ -257,7 +257,6 @@ md"The AMARI interval does not contain zero (and so we can reject the null that 
 # ╠═c2316fb8-7667-11eb-00a9-1bef1ce72652
 # ╠═c52a446a-7667-11eb-344b-4124556ca32a
 # ╠═ca99b43a-7667-11eb-04f9-ff24c8341d77
-# ╠═63b6965e-8182-11eb-02ec-efde92c45120
 # ╟─faf674d6-816d-11eb-2e3e-335dd6bd5008
 # ╠═0ddf12d8-816e-11eb-2cea-35144d2145e2
 # ╠═b533cb1e-816e-11eb-09a7-f3b3f26111fe
