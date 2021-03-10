@@ -1,12 +1,11 @@
 ### A Pluto.jl notebook ###
-# v0.12.20
+# v0.12.21
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ ebbb8758-126a-11eb-3682-31a80e9f8437
 begin 
-	using Revise
 	using Empirikos
 	using JuMP
 	using RCall
@@ -84,7 +83,7 @@ Let us convert the table as a vector of Binomial samples
 """
 
 # ╔═╡ 89cd6128-126b-11eb-2164-9d634900847a
-tack_Zs = BinomialSample.(tacks_tbl[:x], Int64.(tacks_tbl[:k]))
+tack_Zs = BinomialSample.(tacks_tbl.x, Int64.(tacks_tbl.k))
 
 # ╔═╡ c774a158-126b-11eb-2241-a9b6cf80c681
 tacks_npmle = fit(NPMLE(DiscretePriorClass(), Mosek.Optimizer), tack_Zs);
@@ -107,7 +106,7 @@ md"""
 norberg = rcopy(R"Norberg"); first(norberg,3)
 
 # ╔═╡ cccfbc70-126e-11eb-0439-4552285a634d
-norberg_Zs = Empirikos.PoissonSample.(norberg[:Death], norberg[:Exposure] ./ 344);
+norberg_Zs = Empirikos.PoissonSample.(norberg.Death, norberg.Exposure ./ 344);
 
 # ╔═╡ f6e28740-1273-11eb-1464-ab04ba549059
 extrema(response.(norberg_Zs) ./ nuisance_parameter.(norberg_Zs))
@@ -168,7 +167,7 @@ end
 # ╔═╡ Cell order:
 # ╟─ff3c85b6-126a-11eb-3fc0-635d27bf1d7e
 # ╠═ebbb8758-126a-11eb-3682-31a80e9f8437
-# ╟─88f13064-12ba-11eb-2329-b1b7196a3af4
+# ╠═88f13064-12ba-11eb-2329-b1b7196a3af4
 # ╟─675ba12a-12b8-11eb-0791-77781a1619fa
 # ╠═8a5b07c4-12b8-11eb-0884-19f987050ba4
 # ╠═cf8c5152-12b8-11eb-220e-b9750bf9cc9f
