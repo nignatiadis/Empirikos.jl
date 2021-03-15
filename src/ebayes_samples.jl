@@ -63,6 +63,9 @@ function Base.isless(a::EBayesSample, b::EBayesSample)
                  (response(b), nuisance_parameter(b)) )
 end
 
+Base.isless(a::EBayesSample, b::Number) = Base.isless(response(a),b)
+Base.isless(a::Number, b::EBayesSample) = Base.isless(a, response(b))
+
 
 """
 	marginalize(Z::EBayesSample, prior::Distribution)
