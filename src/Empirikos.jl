@@ -48,7 +48,6 @@ include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
-include("fmodeling.jl")
 
 
 include("datasets/LordCressie/LordCressie.jl")
