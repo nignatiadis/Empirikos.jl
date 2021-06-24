@@ -66,7 +66,7 @@ function posterior(Z::PoissonSample, prior::Gamma)
     Gamma(α_post, 1 / β_post)
 end
 
-function StatsBase.fit(::ParametricMLE{<:Gamma}, Zs::AbstractVector{<:PoissonSample})
+function StatsBase.fit(::ParametricMLE{<:Gamma}, Zs::VectorOrSummary{<:PoissonSample})
     func = TwiceDifferentiable(
         params -> -loglikelihood(Zs, Gamma(params...)),
         [1.0; 1.0];

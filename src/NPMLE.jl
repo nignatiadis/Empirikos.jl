@@ -92,6 +92,10 @@ function KolmogorovSmirnovMinimumDistance(convexclass, solver)
     KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
 end
 
+function KolmogorovSmirnovMinimumDistance(; convexclass, solver)
+    KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
+end
+
 function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
     @unpack convexclass, solver = method
     model = Model(solver)

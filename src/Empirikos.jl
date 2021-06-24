@@ -42,15 +42,19 @@ include("NPMLE.jl")
 include("samples/binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
+include("samples/truncatedpoisson.jl")
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
+include("fmodeling.jl")
+
 
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
 include("datasets/Neighborhoods/neighborhoods.jl")
+include("datasets/Butterfly/Butterfly.jl")
 
 
 
@@ -59,6 +63,7 @@ export EBayesSample,
     StandardNormalSample,
     BinomialSample,
     PoissonSample,
+    TruncatedPoissonSample,
     marginalize,
     compound,
     discretize,
