@@ -23,7 +23,7 @@ The main interface functions are the following:
 
 ```@docs
 likelihood_distribution
-response
+response(::EBayesSample)
 marginalize
 pdf(::Distribution, ::EBayesSample)
 cdf(::Distribution, ::EBayesSample)

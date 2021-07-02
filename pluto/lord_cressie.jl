@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.21
+# v0.14.8
 
 using Markdown
 using InteractiveUtils
@@ -25,15 +25,14 @@ md"""
 # ╔═╡ b852c54c-4bd2-11eb-27c9-6fbfa3dc09e7
 begin
 	pgfplotsx()
-	deleteat!(PGFPlotsX.CUSTOM_PREAMBLE,
-			  Base.OneTo(length(PGFPlotsX.CUSTOM_PREAMBLE)))
+	empty!(PGFPlotsX.CUSTOM_PREAMBLE)
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\usepackage{amssymb}")
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\PP}[2][]{\mathbb{P}_{#1}\left[#2\right]}")
 	push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\EE}[2][]{\mathbb{E}_{#1}\left[#2\right]}")
 end;
 
 # ╔═╡ bd3d470e-4bd1-11eb-2b6a-3342f8a8a272
-lord_cressie = LordCressie.load_table() |> DataFrame
+lord_cressie = Empirikos.LordCressie.load_table() |> DataFrame
 
 # ╔═╡ 1e6e4c8a-4bd2-11eb-29ae-9bcb1d13a026
 Zs = Empirikos.MultinomialSummary(BinomialSample.(lord_cressie.x, 20),
@@ -53,6 +52,7 @@ lord_cressie_freq = plot(
 	 0:20,
 	 sqrt.(empirical_probs), seriestype=:sticks, frame=:box,
      grid=nothing, color=:grey, markershape=:circle,
+     legendfonthalign = :left,
      markerstrokealpha = 0, ylim=(-0.001,sqrt(0.15)),
      xguide=L"z",yguide=L"\sqrt{\hat{f}_n(z)}",thickness_scaling=1.3,
      label=nothing, size=(500,350)
@@ -69,7 +69,7 @@ We first create a discretization object that will combine all counts ≤ 1.
 """
 
 # ╔═╡ d3f6af54-8161-11eb-0dd9-41ae82c23455
-discr = integer_discretizer(1:20) 
+discr = integer_discretizer(1:20)
 
 # ╔═╡ caaf9fce-4bd4-11eb-3c4e-318bd5bc838b
 Zs_collapse = discr(Zs)
@@ -133,7 +133,7 @@ upper_dkw_ci = getproperty.(dkw_cis, :upper)
 md"""### Amari intervals"""
 
 # ╔═╡ dec4fae4-4bd5-11eb-337d-0152aba1d793
-lam_chisq = Empirikos.AMARI(
+amari_chisq = Empirikos.AMARI(
 							convexclass = 𝒢,
                             flocalization = Empirikos.ChiSquaredFLocalization(0.01),
                             solver=quiet_mosek,
@@ -142,20 +142,20 @@ lam_chisq = Empirikos.AMARI(
 
 
 # ╔═╡ 64050d52-4bd6-11eb-2fa6-8bf4fbee5ba3
-postmean_ci_lam = confint.(lam_chisq, postmean_targets, Zs_collapse)
+postmean_ci_amari = confint.(amari_chisq, postmean_targets, Zs_collapse)
 
 # ╔═╡ 6d844faa-4bd6-11eb-236b-314232fdc8dc
-lower_lam_ci = getproperty.(postmean_ci_lam, :lower)
+lower_amari_ci = getproperty.(postmean_ci_amari, :lower)
 
 # ╔═╡ 7028abde-4bd6-11eb-21a9-1fc894463402
-upper_lam_ci = getproperty.(postmean_ci_lam, :upper)
+upper_amari_ci = getproperty.(postmean_ci_amari, :upper)
 
 # ╔═╡ 797941a8-4bd6-11eb-2beb-27b403e207f6
 md"""## Plot confidence intervals (Fig.2b)"""
 
 # ╔═╡ 90c72758-4bd6-11eb-2b50-61600eb25e64
 postmean_plot = begin
-plot(0:20, upper_lam_ci, fillrange=lower_lam_ci ,seriestype=:sticks,
+plot(0:20, upper_amari_ci, fillrange=lower_amari_ci ,seriestype=:sticks,
             frame=:box,
             grid=nothing,
             xguide = L"z",
@@ -165,6 +165,7 @@ plot(0:20, upper_lam_ci, fillrange=lower_lam_ci ,seriestype=:sticks,
             linecolor=:blue,
             alpha = 0.4,
             background_color_legend = :transparent,
+            legendfonthalign = :left,
             foreground_color_legend = :transparent, ylim=(-0.01,1.01), thickness_scaling=1.3,
             label="Amari",
             size=(500,350))
@@ -179,7 +180,7 @@ plot!([0;20], [0.0; 1.0], seriestype=:line, linestyle=:dot, label=nothing, color
 end
 
 # ╔═╡ f75f3898-4bd6-11eb-0c18-1bcfedf36254
-savefig(postmean_plot, "lord_cressie_posterior_mean.tikz")
+#savefig(postmean_plot, "lord_cressie_posterior_mean.tikz")
 
 # ╔═╡ Cell order:
 # ╟─7cd14ada-4bd1-11eb-137b-0591983ae782

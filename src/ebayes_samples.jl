@@ -39,9 +39,9 @@ julia> response(StandardNormalSample(1.0))
 1.0
 ```
 """
-#function response(Z::EBayesSample)
-#    Z.Z # implicitly assuming Z is that slot
-#end
+function response(Z::EBayesSample)
+   throw("Response not implemented for this sample type.")
+end
 
 function set_response(Z::EBayesSample, znew=missing)
     Z = @set Z.Z = znew
@@ -187,7 +187,7 @@ end
 function _cdf(
     dbn::ContinuousUnivariateDistribution,
     interval::Interval{T,S,B},
-) where {T,S,B<:Intervals.Bounded}
+) where {T,S,B<:Bounded}
     _cdf(dbn, last(interval))
 end
 
