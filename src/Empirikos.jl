@@ -8,7 +8,7 @@ using DataStructures
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
 
-import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval
+import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded
 export Interval, Closed, Open, Unbounded # instead of @reexport
 
 import JuMP

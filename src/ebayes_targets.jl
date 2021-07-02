@@ -67,7 +67,7 @@ end
 # TODO: Allow setting tolerances.
 function compute_target(lin::QuadgkQuadrature, target::LinearEBayesTarget, sample, prior::ContinuousUnivariateDistribution)
    _interval = intersect(_support(target), _support(prior))
-   if Intervals.isbounded(_interval)
+   if isbounded(_interval)
         _lower = first(_interval)
         _upper = last(_interval)
    elseif isa(_interval, Interval{T, Unbounded, Unbounded} where {T})
