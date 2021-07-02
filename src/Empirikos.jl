@@ -14,7 +14,7 @@ export Interval, Closed, Open, Unbounded # instead of @reexport
 import JuMP
 import JuMP: @constraint, @variable, set_lower_bound, @expression,
     Model, @objective, optimize!, objective_value, set_objective,
-    set_normalized_rhs
+    set_normalized_rhs, RotatedSecondOrderCone
 using KernelDensity
 using LinearAlgebra
 using LinearFractional
