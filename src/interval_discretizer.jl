@@ -28,7 +28,7 @@ function interval_discretizer(grid::AbstractVector; closed = :right, unbounded =
 end
 
 # TODO: What if x does not fall into any of the intervals?
-_right_endpoint(int::Interval) = Intervals.RightEndpoint(int)
+_right_endpoint(int::Interval) = RightEndpoint(int)
 _right_endpoint(x::Real) = x
 
 function _discretize(sorted_intervals, x)

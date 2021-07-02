@@ -8,13 +8,15 @@ using DataStructures
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
 
-import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded
+import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded,
+    RightEndpoint
 export Interval, Closed, Open, Unbounded # instead of @reexport
 
 import JuMP
 import JuMP: @constraint, @variable, set_lower_bound, @expression,
     Model, @objective, optimize!, objective_value, set_objective,
-    set_normalized_rhs, RotatedSecondOrderCone
+    set_normalized_rhs, RotatedSecondOrderCone, SecondOrderCone, set_value
+
 using KernelDensity
 using LinearAlgebra
 using LinearFractional
