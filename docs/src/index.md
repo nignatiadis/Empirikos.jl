@@ -11,11 +11,14 @@ This package provides a unified framework for estimation and inference under the
 
 ## Installation
 
-The package is available from the Julia registry. It may be installed on Julia version 1.5 as follows:
+The package is available from the Julia registry. It may be installed on Julia version 1.6 as follows:
 ```julia
 using Pkg
 Pkg.add("Empirikos")
 ```
+
+For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is [supported by JuMP.jl](ttps://jump.dev/JuMP.jl/dev/installation/#Supported-solvers). We recommend using the [MOSEK](https://www.mosek.com/) solver through the [MosekTools.jl](https://github.com/jump-dev/MosekTools.jl) package and we used MOSEK for all simulations and empirical examples in [[ignatiadis2019bias](@cite)]. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is [Hypatia.jl](https://github.com/chriscoey/Hypatia.jl).
+
 
 ## Getting started
 
@@ -32,7 +35,7 @@ Below are some vignettes using this package for empirical Bayes tasks. There are
 
 !!! note "Modularity"
       This package has been designed with the goal of modularity. 
-      Specialized code (using Julia's multiple dispatch) handles different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently).
+      Specialized code (using Julia's multiple dispatch) can be easily added to more efficiently handle different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently or is slow).
 
       
 ## Related packages
