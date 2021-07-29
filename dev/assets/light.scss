@@ -104,12 +104,10 @@ $input-focus-border-color: $mainwhite;
 // 
 //
 $info: rgb(70, 76, 125);
-$background: lighten_color($info, 3);
+$background: lighten_color($info, 5);
 
-$admonition-background: (
-  'default': $background, 'info': $background, 'success': $background, 'warning': $background,
-  'danger': $background, 'compat': $background
-);
+
+
 
 
 
