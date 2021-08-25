@@ -4,6 +4,8 @@ using Empirikos
 using LinearAlgebra
 using Test
 using JuMP
+using StatsBase
+
 G = Normal(1,0.3)
 F_G = marginalize(StandardNormalSample(), G)
 Random.seed!(1)
