@@ -7,8 +7,6 @@ end
 
 Discretizer() = Discretizer(DataBasedDefault())
 
-# Discretizer(intervals::S) where {T,C<:AbstractInterval{T},S<:AbstractVector{C}}
-
 
 Base.keys(discr::Discretizer) = discr.sorted_intervals
 

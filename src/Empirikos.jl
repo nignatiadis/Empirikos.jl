@@ -30,8 +30,9 @@ using Roots
 using Setfield
 using Statistics
 import Statistics: std, var
-@reexport using StatsBase
-import StatsBase: loglikelihood, response, fit, nobs, weights
+
+using StatsBase
+import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 
 using UnPack
 
@@ -61,6 +62,7 @@ include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
 include("datasets/Neighborhoods/neighborhoods.jl")
 include("datasets/Butterfly/Butterfly.jl")
+include("datasets/Surgery/Surgery.jl")
 
 
 
@@ -92,6 +94,13 @@ export EBayesSample,
     nominal_alpha,
     integer_discretizer,
     interval_discretizer
+
+export loglikelihood,
+    response,
+    fit,
+    nobs,
+    weights,
+    confint
 
 # F-Localizations
 export DvoretzkyKieferWolfowitz,

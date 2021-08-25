@@ -17,7 +17,7 @@ using Pkg
 Pkg.add("Empirikos")
 ```
 
-For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is [supported by JuMP.jl](ttps://jump.dev/JuMP.jl/dev/installation/#Supported-solvers). We recommend using the [MOSEK](https://www.mosek.com/) solver through the [MosekTools.jl](https://github.com/jump-dev/MosekTools.jl) package and we used MOSEK for all simulations and empirical examples in [[ignatiadis2019bias](@cite)]. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is [Hypatia.jl](https://github.com/chriscoey/Hypatia.jl).
+For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is [supported by JuMP.jl](https://jump.dev/JuMP.jl/dev/installation/#Supported-solvers). We recommend using the [MOSEK](https://www.mosek.com/) solver through the [MosekTools.jl](https://github.com/jump-dev/MosekTools.jl) package and we used MOSEK for all simulations and empirical examples in [[ignatiadis2019bias](@cite)]. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is [Hypatia.jl](https://github.com/chriscoey/Hypatia.jl).
 
 
 ## Getting started
