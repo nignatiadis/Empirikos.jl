@@ -10,6 +10,10 @@ using QuadGK
     include("test_set_defaults.jl")
 end
 
+@testset "Test ci tools" begin
+    include("test_ci_tools.jl")
+end
+
 @testset "Dict function" begin
     include("test_dict_function.jl")
 end
