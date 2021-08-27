@@ -5,6 +5,15 @@ using FiniteDifferences
 using ForwardDiff
 using Hypatia
 using QuadGK
+using Documenter
+
+
+# Doctests
+
+DocMeta.setdocmeta!(Empirikos, :DocTestSetup, :(using Empirikos); recursive=true)
+doctest(Empirikos)
+
+# Other tests
 
 @testset "Test set default" begin
     include("test_set_defaults.jl")

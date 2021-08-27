@@ -42,11 +42,12 @@ of `support`, i.e., it represents all `DiscreteNonParametric` distributions with
 Note that `DiscretePriorClass(support)(probs) == DiscreteNonParametric(support, probs)`.
 
 # Examples
-```julia-repl
+```jldoctest
 julia> gcal = DiscretePriorClass([0,0.5,1.0])
-DiscretePriorClass | suport = [0.0, 0.5, 1.0]
+DiscretePriorClass | support = [0.0, 0.5, 1.0]
+
 julia> gcal([0.2,0.2,0.6])
-DiscreteNonParametric{Float64,Float64,Array{Float64,1},Array{Float64,1}}(support=[0.0, 0.5, 1.0], p=[0.2, 0.2, 0.6])
+DiscreteNonParametric{Float64, Float64, Vector{Float64}, Vector{Float64}}(support=[0.0, 0.5, 1.0], p=[0.2, 0.2, 0.6])
 ```
 """
 struct DiscretePriorClass{S} <: AbstractSimplexPriorClass
@@ -55,11 +56,12 @@ end
 
 DiscretePriorClass(; support=DataBasedDefault()) = DiscretePriorClass(support)
 
+support(convexclass::DiscretePriorClass) = convexclass.support
+
 function (convexclass::DiscretePriorClass)(p::AbstractVector{<:Real})
     DiscreteNonParametric(support(convexclass), fix_πs(p))
 end
 
-support(convexclass::DiscretePriorClass) = convexclass.support
 nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
 Distributions.components(convexclass::DiscretePriorClass) = Dirac.(support(convexclass))
 
@@ -70,12 +72,10 @@ function Base.show(io::IO, gcal::DiscretePriorClass)
 end
 
 
-function prior_variable!(model, convexclass::AbstractSimplexPriorClass; var_name = "π") # adds constraints
+function prior_variable!(model, convexclass::AbstractSimplexPriorClass)
     n = nparams(convexclass)
     tmp_vars = @variable(model, [i = 1:n])
-    #model[Symbol(var_name)] = tmp_vars
     set_lower_bound.(tmp_vars, 0.0)
-    #@constraint(model, tmp_vars .> 0)
     con = @constraint(model, sum(tmp_vars) == 1.0)
     PriorVariable(convexclass, tmp_vars, model)
 end
@@ -112,7 +112,8 @@ Type representing the family of all mixture distributions with mixing components
 Note that `MixturePriorClass(components)(probs) == MixtureModel(components, probs)`.
 
 # Examples
-```julia-repl
+
+```jldoctest
 julia> gcal = MixturePriorClass([Normal(0,1), Normal(0,2)])
 MixturePriorClass (K = 2)
 Normal{Float64}(μ=0.0, σ=1.0)
@@ -160,7 +161,7 @@ end
 
 function cdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
     @unpack convexclass, finite_param, model = prior
-    cdf_combination = _cdf.(components(convexclass), Z)
+    cdf_combination = cdf.(components(convexclass), Z)
     @expression(model, dot(finite_param, cdf_combination))
 end
 
@@ -177,7 +178,7 @@ Type representing the family of mixtures of Gaussians with mean `0` and standard
 equal to `σs`. `GaussianScaleMixtureClass(σs)` represents the same class of distributions
 as `MixturePriorClass.(Normal.(0, σs))`
 
-```julia-repl
+```jldoctest
 julia> gcal = GaussianScaleMixtureClass([1.0,2.0])
 GaussianScaleMixtureClass | σs = [1.0, 2.0]
 

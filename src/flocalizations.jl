@@ -2,6 +2,7 @@
    Abstract type representing F-Localizations.
 """
 abstract type FLocalization end
+
 """
    Abstract type representing a fitted F-Localization
    (i.e., wherein the F-localization has already been determined by data).
@@ -95,6 +96,8 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
     cdf_probs /= cdf_probs[end]
     _Zs = collect(keys(Zs_summary.store))
 
+    issorted(_Zs) || error("MultinomialSummary not sorted.")
+
     max_constraints = dkw.max_constraints
 
     if max_constraints < n_constraints - 10
@@ -130,7 +133,7 @@ function flocalization_constraint!(
     model
 end
 
-# subsampling should probably be part of DKW definition
+# add discrete version of this?
 @recipe function f(fitted_dkw::FittedDvoretzkyKieferWolfowitz)
     x_dkw = response.(collect(keys(fitted_dkw.summary)))
     F_dkw = collect(values(fitted_dkw.summary))

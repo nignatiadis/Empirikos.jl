@@ -20,12 +20,26 @@ end
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
 NPMLE(;convexclass, solver, kwargs...) = NPMLE(convexclass, solver; kwargs)
 
+function Base.show(io::IO, npmle::NPMLE)
+    print(io, "NPMLE with ")
+    show(io, npmle.solver)
+    println(io, " and 𝒢:")
+    show(io, npmle.convexclass)
+end
+
+
 struct FittedConvexMinimumDistance{D,N<:ConvexMinimumDistanceMethod}
     prior::D
     method::N
     model::Any # add status?
 end
 Base.broadcastable(fitted_method::FittedConvexMinimumDistance) = Ref(fitted_method)
+
+function Base.show(io::IO, fittedmethod::FittedConvexMinimumDistance)
+    print(io, "Fitted ")
+    show(io, fittedmethod.method)
+end
+
 # TODO: replace these types of methods by a fit_if_not_fitted
 StatsBase.fit(fitted_method::FittedConvexMinimumDistance, args...; kwargs...) =
     fitted_method
@@ -96,6 +110,13 @@ function KolmogorovSmirnovMinimumDistance(; convexclass, solver)
     KolmogorovSmirnovMinimumDistance(convexclass, solver, nothing)
 end
 
+function Base.show(io::IO, ks::KolmogorovSmirnovMinimumDistance)
+    print(io, "Kolmogorov-Smirnov Minimum Distance with ")
+    show(io, ks.solver)
+    println(io, " and 𝒢:")
+    show(io, ks.convexclass)
+end
+
 function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
     @unpack convexclass, solver = method
     model = Model(solver)
@@ -114,14 +135,6 @@ function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
 
     @objective(model, Min, u)
     optimize!(model)
-    estimated_prior = convexclass(JuMP.value.(π.finite_param))
+    estimated_prior = π()
     FittedConvexMinimumDistance(estimated_prior, method, model)
 end
-# NonparametricMLE( __ optional {ConvexPriorClass}; grid= , ngrid=  , method=:primal or :dual, solver= )
-
-# NPMLE{}
-
-# FModel()
-
-#What are we estimating?
-#How are we estimating it?

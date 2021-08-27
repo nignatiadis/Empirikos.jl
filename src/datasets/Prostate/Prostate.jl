@@ -11,7 +11,7 @@ The dataset is from the following reference:
  Gene expression correlates of clinical prostate cancer behavior.
  Cancer cell, 1(2): 203–209, 2002.
 
-See the following monograph for further illustration
+See the following monograph for further illustrations
 of empirical Bayes methods on this dataset:
 
 > Bradley Efron. Large-scale inference: Empirical Bayes methods for estimation, testing,

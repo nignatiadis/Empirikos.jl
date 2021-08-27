@@ -3,6 +3,8 @@
 
 abstract type ConfidenceInterval end
 
+Base.broadcastable(ci::ConfidenceInterval) = Ref(ci)
+
 # LowerUpperConfidenceInterval
 Base.@kwdef struct LowerUpperConfidenceInterval <: ConfidenceInterval
     lower::Float64
@@ -103,13 +105,10 @@ end
 
 Base.broadcastable(pair::BisectionPair) = Ref(pair)
 
-function StatsBase.confint(pair::BisectionPair, λ ; α=0.05)
+function confint(pair::BisectionPair, λ ; α=0.05)
     _se = sqrt( abs2(1-λ)*pair.var1 + abs2(λ)*pair.var2 + 2*λ*(1-λ)*pair.cov)
     _maxbias = (1-λ)*pair.max_bias1 + λ*pair.max_bias2
     _estimate = (1-λ)*pair.estimate1 + λ*pair.estimate2
     bw = gaussian_ci(_se; maxbias=_maxbias, α=α)
-    _estimate -bw , _estimate+bw
+    _estimate -bw , _estimate +bw
 end
-
-
-Base.broadcastable(ci::ConfidenceInterval) = Ref(ci)

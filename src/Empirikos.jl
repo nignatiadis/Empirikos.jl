@@ -26,6 +26,7 @@ using ParameterJuMP
 using QuadGK
 using Random
 using RecipesBase
+using Roots
 using Setfield
 using Statistics
 import Statistics: std, var

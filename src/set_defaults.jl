@@ -31,7 +31,7 @@ function set_defaults(obj, data...; hints = Dict())
     if any(isa.(_fields, AbstractDefault))
         updated_obj = _set_defaults(obj, data...; hints = hints)
         all(.!isa.(getfield.(Ref(updated_obj), _fieldnames), AbstractDefault)) ||
-            throw("set_default did not set all DataBasedDefaults. Please specify manually.")
+            throw("_set_defaults did not set all DataBasedDefaults. Please specify manually.")
         return set_defaults(updated_obj, data...; hints = hints)
     end
 
