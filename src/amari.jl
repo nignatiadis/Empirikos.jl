@@ -504,7 +504,7 @@ function _fit_initialized(method::AMARI, target, Zs; kwargs...)
 end
 
 
-function StatsBase.confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
+function confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
     target == Q.modulus_model.target ||
            throw("Target has changed")
 
@@ -520,7 +520,7 @@ function StatsBase.confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
                                    α = α, method = nothing, target = target)
 end
 
-function StatsBase.confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
+function confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
     _fit = StatsBase.fit(method, target, Zs; kwargs...)
     StatsBase.confint(_fit, target, Zs; kwargs...)
 end

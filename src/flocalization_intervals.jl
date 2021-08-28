@@ -9,8 +9,9 @@ estimands. Here `flocalization` is a  [`Empirikos.FLocalization`](@ref), `convex
 a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
 
 `n_bisection` is relevant only for combinations of `flocalization` and `convexclass` for
-    which the Charnes-Cooper transformation is not applicable. Instead, a quasi-convex
-    optimization problem is solved by bisection and increasing `n_bisection` increases
+    which the Charnes-Cooper transformation is not applicable/implemented.
+    Instead, a quasi-convex optimization problem is solved by bisection and
+    increasing `n_bisection` increases
     accuracy (at the cost of more computation).
 """
 Base.@kwdef struct FLocalizationInterval{N,G}
@@ -28,24 +29,48 @@ end
 Base.@kwdef struct FittedFLocalizationInterval{T, NW<:FLocalizationInterval, M, P, V}
     method::NW
     target::T = nothing
-    model::M
-    gmodel::P
-    g1::V = nothing
-    g2::V = nothing
+    model::M  #JuMP model
+    gmodel::P #prior variable
+    g1::V = nothing #prior corresponding to smallest value of target
+    g2::V = nothing #prior corresponding to largest value of target
     lower::Float64 = -Inf
     upper::Float64 = +Inf
 end
 
+function Empirikos.nominal_alpha(floc::FittedFLocalizationInterval)
+    Empirikos.nominal_alpha(floc.method)
+end
+
+# Calls:
+
+## Level 1: With raw data Zs, Need to fit FLocalization
+#--------------------------------------------------------
+# fit(method::FLocalizationInterval, target, Zs, args...; kwargs...)
+
+## Level 2: Dispatch with FittedFLocalization, maybe this should be renamed initialize or sth like that
+#-------------------------------------------------------------------------------------------------------
+# fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization}, target::Empirikos.AbstractPosteriorTarget)
+# fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization}, target::Empirikos.AbstractPosteriorTarget, vexity::Empirikos.LinearVexity)
+# fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization}, target::Empirikos.AbstractPosteriorTarget, ::Empirikos.ConvexVexity)
+# fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization}, target::Empirikos.LinearEBayesTarget)
+
+## Level 3: Dispatch with FittedFLocalization & JuMP objects and so forth already setup (FittedFLocalizationInterval)
+#------------------------------------------------------------------------------------------------------------------------
+# fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget}, target::Empirikos.AbstractPosteriorTarget)
+# fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget}, target::Empirikos.AbstractPosteriorTarget, ::Empirikos.LinearVexity)
+# it(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget}, target::Empirikos.AbstractPosteriorTarget, ::Empirikos.ConvexVexity)
+
+# fit(method::FittedFLocalizationInterval{<:Empirikos.LinearEBayesTarget}, target::Empirikos.LinearEBayesTarget)
 
 
-function StatsBase.fit(method::FLocalizationInterval, target, Zs; kwargs...)
+function StatsBase.fit(method::FLocalizationInterval, target, Zs, args...; kwargs...)
     Zs = Empirikos.summarize_by_default(Zs) ? summarize(Zs) : Zs
     method = Empirikos.set_defaults(method, Zs; kwargs...)
 
     fitted_floc = StatsBase.fit(method.flocalization, Zs)
     method = @set method.flocalization = fitted_floc
 
-    StatsBase.fit(method, target)
+    StatsBase.fit(method, target, args...) #args could be vexity
 end
 
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
@@ -54,7 +79,7 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
 end
 
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
-    target::Empirikos.AbstractPosteriorTarget, ::Empirikos.LinearVexity)
+    target::Empirikos.AbstractPosteriorTarget, vexity::Empirikos.LinearVexity)
 
     lfp = LinearFractionalModel(method.solver)
     g = Empirikos.prior_variable!(lfp, method.convexclass)
@@ -66,7 +91,7 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
         gmodel=g,
         target=target)
 
-    StatsBase.fit(fitted_worst_case, target)
+    StatsBase.fit(fitted_worst_case, target, vexity)
 end
 
 
@@ -78,14 +103,12 @@ end
 function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
                        target::Empirikos.AbstractPosteriorTarget, ::Empirikos.LinearVexity)
 
+                       #TODO CHECK target == method.target ?
     g = method.gmodel
     lfp = method.model
 
-    target_numerator = numerator(target)
-    target_numerator_g = target_numerator(g)
-    target_denominator = denominator(target)
-    target_denominator_g = target_denominator(g)
-
+    target_numerator_g = numerator(target)(g)
+    target_denominator_g = denominator(target)(g)
 
     set_objective(lfp, JuMP.MOI.MIN_SENSE, target_numerator_g, target_denominator_g)
     optimize!(lfp)
@@ -118,25 +141,26 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
     g = Empirikos.prior_variable!(model, convexclass)
 
     Empirikos.flocalization_constraint!(model, flocalization, g)
-    num_target = numerator(target)
-    denom_target = denominator(target)
-    @objective(model, Max, denom_target(g))
+    num_target_g = numerator(target)(g)
+    denom_target_g = denominator(target)(g)
+
+    @objective(model, Max, denom_target_g)
     optimize!(model)
     _max_denom = JuMP.objective_value(model)
-    @objective(model, Min, denom_target(g))
+    @objective(model, Min, denom_target_g)
     optimize!(model)
     _min_denom = JuMP.objective_value(model)
 
     _denom_range = range(_min_denom, stop=_max_denom, length=n_bisection)
     @variable(model, t == _min_denom, Param())
-    @constraint(model, denom_target(g) == t)
+    @constraint(model, denom_target_g == t)
 
     for (i, _denom) in enumerate(_denom_range)
         set_value(t, _denom)
-        @objective(model, Max, num_target(g))
+        @objective(model, Max, num_target_g)
         optimize!(model)
         _max_vals[i] = target(g())
-        @objective(model, Min, num_target(g))
+        @objective(model, Min, num_target_g)
         optimize!(model)
         _min_vals[i] = target(g())
     end
@@ -148,16 +172,18 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
         target=target,
         model=model,
         gmodel=g,
-        g1=nothing,
+        g1=nothing, # TODO: Keep track of this? -> Would require resolve though.
         g2=nothing,
         lower=_min,
         upper=_max)
 end
 
 function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
-    target::Empirikos.AbstractPosteriorTarget, ::Empirikos.ConvexVexity)
+    target::Empirikos.AbstractPosteriorTarget, vexity::Empirikos.ConvexVexity)
     # TODO: Cache results here too? But maybe wait for ParametricOptInterface first
-    StatsBase.fit(method.method, target)
+    # Right now we just extract the FLocalizationInterval object and refit the whole
+    # thing, including regenerating JuMP models and so forth.
+    StatsBase.fit(method.method, target, vexity)
 end
 
 
@@ -207,27 +233,57 @@ function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.LinearEBa
 end
 
 
-
-
-
-function StatsBase.confint(fitted_worst_case::FittedFLocalizationInterval)
+function confint(
+    fitted_worst_case::FittedFLocalizationInterval;
+    level=1-nominal_alpha(fitted_worst_case)
+)
     @unpack target, method, lower, upper = fitted_worst_case
-    α = nominal_alpha(method.flocalization)
+    α = nominal_alpha(fitted_worst_case)
+    α ≈ 1-level || error("F-Localization is not at correct confidence-level")
     LowerUpperConfidenceInterval(α=α, target=target, lower=lower,
                                  upper=upper)
 end
 
-function StatsBase.confint(floc::Union{FLocalizationInterval,FittedFLocalizationInterval}, target, args...)
+function confint(
+    floc::Union{FLocalizationInterval,FittedFLocalizationInterval},
+    target, args...;
+    level=1-nominal_alpha(floc)
+)
+    # could potentially think about having this reset the confidence level of the FLOC
+    # for now be safe and throw an error if wrong!
+    Empirikos.nominal_alpha(floc) ≈ 1-level ||
+        error("F-Localization is not at correct confidence-level")
+
     _fit = StatsBase.fit(floc, target, args...)
-    StatsBase.confint(_fit)
+    confint(_fit; level=level)
 end
 
 
-function Base.broadcasted(::typeof(StatsBase.confint), floc::FLocalizationInterval, targets, args...)
+function Base.broadcasted(::typeof(confint), floc::FLocalizationInterval, targets, args...)
     _fit = StatsBase.fit(floc, targets[1], args...)
     confint_vec = fill(confint(_fit), axes(targets))
     for (index, target) in enumerate(targets[2:end])
-        confint_vec[index+1] = StatsBase.confint(StatsBase.fit(_fit, target))
+        # TODO: Right now this would not work if args... specified non-default vexity.
+        confint_vec[index+1] = confint(StatsBase.fit(_fit, target))
     end
     confint_vec
+end
+
+
+function Base.broadcasted_kwsyntax(
+    ::typeof(confint),
+    floc::FLocalizationInterval,
+    targets::AbstractArray,
+    args...;
+    level=0.95,
+    kwargs...,
+)
+    _fit = StatsBase.fit(floc, targets[1], args...)
+    _first_ci = confint(_fit; level=level, kwargs...)
+    confint_vec = fill(_first_ci, axes(targets))
+    for (index, target) in enumerate(targets[2:end])
+            # TODO: Right now this would not work if args... specified non-default vexity.
+        confint_vec[index + 1] = confint(_fit, target; level=level)
+    end
+    return confint_vec
 end

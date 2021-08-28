@@ -224,6 +224,10 @@ function StatsBase.fit(opt::InfinityNormDensityBand,
 
     @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
 
+    # deepcopying below to make sure RNG status for sampling here remains the same.
+
+    rng = deepcopy(rng)
+
     res = certainty_banded_KDE(response.(Zs), a_min, a_max;
                          npoints = npoints,
                          rng = rng,

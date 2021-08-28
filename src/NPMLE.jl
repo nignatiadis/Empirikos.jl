@@ -82,7 +82,7 @@ function _fit(npmle::NPMLE, Zs)
     @constraint(model, vcat(u, f, _mult) in MathOptInterface.RelativeEntropyCone(2n + 1))
     @objective(model, Min, u)
     optimize!(model)
-    estimated_prior = convexclass(JuMP.value.(π.finite_param))
+    estimated_prior = π()
     FittedConvexMinimumDistance(estimated_prior, npmle, model)
 end
 
