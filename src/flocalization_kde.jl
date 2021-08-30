@@ -1,7 +1,7 @@
 abstract type InfiniteOrderKernel <: ContinuousUnivariateDistribution end
 
 function Base.show(io::IO, d::InfiniteOrderKernel)
-    print(io, Base.typename(typeof(d)))
+    print(io,   nameof(typeof(d)))
     print(io, " | bandwidth = ")
     print(io, d.h)
 end
@@ -37,7 +37,7 @@ end
 
 Distributions.cf(a::SincKernel, t) = one(Float64)*(-1/a.h <= t <= 1/a.h)
 
-function Distributions.pdf(a::SincKernel, t)
+function Distributions.pdf(a::SincKernel, t::Real)
    if t==zero(Float64)
        return(one(Float64)/pi/a.h)
    else
@@ -45,7 +45,6 @@ function Distributions.pdf(a::SincKernel, t)
    end
 end
 
-# TODO, General FlatTopKernel
 
 """
     DeLaValleePoussinKernel(h) <: InfiniteOrderKernel
@@ -81,7 +80,7 @@ function Distributions.cf(a::DeLaValleePoussinKernel, t)
    end
 end
 
-function Distributions.pdf(a::DeLaValleePoussinKernel, t)
+function Distributions.pdf(a::DeLaValleePoussinKernel, t::Real)
    if t==zero(Float64)
        return(3*one(Float64)/2/pi/a.h)
    else
@@ -108,6 +107,11 @@ K^*(t) = \\begin{cases}
  11-10|t|,& \\text{ if } |t| \\in [1,1.1]
  \\end{cases}
 ```
+
+```jldoctest
+julia> Empirikos.FlatTopKernel(0.1)
+FlatTopKernel | bandwidth = 0.1
+```
 """
 struct FlatTopKernel{H} <: InfiniteOrderKernel
     h::H
@@ -125,11 +129,15 @@ function Distributions.cf(a::FlatTopKernel, t)
     end
  end
 
-function Distributions.pdf(a::FlatTopKernel, t)
+ # TODO: This is *not* numerically stable.
+ # But presumably do not need it to be (since the KDE code just calls cf)
+function Distributions.pdf(a::FlatTopKernel, t::Real)
+    h = a.h
+    th = t/h
     if t==zero(Float64)
-        return((0.55^2 - 0.5^2)*20/pi)
+        return((0.55^2 - 0.5^2)*20/pi/h)
     else
-        return((abs2(sin(0.55*x)) - abs2(sin(0.5*x)))/pi/x^2 * 20)
+        return((abs2(sin(0.55*th)) - abs2(sin(0.5*th)))/pi/th^2 * 20 / h)
     end
 end
 
@@ -196,7 +204,7 @@ distributed according to a density ``f``..
 
 ## Fields:
 * `a_min`,`a_max`, `kernel`: These are the same as the fields in `opt::InfinityNormDensityBand`.
-* `C∞`
+* `C∞`: The half-width of the L∞ band.
 * `fitted_kde`: The fitted `KernelDensity` object.
 """
 Base.@kwdef struct FittedInfinityNormDensityBand{T<:Real, S, K} <: FittedFLocalization
@@ -225,7 +233,6 @@ function StatsBase.fit(opt::InfinityNormDensityBand,
     @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
 
     # deepcopying below to make sure RNG status for sampling here remains the same.
-
     rng = deepcopy(rng)
 
     res = certainty_banded_KDE(response.(Zs), a_min, a_max;
@@ -237,7 +244,8 @@ function StatsBase.fit(opt::InfinityNormDensityBand,
     res = @set res.method = opt
     Z = Zs[1]
     normal_midpoints =  [@set Z.Z = mdpt for mdpt in res.midpoints]
-    @set res.midpoints = normal_midpoints
+    res = @set res.midpoints = normal_midpoints
+    res
 end
 
 function certainty_banded_KDE(Xs, a_min, a_max;
@@ -258,24 +266,28 @@ function certainty_banded_KDE(Xs, a_min, a_max;
 
     fitted_kde = kde(Xs, KernelDensity.UniformWeights(m), midpts, kernel)
     interp_kde = InterpKDE(fitted_kde)
+
+    # quantities only at points of interest
     midpts_idx = findall( (midpts .>= a_min) .& (midpts .<= a_max) )
+    midpoints = fitted_kde.x[midpts_idx]
+    estimated_density = fitted_kde.density[midpts_idx]
+
     C∞_boot = Vector{Float64}(undef, nboot)
 
     if bootstrap === :Multinomial
         multi = Multinomial(m, fill(1/m, m))
     end
     for k =1:nboot
-        # Poisson bootstrap to estimate certainty band
-        if bootstrap === :Poisson
+        if bootstrap === :Poisson # Poisson bootstrap to estimate certainty band
             Z_pois = rand(rng, Poisson(1), m)
             ws =  Weights(Z_pois/sum(Z_pois))
-        elseif bootstrap === :Multinomial
+        elseif bootstrap === :Multinomial # Efron bootstrap
             ws = Weights(vec(rand(rng, multi, 1)))
         else
             throw(error("Only :Multinomial and :Poisson supported."))
         end
         f_kde_pois =  kde(Xs, ws, midpts, kernel)
-        C∞_boot[k] = maximum(abs.(fitted_kde.density[midpts_idx] .- f_kde_pois.density[midpts_idx]))
+        C∞_boot[k] = maximum(abs.(estimated_density .- f_kde_pois.density[midpts_idx]))
     end
 
     C∞ = quantile(C∞_boot, 1-α)
@@ -285,21 +297,15 @@ function certainty_banded_KDE(Xs, a_min, a_max;
                     a_max=a_max,
                     fitted_kde=fitted_kde,
                     interp_kde=interp_kde,
-                    midpoints = fitted_kde.x[midpts_idx],
-                    estimated_density = fitted_kde.density[midpts_idx],
+                    midpoints = midpoints,
+                    estimated_density = estimated_density,
                     boot_samples = C∞_boot)
 end
 
 
 @recipe function f(ctband::FittedInfinityNormDensityBand; subsample=300)
-    y_all = ctband.fitted_kde.density
-    x_all = ctband.fitted_kde.x
-    a_min = ctband.a_min
-    a_max = ctband.a_max
-
-    _in_amin_amax = a_min .<= x_all .<= a_max
-    x_all = x_all[_in_amin_amax]
-    y_all = y_all[_in_amin_amax]
+    y_all = ctband.estimated_density
+    x_all = response.(ctband.midpoints)
 
     n = length(y_all)
     _step = div(n-2, subsample)
@@ -338,6 +344,7 @@ function Empirikos.flocalization_constraint!(
     _midpoints = ctband.midpoints
     _density_values = ctband.estimated_density
 
+    # TODO: perhaps move this evaluation below
     _min, _max = extrema(Empirikos.MarginalDensity(_midpoints[1]))
     for (index, Z) in enumerate(_midpoints)
         _density_hat = _density_values[index]

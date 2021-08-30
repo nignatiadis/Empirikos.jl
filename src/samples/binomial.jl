@@ -9,13 +9,14 @@ Z \\sim \\text{Binomial}(n, p)
 
 ``p`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``p``.
 
-```julia
-BinomialSample(2, 10)          # 2 out of 10 trials successful
+```jldoctest
+julia> BinomialSample(2, 10)          # 2 out of 10 trials successful
+Z=2  | n=10
 ```
 """
 struct BinomialSample{T,S<:Integer} <: DiscreteEBayesSample{T}
     Z::T
-    n::S     # add checks that Z \in {0,...,n}
+    n::S     #TODO: add checks that Z \in {0,...,n}
 end
 
 BinomialSample(n::Integer) = BinomialSample(missing, n)

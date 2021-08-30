@@ -17,10 +17,10 @@ abstract type DiscreteEBayesSample{T} <: EBayesSample{T} end
     likelihood_distribution(Z::EBayesSample, μ::Number)
 
 Returns the distribution ``p(\\cdot \\mid \\mu)`` of ``Z \\mid \\mu`` (the return type being
-`Distributions.jl` Distribution).
+a `Distributions.jl` Distribution).
 
 # Examples
-```julia-repl
+```jldoctest
 julia> likelihood_distribution(StandardNormalSample(1.0), 2.0)
 Normal{Float64}(μ=2.0, σ=1.0)
 ```
@@ -34,13 +34,13 @@ Returns the concrete realization of `Z` as type `T`, thus dropping the informati
 likelihood.
 
 # Examples
-```julia-repl
+```jldoctest
 julia> response(StandardNormalSample(1.0))
 1.0
 ```
 """
 function response(Z::EBayesSample)
-   throw("Response not implemented for this sample type.")
+   Z.Z
 end
 
 function set_response(Z::EBayesSample, znew=missing)
@@ -75,7 +75,7 @@ return that marginal distribution of ``Z``. Works for `EBayesSample{Missing}``,
 i.e., no realization is needed.
 
 # Examples
-```julia-repl
+```jldoctest
 julia> marginalize(StandardNormalSample(1.0), Normal(2.0, sqrt(3)))
 Normal{Float64}(μ=2.0, σ=1.9999999999999998)
 ````
@@ -112,7 +112,7 @@ function skedasticity(Zs::AbstractVector{EB}) where {EB<:EBayesSample}
 end
 
 # avoid piracy
-likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), response(Z)) # maybe dispatch to Z first, then can deal with discretized sample
+likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), response(Z))
 loglikelihood(Z::EBayesSample, param) =
     _logpdf(likelihood_distribution(Z, param), response(Z))
 loglikelihood(Z::EBayesSample, prior::Distribution) =
@@ -129,7 +129,7 @@ end
 Given a `prior` ``G`` and `EBayesSample` ``Z``, compute the marginal density of `Z`.
 
 # Examples
-```julia-repl
+```jldoctest
 julia> Z = StandardNormalSample(1.0)
 Z=     1.0 | σ=1.0
 julia> prior = Normal(2.0, sqrt(3))
@@ -141,6 +141,7 @@ julia> pdf(Normal(2.0, 2.0), 1.0)
 ```
 """
 pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
+
 """
     cdf(prior::Distribution, Z::EBayesSample)
 
@@ -298,6 +299,7 @@ MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(Dict(vals .=> cnt
 
 const VectorOrSummary{T} = Union{AbstractVector{T},MultinomialSummary{T}}
 
+# Does the distinction of the two things below really make sense?
 function (Zs_summary::MultinomialSummary)(Z)
     get(Zs_summary.store, Z, zero(Int))
 end
@@ -310,6 +312,7 @@ Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
 Base.values(Zs_summary::MultinomialSummary) = Base.values(Zs_summary.store)
 Base.length(Zs_summary::MultinomialSummary) = Base.length(Zs_summary.store)
 
+# TODO: Move to Dictionaries.jl
 
 function Base.broadcasted(::typeof(response), Zs_summary::MultinomialSummary)
     response.(keys(Zs_summary))

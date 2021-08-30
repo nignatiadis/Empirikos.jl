@@ -56,6 +56,14 @@ end
     include("test_flocalization_intervals.jl")
 end
 
+@testset "Kernel density tests" begin
+    include("test_kernel_density.jl")
+end
+
+@testset "Bernoulli samples" begin
+    include("test_bernoulli.jl")
+end
+
 @testset "Two kinds of modulus problems" begin
     include("test_modulus.jl")
 end
