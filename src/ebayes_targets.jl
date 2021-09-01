@@ -25,7 +25,6 @@ _support(::LinearEBayesTarget) = Interval(nothing, nothing)
 
 abstract type AbstractTargetComputation end
 
-
 struct Conjugate <: AbstractTargetComputation end
 struct NumeratorOfConjugate <: AbstractTargetComputation end
 struct QuadgkQuadrature <: AbstractTargetComputation end
@@ -39,16 +38,17 @@ Base.numerator(lin::LinearOverLinear) = lin.num
 Base.denominator(lin::LinearOverLinear) = lin.denom
 
 
+function (target::EBayesTarget)(prior)
+    _loc = location(target) #TODO What about targets w/o location -> make it a trait!
+    _comp = default_target_computation(target, _loc, prior)
+    compute_target(_comp, target, _loc, prior)
+end
 
 function compute_target(comp::AbstractTargetComputation, target, prior)
     compute_target(comp, target, location(target), prior)
 end
 
-function (target::EBayesTarget)(prior)
-    _loc = location(target)
-    _comp = default_target_computation(target, _loc, prior)
-    compute_target(_comp, target, _loc, prior)
-end
+
 
 function default_target_computation(target::LinearEBayesTarget, sample, prior)
     QuadgkQuadrature()
@@ -59,6 +59,7 @@ function default_target_computation(target::AbstractPosteriorTarget, sample, pri
 end
 
 function compute_target(lin::LinearOverLinear, target::AbstractPosteriorTarget, sample, prior)
+    # TODO: Actually take advantage of options in LinearOverLinear fields
     _num = numerator(target)(prior)
     _denom = denominator(target)(prior)
     _num/_denom
@@ -99,7 +100,7 @@ end
 
 Base.:*(t::LinearEBayesTarget, s::Number) = s*t
 
-(t::AffineTransformedLinearTarget)(prior::Union{<:Number, <:Distribution}) = t.b * t.target(prior)
+(t::AffineTransformedLinearTarget)(prior::Union{<:Number, <:Distribution}) = t.b * t.target(prior) + t.a
 
 """
 	cf(::LinearEBayesTarget, t)
@@ -120,8 +121,9 @@ function Distributions.cf(::LinearEBayesTarget, t) end
 """
 	PriorDensity(z::Float64) <: LinearEBayesTarget
 ## Example call
-```julia
-PriorDensity(2.0)
+```jldoctest
+julia> PriorDensity(2.0)
+PriorDensity{Float64}(2.0)
 ```
 ## Description
 This is the evaluation functional of the density of ``G`` at `z`, i.e.,
@@ -137,6 +139,7 @@ function Distributions.cf(target::PriorDensity{<:Real}, t)
     exp(im * location(target) * t)
 end
 
+#TODO: Not sure this is the right dispatch one(\mu) instead of e.g. one(Float64)
 function (target::PriorDensity{<:Real})(μ::Number)
     location(target) == μ ? one(μ) : zero(μ)
 end
@@ -341,6 +344,26 @@ end
 function _support(target::PosteriorTargetNumerator{<:PosteriorProbability})
     target.posterior_target.s
 end
+
+
+# Some additional linear targets that we keep unexported for now.
+
+
+struct PriorMean <: LinearEBayesTarget end
+
+(target::PriorMean)(μ::Number) = μ
+(target::PriorMean)(prior::Distribution) = mean(prior)
+
+struct PriorSecondMoment <: LinearEBayesTarget end
+
+(target::PriorSecondMoment)(μ::Number) = abs2(μ)
+(target::PriorSecondMoment)(prior::Distribution) = abs2(mean(prior)) + var(prior)
+
+
+
+
+
+
 
 
 # Plotting code

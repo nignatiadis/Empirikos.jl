@@ -1,10 +1,19 @@
-#----------------------------------
+#------------------------------------------------------------------------
 # Structure
-#----------------------------------
+#------------------------------------------------------------------------
 # ModulusModel contains all JuMP related information
 # AMARI contains optimization information
 # SteinMinimaxEstimator contains the fit result
-#
+
+#------------------------------------------------------------------------
+# Call structure for fitting AMARI
+#------------------------------------------------------------------------
+#  StatsBase.fit(::AMARI, target, Zs; initialize=true)
+#  -- initialize_method(method, target, Zs) -> returns AMARI
+#     -- initialize_modulus_model(method, modulus_model, target, δ1) -> returns AbstractModulusModel
+#  -- fit_initialized!(::AMARI, target, Zs; kwargs...) -> returns SteinMinimaxEstimator
+#     -- set_target!(::AbstractModulusModel, target)
+#     -- set_δ!(::AbstractModulusModel, δ)
 
 abstract type AbstractModulusModel end
 
@@ -155,6 +164,7 @@ Base.@kwdef struct AMARI{N, G, M, EB}
     n = nothing
 end
 
+
 function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, target::Empirikos.LinearEBayesTarget, δ)
 
     #TODO: perhaps this can also be moved..
@@ -246,7 +256,7 @@ function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithoutF}, t
         δ_max=Inf, δ_up=δ_up,
         bound_delta=bound_delta, target=target,
         discretizer = discretizer, representative_eb_samples = representative_eb_samples
-        ) #FIXME potentially
+        )
 end
 
 
@@ -258,9 +268,6 @@ function set_δ!(modulus_model::AbstractModulusModel, δ)
 end
 
 function set_target!(modulus_model::AbstractModulusModel, target::Empirikos.LinearEBayesTarget)
-    #if modulus_model.target == target
-    #   return modulus_model
-    #end
     @unpack model, g1, g2 = modulus_model
     @objective(model, Max, target(g2) - target(g1))
     modulus_model = @set modulus_model.target = target
@@ -290,15 +297,13 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
         method = @set method.discretizer = discr
     end
     modulus_model = method.modulus_model
-    # todo: fix this
-    #if isa(modulus_model, Type{ModulusModelWithF})
 
     method = @set method.representative_eb_samples = heteroskedastic(Zs)
 
     method = @set method.flocalization = fitted_floc
     method = @set method.plugin_G = fitted_plugin_G
 
-    n = nobs(Zs) #TODO: length or nobs?
+    n = nobs(Zs)
     method = @set method.n = n
 
     @unpack delta_grid = method
@@ -307,15 +312,7 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
     modulus_model = initialize_modulus_model(method, modulus_model, target, δ1)
     method = @set method.modulus_model = modulus_model
     method
-end #AMARI -> AMARI
-
-function StatsBase.fit(method::AMARI, target, Zs; initialize=true, kwargs...)
-    if initialize
-        method = initialize_method(method, target, Zs; kwargs...)
-    end
-    _fit_initialized(method::AMARI, target, Zs; kwargs...)
-end #AMARI ->
-
+end
 
 
 
@@ -328,41 +325,13 @@ Base.@kwdef mutable struct SteinMinimaxEstimator{M, T, D}
     g2
     Q::D
     max_bias::Float64
-    unit_var_proxy::Float64 #n::Int64
-    modulus_model::M #    δ_tuner::DeltaTuner
+    unit_var_proxy::Float64
+    modulus_model::M
     method
     δs = zeros(Float64,5)
     δs_objective = zeros(Float64, length(δs))
 end
 
-
-#var(sme::SteinMinimaxEstimator) = sme.unit_var_proxy/sme.n
-
-
-function set_target!(method::SteinMinimaxEstimator, target)
-    @unpack modulus_model = method
-    if method.target == target
-        return method
-    end
-    modulus_model = set_target!(modulus_model, target)
-    @set method.modulus_model = modulus_model
-    @set method.target = target
-    method
-end
-
-function worst_case_bias(sme::SteinMinimaxEstimator)
-    sme.max_bias
-end
-
-#"""
-#SteinMinimaxEstimator(Zs_discr::DiscretizedStandardNormalSamples,
-#              prior_class::ConvexPriorClass,
-##              target::LinearEBayesTarget,
-#              δ_tuner::DeltaTuner
-#
-#Computes a linear estimator optimizing a worst-case bias-variance tradeoff (specified by `δ_tuner`)
-#for estimating a linear `target` over `prior_class` based on [`DiscretizedStandardNormalSamples`](@ref)
-#`Zs_discr`.
 
 Base.@kwdef struct QDonoho{G,H,T,D}
     g1::G
@@ -480,20 +449,21 @@ function SteinMinimaxEstimator(modulus_model::ModulusModelWithF)
 end
 
 
-function _fit_initialized(method::AMARI, target, Zs; kwargs...)
+function fit_initialized!(method::AMARI, target, Zs; kwargs...)
     @unpack modulus_model, delta_grid, delta_objective, n = method
-    modulus_model = set_target!(modulus_model, target) #TODO: This is mutating the JuMP.model but not anything else
+
+    modulus_model = set_target!(modulus_model, target)
 
     δs_objective = zeros(Float64, length(delta_grid))
 
     for (index, δ) in enumerate(delta_grid)
-        set_δ!(modulus_model, δ/sqrt(n)) #TODO: sanity checks
+        set_δ!(modulus_model, δ/sqrt(n))
         δs_objective[index] = delta_objective(modulus_model)
     end
 
     if length(delta_grid) > 1 # resolve to get best objective
         idx_best = argmin(δs_objective)
-        set_δ!(modulus_model, delta_grid[idx_best]/sqrt(n)) #TODO: sanity checks
+        set_δ!(modulus_model, delta_grid[idx_best]/sqrt(n))
     end
 
     sm = SteinMinimaxEstimator(modulus_model)
@@ -504,14 +474,14 @@ function _fit_initialized(method::AMARI, target, Zs; kwargs...)
 end
 
 
-function confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
+function confint(Q::SteinMinimaxEstimator, target, Zs; level=0.95)
     target == Q.modulus_model.target ||
-           throw("Target has changed")
-
+           error("Target has changed")
+    α = 1- level
     _bias = Q.max_bias
     _Qs = Q.Q.(Zs)
     _wts = StatsBase.weights(Zs)
-    _se = std(Q.Q.(Zs), _wts)/sqrt(nobs(Zs))
+    _se = std(Q.Q.(Zs), _wts; corrected=true)/sqrt(nobs(Zs))
     point_estimate = mean(Q.Q.(Zs), _wts)
     halfwidth = gaussian_ci(_se; maxbias=_bias, α=α)
     BiasVarianceConfidenceInterval(estimate = point_estimate,
@@ -520,130 +490,118 @@ function confint(Q::SteinMinimaxEstimator, target, Zs; α=0.05)
                                    α = α, method = nothing, target = target)
 end
 
-function confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
-    _fit = StatsBase.fit(method, target, Zs; kwargs...)
-    StatsBase.confint(_fit, target, Zs; kwargs...)
+function confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; initialize=true, kwargs...)
+    _fit = StatsBase.fit(method, target, Zs; initialize=initialize)
+    confint(_fit, target, Zs; kwargs...)
 end
 
-function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
-                           targets::AbstractVector{<:Empirikos.LinearEBayesTarget}, Zs, args...; kwargs...)
-    length(targets) >= 2  || throw(error("use non-broadcasting call to .fit"))
-    mid_idx = ceil(Int,median(Base.OneTo(length(targets))))
-    _fit = StatsBase.fit(method, targets[mid_idx], Zs, args...; kwargs...)
-    _confint = StatsBase.confint(_fit, targets[mid_idx], Zs, args...; kwargs...)
-    confint_vec = fill(_confint, length(targets))
+function StatsBase.fit(method::AMARI, target, Zs; initialize=true, kwargs...)
+    if initialize
+        method = initialize_method(method, target, Zs; kwargs...)
+    end
+    fit_initialized!(method::AMARI, target, Zs; kwargs...)
+end
 
-    #TODO make this interface point nicer
-    #-------------------------------------
-    updated_method = _fit.method
-    δ = _fit.δ
-    updated_method = @set updated_method.delta_grid = [δ]
-    #-------------------------------------
 
-    for (index, target) in enumerate(targets)
-        _fit = _fit_initialized(updated_method, target, Zs, args...; kwargs...)
-        confint_vec[index] = StatsBase.confint(_fit, target, Zs, args...; kwargs...)
+function Base.broadcasted(::typeof(confint), amari::AMARI,
+    targets::AbstractArray{<:Empirikos.LinearEBayesTarget}, Zs)
+
+    method = initialize_method(amari, targets[1], Zs)
+    _ci =  confint(method, targets[1], Zs; initialize=false)
+    confint_vec = fill(_ci, axes(targets))
+    for (index, target) in enumerate(targets[2:end])
+        confint_vec[index+1] = confint(method, target, Zs; initialize=false)
     end
     confint_vec
 end
+
+function Base.broadcasted_kwsyntax(::typeof(confint), amari::AMARI,
+    targets::AbstractArray{<:Empirikos.LinearEBayesTarget}, Zs; level=0.95)
+
+    method = initialize_method(amari, targets[1], Zs)
+    _ci =  confint(method, targets[1], Zs; initialize=false, level=level)
+    confint_vec = fill(_ci, axes(targets))
+    for (index, target) in enumerate(targets[2:end])
+        confint_vec[index+1] = confint(method, target, Zs; initialize=false, level=level)
+    end
+    confint_vec
+end
+
+
+
 
 """
     StatsBase.confint(method::AMARI,
                       target::Empirikos.EBayesTarget,
                       Zs;
-                      α=0.05)
+                      level=0.95)
 
 Form a confidence interval for the [`Empirikos.EBayesTarget`](@ref) `target` with coverage
-    `1-α` based on the samples `Zs` using the [`AMARI`](@ref) `method`.
+    `level` based on the samples `Zs` using the [`AMARI`](@ref) `method`.
 """
-function StatsBase.confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
-                          initialized=false, α=0.05, c_lower=nothing, c_upper=nothing, single_delta=false, kwargs...)
-    if !initialized
+function confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
+                          initialize=true, level=0.95, kwargs...)
+    if initialize
         init_target = Empirikos.PosteriorTargetNullHypothesis(target, 0.0)
         method = initialize_method(method, init_target, Zs; kwargs...)
-
-        init_target = Empirikos.PosteriorTargetNullHypothesis(target, target(method.plugin_G))
-        _fit = _fit_initialized(method, init_target, Zs)
-
-        if single_delta
-            δ = _fit.δ
-            method = @set method.delta_grid = [δ]
-        end
     end
 
     floc_worst_case = FLocalizationInterval(flocalization = method.flocalization,
             convexclass = method.convexclass,
             solver= method.solver)
-    outer_ci = StatsBase.confint(floc_worst_case, target)
+
+    α = 1 - level
+    outer_ci = confint(floc_worst_case, target)
     outer_ci =  @set outer_ci.α = α
 
-    if isnothing(c_lower)
-        c_lower = outer_ci.lower
-    end
-    if isnothing(c_upper)
-        c_upper = outer_ci.upper
-    end
+    @show outer_ci
+    c_lower = outer_ci.lower
+    c_upper = outer_ci.upper
 
-    #@show c_lower, c_upper
     target_lower = Empirikos.PosteriorTargetNullHypothesis(target, c_lower)
     target_upper = Empirikos.PosteriorTargetNullHypothesis(target, c_upper)
 
-    n = nobs(Zs)
 
-    _fit = _fit_initialized(method, target_lower, Zs) #SteinMinimax
-
-
-
-    Q_lower = _fit.Q.(Zs)
-    _wts = StatsBase.weights(Zs)
-    confint_lower = StatsBase.confint(_fit, target_lower, Zs; α=α)
-    max_bias_lower = confint_lower.maxbias   # TODO: extract from better CI object
-    var_Q_lower = var(Q_lower, _wts)/n
+    fit_lower = fit_initialized!(method, target_lower, Zs) #SteinMinimax
+    Q_lower = fit_lower.Q.(Zs)
+    confint_lower = confint(fit_lower, target_lower, Zs; level=level)
+    max_bias_lower = confint_lower.maxbias
+    var_Q_lower = abs2(confint_lower.se)
     estimate_lower = confint_lower.estimate
 
-    _fit = _fit_initialized(method, target_upper, Zs) #TODO: should have some bang!?
-    Q_upper = _fit.Q.(Zs)
-    confint_upper = StatsBase.confint(_fit, target_upper, Zs ; α=α)
+    fit_upper = fit_initialized!(method, target_upper, Zs)
+    Q_upper = fit_upper.Q.(Zs)
+    confint_upper = confint(fit_upper, target_upper, Zs; level=level)
     max_bias_upper = confint_upper.maxbias
-    var_Q_upper = var(Q_upper, _wts)/n
+    var_Q_upper = abs2(confint_upper.se)
     estimate_upper = confint_upper.estimate
 
-    cov_lower_upper = cov([Q_lower Q_upper], _wts)[1,2]/n
+    _wts = StatsBase.weights(Zs)
+    cov_lower_upper = cov([Q_lower Q_upper], _wts; corrected=true)[1,2] / nobs(Zs)
 
-    #@show  confint_lower.lower, confint_lower.upper
-    #@show confint_upper.lower, confint_upper.upper
-    if confint_lower.lower <= 0.0 || confint_upper.upper >= 0.0
-        return outer_ci
+
+    bisection_pair = BisectionPair(var1 = var_Q_lower, max_bias1= max_bias_lower, estimate1= estimate_lower,
+                         var2 = var_Q_upper, max_bias2 = max_bias_upper, estimate2= estimate_upper,
+                         cov = cov_lower_upper)
+
+
+
+    λs = range(0, stop=1, length=10_000)
+    all_cis = confint.(Ref(bisection_pair), λs; α = α)
+    zero_in_ci = first.(all_cis) .<= 0.0 .<= last.(all_cis)
+
+    idx_lhs = findfirst(zero_in_ci)
+    idx_rhs = findlast(zero_in_ci)
+
+    if isnothing(idx_lhs)
+        return(outer_ci)
     end
 
-    bisection_pair = BisectionPair(c1 = c_lower, var1 = var_Q_lower, max_bias1= max_bias_lower, estimate1= estimate_lower,
-                         c2 = c_upper, var2 = var_Q_upper, max_bias2= max_bias_upper, estimate2= estimate_upper,
-                         cov=cov_lower_upper)
-
-    # TODO: move all functionality here into separate fit function and export as plot
-    #λs=0.0:0.001:1.0
-    #all_cis = confint.(tmp_pair, λs)
-    #all_cis_lower = first.(all_cis)
-    #all_cis_upper = last.(all_cis)
-    #plot(λs, [all_cis_lower all_cis_upper])
-
-
-    λs_lhs =  find_zeros(λ -> first(confint(bisection_pair, λ; α=α))  , 0.0, 1.0)
-    λs_rhs =  find_zeros(λ -> last(confint(bisection_pair, λ; α=α))  , 0.0, 1.0)
-    #@show λs_lhs, λs_rhs
-    λ_lhs = minimum(λs_lhs)
-    λ_rhs = maximum(λs_rhs)
-
+    λ_lhs = λs[idx_lhs]
+    λ_rhs = λs[idx_rhs]
 
     c_lower_updated = (1-λ_lhs)*c_lower + λ_lhs*c_upper
     c_upper_updated = (1-λ_rhs)*c_lower + λ_rhs*c_upper
-
-    # TODO: Pretruncate according to target
-
-    if c_lower_updated < c_lower || c_upper_updated > c_upper
-        return outer_ci
-    end
-    #let us assume we have flocalizations.
 
     LowerUpperConfidenceInterval(α=α, target=target, method=nothing,
                                  lower=c_lower_updated,
@@ -651,7 +609,7 @@ function StatsBase.confint(method::AMARI, target::Empirikos.AbstractPosteriorTar
 end
 
 
-function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
+function Base.broadcasted(::typeof(confint), method::AMARI,
             targets::AbstractVector{<:Empirikos.AbstractPosteriorTarget}, Zs, args...; kwargs...)
 
     length(targets) >= 2  || throw(error("use non-broadcasting call to .fit"))
@@ -662,19 +620,12 @@ function Base.broadcasted(::typeof(StatsBase.confint), method::AMARI,
     method = initialize_method(method, init_target, Zs; kwargs...)
 
     init_target = Empirikos.PosteriorTargetNullHypothesis(target, target(method.plugin_G))
-    _fit = _fit_initialized(method, init_target, Zs)
-
-    single_delta = false
-    if single_delta
-        δ = _fit.δ
-        method = @set method.delta_grid = [δ]
-    end
-
+    _fit = fit_initialized!(method, init_target, Zs)
 
     confint_vec =  Vector{LowerUpperConfidenceInterval}(undef, length(targets))
 
     for (index, target) in enumerate(targets)
-        _ci = StatsBase.confint(method, target, Zs, args...; initialized=true, kwargs...)
+        _ci = confint(method, target, Zs, args...; initialize=false, kwargs...)
         confint_vec[index] = _ci
     end
     confint_vec

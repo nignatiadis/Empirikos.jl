@@ -10,9 +10,11 @@ Z \\sim \\text{Poisson}(\\mu \\cdot E).
 The multiplying intensity ``E`` is assumed to be known (and equal to `1.0` by default), while
 ``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
 
-```julia
-PoissonSample(3)
-PoissonSample(3, 1.5)
+```jldoctest
+julia> PoissonSample(3)
+Z=3  | E=1.0
+julia> PoissonSample(3, 1.5)
+Z=3  | E=1.5
 ```
 """
 struct PoissonSample{T,S} <: DiscreteEBayesSample{T}
@@ -94,8 +96,3 @@ function _set_defaults(
     _grid_max = _sample_max + eps
     DiscretePriorClass(range(_grid_min; stop = _grid_max, length = prior_grid_length))
 end
-
-
-
-
-#v <- seq(max(2 * eps, min(x/exposure)) - eps, max(x/exposure) + eps, length = v)

@@ -60,18 +60,7 @@ function fill_levels(Zs::MultinomialSummary{<:DiscreteEBayesSample})
     fill_levels(collect(keys(Zs)))
 end
 
-function dictfun(::Nothing, Zs_summary::MultinomialSummary{<:DiscreteEBayesSample}, f)
-    skedasticity(Zs_summary) == Homoskedastic() ||
-        error("Heteroskedastic likelihood not implemented.")
-    Zs = fill_levels(collect(keys(Zs_summary)))
-    if !isa(f, AbstractVector)
-        f = f.(Zs)
-    end
-    DictFunction(Zs, f)
-end
-
-# TODO: Fix repetition with code above. Maybe separate fill_levels?
-function dictfun(::Nothing, Zs_summary::AbstractVector{<:DiscreteEBayesSample}, f)
+function dictfun(::Nothing, Zs_summary::VectorOrSummary{<:DiscreteEBayesSample}, f)
     skedasticity(Zs_summary) == Homoskedastic() ||
         error("Heteroskedastic likelihood not implemented.")
     Zs = fill_levels(Zs_summary)

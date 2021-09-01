@@ -57,7 +57,7 @@ end
 Base.isnan(Z::EBayesSample) = Base.isnan(response(Z))
 Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 
-# default fallback
+
 function Base.isless(a::EBayesSample, b::EBayesSample)
     Base.isless( (response(a), nuisance_parameter(a)),
                  (response(b), nuisance_parameter(b)) )

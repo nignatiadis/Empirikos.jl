@@ -16,5 +16,5 @@ AMARI
 ## Interface
 
 ```@docs
-StatsBase.confint(::AMARI, ::Empirikos.AbstractPosteriorTarget, ::Any)
+confint(::AMARI, ::Empirikos.AbstractPosteriorTarget, ::Any)
 ```

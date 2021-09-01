@@ -8,6 +8,8 @@ Themes.compile(joinpath(@__DIR__,"src/assets/light.scss"), joinpath(@__DIR__,"sr
 
 bib = CitationBibliography(joinpath(@__DIR__, "ebayes.bib"))
 
+DocMeta.setdocmeta!(Empirikos, :DocTestSetup, :(using Empirikos); recursive=true)
+
 makedocs(
     bib,
     sitename = "Empirikos",

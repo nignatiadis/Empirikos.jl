@@ -62,8 +62,12 @@ function gaussian_ci(se; maxbias=0.0, α=0.05)
     end
     maxbias = abs(maxbias)
     rel_bias = maxbias/se
-    nc = NoncentralChisq(1, abs2(rel_bias))
-    se*sqrt(quantile(nc, 1-α))
+    if abs(rel_bias) > 6
+        pm = quantile(Normal(), 1-α) + abs(rel_bias)
+    else
+        pm = sqrt(quantile(NoncentralChisq(1, abs2(rel_bias)), 1-α))
+    end
+    se*pm
 end
 
 Base.@kwdef struct BiasVarianceConfidenceInterval <: ConfidenceInterval
@@ -92,11 +96,9 @@ end
 
 
 Base.@kwdef struct BisectionPair
-    c1::Float64
     var1::Float64
     max_bias1::Float64
     estimate1::Float64
-    c2::Float64
     var2::Float64
     max_bias2::Float64
     estimate2::Float64

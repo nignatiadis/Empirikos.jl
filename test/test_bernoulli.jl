@@ -4,6 +4,8 @@
 using Random
 using Empirikos
 using Hypatia
+using Setfield
+
 Random.seed!(1)
 
 n = 200
@@ -62,3 +64,87 @@ ci_postmean_at_1_chisq = confint(floc_chisq_interval, postmean_at_1, Zs_summary)
 @test ci_postmean_at_1_chisq.upper ≈ 1.0 atol = 1e-6
 @test ci_postmean_at_1_chisq.lower ≈ chisq_f_center -  chisq_error atol = 1e-6
 @test !(ci_postmean_at_1_chisq.lower ≈ ci_postmean_at_1_dkw.lower)
+
+
+
+
+
+
+
+Random.seed!(1)
+
+n = 200
+
+Zs = BinomialSample.(Int.(rand(Bernoulli(0.7), 200)), 1)
+Zs_summary = summarize(Zs)
+
+comp_Zs = Empirikos.compound(Zs)
+@test comp_Zs[1].probs == [1.0]
+@test comp_Zs[1].vec == [BinomialSample(1)]
+@test response(comp_Zs[1]) == response(Zs[1])
+
+het_Zs = Empirikos.heteroskedastic(Zs)
+@test het_Zs.probs == [1.0]
+@test het_Zs.vec == [BinomialSample(1)]
+
+
+amari_with_F = AMARI(;flocalization = (@set floc_dkw.α = 0.01),
+                      solver = Hypatia.Optimizer,
+                      convexclass = DiscretePriorClass(0:0.1:1),
+                      modulus_model = Empirikos.ModulusModelWithF,
+                      discretizer = Empirikos.integer_discretizer(0:1))
+
+amari_without_F = AMARI(;flocalization = (@set floc_dkw.α = 0.01),
+                      solver = Hypatia.Optimizer,
+                      convexclass = DiscretePriorClass(0:0.1:1),
+                      modulus_model = Empirikos.ModulusModelWithoutF,
+                      discretizer = Empirikos.integer_discretizer(0:1))
+
+for amari_ in (amari_with_F, amari_without_F)
+    amari_fit_priormean = fit(amari_, Empirikos.PriorMean(), Zs)
+    ci_priormean = confint(amari_fit_priormean, Empirikos.PriorMean(), Zs; level=1-α)
+    @test confint(amari_, Empirikos.PriorMean(), Zs; level=1-α) == ci_priormean
+
+    @test amari_fit_priormean.Q(BinomialSample(1,1)) ≈ 1.0 atol = 1e-6
+    @test amari_fit_priormean.Q(BinomialSample(0,1)) ≈ 0.0 atol = 1e-6
+
+    @test ci_priormean.estimate ≈ mean(response.(Zs)) atol = 1e-6
+    @test ci_priormean.maxbias ≈ 0 atol = 1e-7
+    @test amari_fit_priormean.max_bias ≈ 0 atol = 1e-7
+    @test ci_priormean.se ≈ std(response.(Zs))/sqrt(nobs(Zs)) atol = 1e-7
+
+    @test ci_priormean.lower ≈ ci_priormean.estimate - quantile(Normal(), 1-α/2)*ci_priormean.se
+    @test ci_priormean.upper ≈ ci_priormean.estimate + quantile(Normal(), 1-α/2)*ci_priormean.se
+
+    @test amari_fit_priormean.target === Empirikos.PriorMean()
+    @test amari_fit_priormean.unit_var_proxy ≈ var(response.(Zs)) atol=0.01
+    @test amari_fit_priormean.unit_var_proxy ≈ mean(response.(Zs))*(1- mean(response.(Zs))) atol=1e-5
+
+
+
+    amari_fit_prior_second_mean = fit(amari_, Empirikos.PriorSecondMoment(), Zs)
+    ci_second_mean = confint(amari_fit_prior_second_mean, Empirikos.PriorSecondMoment(), Zs; level=1-α)
+
+
+    @test_throws ErrorException confint(amari_fit_prior_second_mean, Empirikos.PriorMean(), Zs; level=1-α)
+    tmp_fit = fit((@set floc_dkw.α = 0.01), Zs)
+    dkw_lb = mean(response, Zs) - tmp_fit.band
+
+    @test amari_fit_prior_second_mean.max_bias ≈ dkw_lb*(1-dkw_lb)/2 rtol = 0.005
+    @test amari_fit_prior_second_mean.Q(BinomialSample(1,1)) ≈ 1.0 - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
+    @test amari_fit_prior_second_mean.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
+    @test ci_second_mean.estimate ≈ mean(response.(Zs)) - dkw_lb*(1-dkw_lb)/2 atol = 1e-3
+    @test ci_second_mean.lower < ci_second_mean.estimate - quantile(Normal(), 1-α/2)*ci_second_mean.se
+    @test ci_second_mean.lower > ci_second_mean.estimate - quantile(Normal(), 1-α/2)*ci_second_mean.se - ci_second_mean.maxbias
+    @test ci_second_mean.se ≈ std(response.(Zs))/sqrt(nobs(Zs)) atol = 1e-7
+    @test amari_fit_prior_second_mean.unit_var_proxy ≈ mean(response.(Zs))*(1- mean(response.(Zs))) atol=1e-5
+
+    both_cis = confint.(amari_, [Empirikos.PriorMean(), Empirikos.PriorSecondMoment()], Zs)
+    @test getfield.(both_cis, :α) ≈ [0.05; 0.05]
+
+    both_cis_kw = confint.(amari_, [Empirikos.PriorMean(), Empirikos.PriorSecondMoment()], Zs; level=0.95)
+    @test both_cis_kw == both_cis
+
+    both_cis_at_α = confint.(amari_, [Empirikos.PriorMean(), Empirikos.PriorSecondMoment()], Zs; level=1-α)
+    @test both_cis_at_α == [ci_priormean; ci_second_mean]
+end

@@ -86,7 +86,7 @@ for target in targets
     @test lp_biases.maxbias ≈ -lp_biases.minbias atol = 0.00001
     # high tolerance for this test
     @test sqrt(lp_biases.expected_var / 1000) ≈ amari_ci.se rtol=0.1
-    @test_throws String confint(amari_fit, postmean_target, Zs)
+    @test_throws ErrorException confint(amari_fit, postmean_target, Zs)
 end
 
 
@@ -96,7 +96,7 @@ end
 postmean_ci = confint(amari, postmean_target, Zs)
 
 
-postmean_ci_01 = confint(amari, postmean_target, Zs; α=0.1)
+postmean_ci_01 = confint(amari, postmean_target, Zs; level=0.9)
 @test postmean_ci_01.upper - postmean_ci_01.lower < postmean_ci.upper - postmean_ci.lower
 
 

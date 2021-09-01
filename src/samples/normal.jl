@@ -11,8 +11,9 @@ Z \\sim \\mathcal{N}(\\mu, \\sigma^2)
 
 ``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
 
-```julia
-NormalSample(0.5, 1.0)          #Z=0.5, σ=1
+```jldoctest
+julia> NormalSample(0.5, 1.0)          #Z=0.5, σ=1
+Z=     0.5 | σ=1.0
 ```
 """
 struct NormalSample{T,S} <: AbstractNormalSample{T}
@@ -20,6 +21,7 @@ struct NormalSample{T,S} <: AbstractNormalSample{T}
     σ::S
 end
 
+# TODO: Should not need this eventually.
 function NormalSample(Z::P, σ::S) where {T,P<:EBInterval{T},S}
     NormalSample{EBInterval{T},S}(Z, σ)
 end
@@ -41,8 +43,9 @@ Z \\sim \\mathcal{N}(\\mu, 1)
 
 ``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
 
-```julia
-StandardNormalSample(0.5)          #Z=0.5
+```jldoctest
+julia> StandardNormalSample(0.5)          #Z=0.5
+Z=     0.5 | σ=1.0
 ```
 """
 struct StandardNormalSample{T} <: AbstractNormalSample{T}
@@ -84,10 +87,6 @@ function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
     print(io, " | ", "σ=")
     print(io, rpad(round(std(Z), digits = 3),5))
 end
-
-#function Base.isless(a::AbstractNormalSample, b::AbstractNormalSample)
-    #std(a) <= std(b) && response(a) < response(b)
-#end
 
 
 
@@ -141,7 +140,8 @@ function _set_defaults(
     eps = get(hints, :eps, 1e-4)
     prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
     _sample_min, _sample_max = extrema(response.(Zs))
-    # This won't handle infinity correctly. TODOOO
+    # This won't handle infinity correctly. TODOO
+    # Also TODO once switch from Intervals.jl to IntervalSets.jl
     _sample_min = isa(_sample_min, Interval) ? first(_sample_min) : _sample_min
     _sample_max = isa(_sample_max, Interval) ? last(_sample_max) : _sample_max
     _grid = range(_sample_min - eps; stop = _sample_max + eps, length = prior_grid_length)
