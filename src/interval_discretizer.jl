@@ -32,7 +32,6 @@ _right_endpoint(x::Real) = x
 function _discretize(sorted_intervals, x)
     n = length(sorted_intervals)
     left, right = 1, n
-
     for i = 1:n
         middle = div(left + right, 2)
         middle_interval = sorted_intervals[middle]
@@ -44,7 +43,7 @@ function _discretize(sorted_intervals, x)
             left = middle + 1
         end
     end
-    middle_interval
+    error("bisection failed")
 end
 
 function (discr::Discretizer)(x)
@@ -116,7 +115,7 @@ end
 
 
 function integer_discretizer(grid::AbstractVector{Int}; unbounded = :both)
-    unbounded === :both || throw(ArgumentError("only positive boundary implemented"))
+    unbounded === :both || throw(ArgumentError("only unbounded == :both implemented"))
 
     ints = Union{Int, Interval{Int64,Unbounded,Closed}, Interval{Int64,Closed,Unbounded}}[
                 Interval(nothing, first(grid))

@@ -147,4 +147,57 @@ for amari_ in (amari_with_F, amari_without_F)
 
     both_cis_at_α = confint.(amari_, [Empirikos.PriorMean(), Empirikos.PriorSecondMoment()], Zs; level=1-α)
     @test both_cis_at_α == [ci_priormean; ci_second_mean]
+
+    # some work towards AMARI with posterior mean
+    c = 0.6
+    postmean_lin = Empirikos.PosteriorTargetNullHypothesis(PosteriorMean(BinomialSample(1,1)), c)
+
+    amari_fit_postmean_lin = fit(amari_, postmean_lin, Zs)
+
+    @test amari_fit_postmean_lin.max_bias ≈ dkw_lb*(1-dkw_lb)/2 rtol = 0.005
+    @test amari_fit_postmean_lin.Q(BinomialSample(1,1)) ≈ (1-c) - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
+    @test amari_fit_postmean_lin.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
+
+    ci_postmean_lin = confint(amari_fit_postmean_lin, postmean_lin, Zs; level=1-α)
+
+    @test ci_postmean_lin.estimate ≈ (1-c)*mean(response.(Zs)) - dkw_lb*(1-dkw_lb)/2 atol = 1e-3
+    @test ci_postmean_lin.lower < ci_postmean_lin.estimate - quantile(Normal(), 1-α/2)*ci_postmean_lin.se
+    @test ci_postmean_lin.lower > ci_postmean_lin.estimate - quantile(Normal(), 1-α/2)*ci_postmean_lin.se - ci_postmean_lin.maxbias
+    @test amari_fit_postmean_lin.unit_var_proxy ≈ (1-c)^2*mean(response.(Zs))*(1- mean(response.(Zs))) atol=1e-5
+
+
+    function tmp_f(c)
+        barf = mean(response, Zs)
+        _est = (1-c)*barf - dkw_lb*(1-dkw_lb)/2
+        _se = (1-c)*sqrt(barf*(1-barf)/ nobs(Zs))
+        _maxbias =  dkw_lb*(1-dkw_lb)/2
+        _pm = Empirikos.gaussian_ci(_se; maxbias=_maxbias, α=α)
+        _est - _pm
+    end
+
+    cs = 0:0.0001:1
+    idx = findfirst( tmp_f.(cs) .<= 0)
+    c_left = cs[idx]
+
+    ci_postmean = confint(amari_, PosteriorMean(BinomialSample(1,1)), Zs; level=1-α)
+    @test ci_postmean.upper ≈ 1.0
+    @test ci_postmean.lower ≈ c_left atol = 0.0015
+
+    Zs_flip = BinomialSample.(1 .- response.(Zs), 1)
+    ci_postmean_0_flip = confint(amari_, PosteriorMean(BinomialSample(0,1)), Zs_flip; level=1-α)
+    @test ci_postmean_0_flip.lower ≈ 1 - ci_postmean.upper atol = 1e-5
+    @test ci_postmean_0_flip.upper ≈ 1 - ci_postmean.lower atol = 1e-5
+
+    ci_postmean_0 = confint(amari_, PosteriorMean(BinomialSample(0,1)), Zs; level=1-α)
+    @test ci_postmean_0.lower ≈ 0 atol=1e-8
+
+    both_cis_postmean = confint.(amari_, identity(PosteriorMean.(BinomialSample.([0,1],1))), Zs)
+    @test getfield.(both_cis_postmean, :α) ≈ [0.05; 0.05]
+
+    both_cis_postmean_kw = confint.(amari_, identity(PosteriorMean.(BinomialSample.([0,1],1))), Zs; level=0.95)
+    @test both_cis_postmean_kw == both_cis_postmean
+
+    both_cis_postmean_at_α = confint.(amari_, identity(PosteriorMean.(BinomialSample.([0,1],1))), Zs; level=1-α)
+    @test both_cis_postmean_at_α == [ci_postmean_0; ci_postmean]
+
 end

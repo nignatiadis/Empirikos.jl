@@ -21,6 +21,14 @@ Base.@kwdef struct FLocalizationInterval{N,G}
     n_bisection::Int = 100
 end
 
+function Base.show(io::IO, floc::FLocalizationInterval)
+    print(io, "EB intervals with F-Localization: ")
+    show(io, floc.flocalization)
+    print(io, "\n")
+    print(io, "                  𝒢: ")
+    show(io, floc.convexclass)
+end
+
 function Empirikos.nominal_alpha(floc::FLocalizationInterval)
     Empirikos.nominal_alpha(floc.flocalization)
 end

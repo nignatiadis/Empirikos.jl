@@ -164,6 +164,14 @@ Base.@kwdef struct AMARI{N, G, M, EB}
     n = nothing
 end
 
+function Base.show(io::IO, amari::AMARI)
+    print(io, "AMARI with")
+    print(io, "  F-Localization: ")
+    show(io, amari.flocalization)
+    print(io, "\n")
+    print(io, "            𝒢: ")
+    show(io, amari.convexclass)
+end
 
 function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, target::Empirikos.LinearEBayesTarget, δ)
 
@@ -504,9 +512,11 @@ end
 
 
 function Base.broadcasted(::typeof(confint), amari::AMARI,
-    targets::AbstractArray{<:Empirikos.LinearEBayesTarget}, Zs)
+    targets::AbstractArray{<:Empirikos.EBayesTarget}, Zs)
 
-    method = initialize_method(amari, targets[1], Zs)
+    init_target = isa(targets[1], LinearEBayesTarget) ? targets[1] : denominator(targets[1])
+    method = initialize_method(amari, init_target, Zs)
+
     _ci =  confint(method, targets[1], Zs; initialize=false)
     confint_vec = fill(_ci, axes(targets))
     for (index, target) in enumerate(targets[2:end])
@@ -516,9 +526,11 @@ function Base.broadcasted(::typeof(confint), amari::AMARI,
 end
 
 function Base.broadcasted_kwsyntax(::typeof(confint), amari::AMARI,
-    targets::AbstractArray{<:Empirikos.LinearEBayesTarget}, Zs; level=0.95)
+    targets::AbstractArray{<:Empirikos.EBayesTarget}, Zs; level=0.95)
 
-    method = initialize_method(amari, targets[1], Zs)
+    init_target = isa(targets[1], LinearEBayesTarget) ? targets[1] : denominator(targets[1])
+    method = initialize_method(amari, init_target, Zs)
+
     _ci =  confint(method, targets[1], Zs; initialize=false, level=level)
     confint_vec = fill(_ci, axes(targets))
     for (index, target) in enumerate(targets[2:end])
@@ -609,27 +621,8 @@ function confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
 end
 
 
-function Base.broadcasted(::typeof(confint), method::AMARI,
-            targets::AbstractVector{<:Empirikos.AbstractPosteriorTarget}, Zs, args...; kwargs...)
 
-    length(targets) >= 2  || throw(error("use non-broadcasting call to .fit"))
-    mid_idx = ceil(Int,median(Base.OneTo(length(targets))))
 
-    target = targets[mid_idx]
-    init_target = Empirikos.PosteriorTargetNullHypothesis(target, 0.0)
-    method = initialize_method(method, init_target, Zs; kwargs...)
-
-    init_target = Empirikos.PosteriorTargetNullHypothesis(target, target(method.plugin_G))
-    _fit = fit_initialized!(method, init_target, Zs)
-
-    confint_vec =  Vector{LowerUpperConfidenceInterval}(undef, length(targets))
-
-    for (index, target) in enumerate(targets)
-        _ci = confint(method, target, Zs, args...; initialize=false, kwargs...)
-        confint_vec[index] = _ci
-    end
-    confint_vec
-end
 
 
 # used right now only for sanity check in tests
