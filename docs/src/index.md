@@ -27,9 +27,9 @@ Below are some vignettes using this package for empirical Bayes tasks. There are
 * Nonparametric estimation using the Nonparametric Maximum Likelihood estimator (NPMLE):
   * A [vignette](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/REBayes.jl.html) that partially reproduces the vignette of the REBayes package [[koenker2017rebayes](@cite)]. 
 * Nonparametric confidence intervals for empirical Bayes estimands as developed in [[ignatiadis2019bias](@cite)]:
-  * [Posterior mean and local false sign rate in a Gaussian dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/prostate.jl.html)
-  * [Posterior mean in a Binomial dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/lord_cressie.jl.html)
-  * [Posterior mean in a Poisson dataset.](http://htmlpreview.github.io/?https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/bichsel.jl.html)
+  * [Posterior mean and local false sign rate in a Gaussian dataset.](https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/prostate_pluto.pdf)
+  * [Posterior mean in a Binomial dataset.](https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/lord_cressie_pluto.pdf)
+  * [Posterior mean in a Poisson dataset.](https://github.com/nignatiadis/Empirikos.jl/blob/Pluto/bichsel_pluto.pdf)
 
 
 
