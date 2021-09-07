@@ -566,7 +566,6 @@ function confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
     outer_ci = confint(floc_worst_case, target)
     outer_ci =  @set outer_ci.α = α
 
-    @show outer_ci
     c_lower = outer_ci.lower
     c_upper = outer_ci.upper
 
