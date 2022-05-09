@@ -71,3 +71,8 @@ end
 @testset "Compound and DKW F localization" begin
     include("test_compound.jl")
 end
+
+
+@testset "Noncentral hypergeometric" begin
+    include("test_noncentralhypergeometric.jl")
+end

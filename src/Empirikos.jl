@@ -50,6 +50,8 @@ include("samples/binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
 include("samples/truncatedpoisson.jl")
+include("samples/noncentralhypergeometric.jl")
+
 #include("samples/foldednormal.jl")
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
@@ -63,6 +65,7 @@ include("datasets/Prostate/Prostate.jl")
 include("datasets/Neighborhoods/neighborhoods.jl")
 include("datasets/Butterfly/Butterfly.jl")
 include("datasets/Surgery/Surgery.jl")
+include("datasets/CollinsLangman/CollinsLangman.jl")
 include("datasets/CressieSeheult/CressieSeheult.jl")
 
 
