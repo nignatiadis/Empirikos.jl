@@ -336,6 +336,8 @@ end
     x = x_all[idxs]
     y = y_all[idxs]
 
+    a_min = ctband.a_min
+    a_max = ctband.a_max
 
     xlims --> (a_min, a_max)
     ylims --> (0, maximum(y) * 1.1)

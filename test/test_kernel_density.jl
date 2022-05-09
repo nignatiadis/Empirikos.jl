@@ -19,7 +19,7 @@ for idx in idxs
     x1 = kde1.x[idx]
     kde1_f = kde1.density[idx]
     kde1_manual = mean( pdf.(kernel2, response.(Zs) .- x1) )
-    @test kde1_f ≈ kde1_manual atol = 0.0001
+    @test kde1_f ≈ kde1_manual atol = 0.001
 end
 
 
@@ -63,5 +63,5 @@ for idx in rand_idxs
     loc = response(floc_fit_02.midpoints[idx])
     dens = floc_fit_02.estimated_density[idx]
     dens_manual = mean( pdf.(_kernel, response.(Zs) .- loc) )
-    @test dens ≈ dens_manual atol = 0.0001
+    @test dens ≈ dens_manual atol = 0.001
 end
