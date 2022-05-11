@@ -38,6 +38,7 @@ Base.numerator(lin::LinearOverLinear) = lin.num
 Base.denominator(lin::LinearOverLinear) = lin.denom
 
 
+
 function (target::EBayesTarget)(prior)
     _loc = location(target) #TODO What about targets w/o location -> make it a trait!
     _comp = default_target_computation(target, _loc, prior)
@@ -192,6 +193,7 @@ end
 
 
 
+
 location(target::AbstractPosteriorTarget) = target.Z
 
 
@@ -274,7 +276,6 @@ E_G[\\mu_i \\mid Z_i = z]
 struct PosteriorMean{T} <: BasicPosteriorTarget
     Z::T
 end
-PosteriorMean() = PosteriorMean(missing)
 
 function compute_target(::Conjugate, postmean::PosteriorMean, Z::EBayesSample, prior)
     mean(posterior(Z, prior))
@@ -284,7 +285,31 @@ function (postmean::PosteriorMean)(μ::Number)
     μ
 end
 
+"""
+    PosteriorSecondMoment(Z::EBayesSample) <: AbstractPosteriorTarget
 
+Type representing the second moment of the posterior, i.e.,
+
+```math
+E_G[\\mu_i^2 \\mid Z_i = z]
+```
+"""
+struct PosteriorSecondMoment{T,S} <: BasicPosteriorTarget
+    Z::T
+    c::S
+end
+
+PosteriorSecondMoment(z) = PosteriorSecondMoment(z, zero(Float64))
+
+function compute_target(::Conjugate, postmean::PosteriorSecondMoment, Z::EBayesSample, prior)
+    _post = posterior(Z, prior)
+    c = postmean.c
+    var(_post) + abs2(mean(postmean) - c)
+end
+
+function (postmean::PosteriorSecondMoment)(μ::Number)
+    abs2(μ)
+end
 
 
 """
