@@ -218,7 +218,7 @@ function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, targ
         bound_delta=bound_delta, target=target)
 end
 
-function modulus_cholesky_factor(convexclass::AbstractSimplexPriorClass, plugin_G, discr,
+function modulus_cholesky_factor(convexclass::AbstractMixturePriorClass, plugin_G, discr,
             eb_samples::HeteroskedasticSamples)
     K = nparams(convexclass)
     chr = cholesky(zeros(K, K) + I)
