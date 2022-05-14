@@ -52,7 +52,7 @@ include("samples/poisson.jl")
 include("samples/truncatedpoisson.jl")
 include("samples/noncentralhypergeometric.jl")
 
-#include("samples/foldednormal.jl")
+include("samples/foldednormal.jl")
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
