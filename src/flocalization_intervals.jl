@@ -8,8 +8,9 @@ Method for computing frequentist confidence intervals for empirical Bayes
 estimands. Here `flocalization` is a  [`Empirikos.FLocalization`](@ref), `convexclass` is
 a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
 
-`n_bisection` is relevant only for combinations of `flocalization` and `convexclass` for
-    which the Charnes-Cooper transformation is not applicable/implemented.
+`n_bisection` is relevant only for combinations of `target`, `flocalization`
+    and `convexclass` for which the Charnes-Cooper transformation
+    is not applicable/implemented.
     Instead, a quasi-convex optimization problem is solved by bisection and
     increasing `n_bisection` increases
     accuracy (at the cost of more computation).
@@ -78,6 +79,7 @@ function StatsBase.fit(method::FLocalizationInterval, target, Zs, args...; kwarg
     fitted_floc = StatsBase.fit(method.flocalization, Zs)
     method = @set method.flocalization = fitted_floc
 
+    #init_fitted_floc = initialize_fitted_floc(method, target)
     StatsBase.fit(method, target, args...) #args could be vexity
 end
 
@@ -85,6 +87,15 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
     target::Empirikos.AbstractPosteriorTarget)
     StatsBase.fit(method, target, Empirikos.vexity(method.flocalization))
 end
+
+function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
+    target::Empirikos.AbstractPosteriorTarget)
+    StatsBase.fit(method, target, Empirikos.vexity(method.method.flocalization))
+end
+
+#--------------------------------------------------------------------------
+# PosteriorTarget, LinearVexity
+#--------------------------------------------------------------------------
 
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.AbstractPosteriorTarget, vexity::Empirikos.LinearVexity)
@@ -100,12 +111,6 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
         target=target)
 
     StatsBase.fit(fitted_worst_case, target, vexity)
-end
-
-
-function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
-    target::Empirikos.AbstractPosteriorTarget)
-    StatsBase.fit(method, target, Empirikos.vexity(method.method.flocalization))
 end
 
 function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractPosteriorTarget},
@@ -136,6 +141,11 @@ function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractP
         lower=_min,
         upper=_max)
 end
+
+#--------------------------------------------------------------------------
+# PosteriorTarget, ConvexVexity
+#--------------------------------------------------------------------------
+
 
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.AbstractPosteriorTarget, ::Empirikos.ConvexVexity)
@@ -195,6 +205,51 @@ function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractP
 end
 
 
+#--------------------------------------------------------------------------
+# PosteriorVariance
+#--------------------------------------------------------------------------
+
+function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
+    target::Empirikos.PosteriorVariance)
+
+    @unpack n_bisection = method
+
+    postmean_target = PosteriorMean(location(target))
+
+    _fit = StatsBase.fit(method, postmean_target)
+
+    min_postmean = _fit.lower
+    max_postmean = _fit.upper
+
+    max_vals = Vector{Float64}(undef, n_bisection)
+    min_vals = Vector{Float64}(undef, n_bisection)
+
+    postmean_range = range(min_postmean, stop=max_postmean, length=n_bisection)
+    second_moment_targets = PosteriorSecondMoment.(location(target), postmean_range)
+    for (index, second_moment_target) in enumerate(second_moment_targets)
+        _tmp_confint = confint(StatsBase.fit(method, second_moment_target))
+        min_vals = _tmp_confint.lower
+        max_vals = _tmp_confint.upper
+    end
+
+    idx = argmin(min_vals)
+
+    _fit = StatsBase.fit(method, second_moment_targets[idx])
+    _fit = @set _fit.target = target
+    _fit
+end
+
+
+function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.PosteriorVariance},
+    target::Empirikos.PosteriorVariance)
+    # TODO: Cache results here too
+    StatsBase.fit(method.method, target)
+end
+
+
+#---------------------
+# LinearEbayesTarget
+#---------------------
 
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.LinearEBayesTarget)
@@ -211,6 +266,7 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
 
     StatsBase.fit(fitted_worst_case, target)
 end
+
 
 function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.LinearEBayesTarget},
                        target::Empirikos.LinearEBayesTarget)
@@ -239,6 +295,10 @@ function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.LinearEBa
         lower=_min,
         upper=_max)
 end
+
+#------------------------------------------------------------------------
+# Convenience functions for extracting/computing confidence intervals
+#------------------------------------------------------------------------
 
 
 function confint(

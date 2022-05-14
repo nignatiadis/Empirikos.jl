@@ -288,10 +288,10 @@ end
 """
     PosteriorSecondMoment(Z::EBayesSample) <: AbstractPosteriorTarget
 
-Type representing the second moment of the posterior, i.e.,
+Type representing the second moment of the posterior centered around c, i.e.,
 
 ```math
-E_G[\\mu_i^2 \\mid Z_i = z]
+E_G[(\\mu_i-c)^2 \\mid Z_i = z]
 ```
 """
 struct PosteriorSecondMoment{T,S} <: BasicPosteriorTarget
@@ -301,10 +301,10 @@ end
 
 PosteriorSecondMoment(z) = PosteriorSecondMoment(z, zero(Float64))
 
-function compute_target(::Conjugate, postmean::PosteriorSecondMoment, Z::EBayesSample, prior)
+function compute_target(::Conjugate, postmoment::PosteriorSecondMoment, Z::EBayesSample, prior)
     _post = posterior(Z, prior)
-    c = postmean.c
-    var(_post) + abs2(mean(postmean) - c)
+    c = postmoment.c
+    var(_post) + abs2(mean(_post) - c)
 end
 
 function (postmean::PosteriorSecondMoment)(μ::Number)
