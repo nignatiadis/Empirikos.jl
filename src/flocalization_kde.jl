@@ -39,6 +39,19 @@ function Empirikos._set_defaults(
     @set kernel.h = h
 end
 
+function Empirikos._set_defaults(
+    kernel::InfiniteOrderKernel,
+    Zs::AbstractVector{<:Empirikos.FoldedNormalSample};
+    kwargs...,
+)
+    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+        throw("Only implemented for Homoskedastic Gaussian data.")
+    σ = std(Zs[1])
+    n = length(Zs)
+    h = σ / sqrt(log(n))
+    @set kernel.h = h
+end
+
 
 Distributions.cf(a::SincKernel, t) = one(Float64) * (-1 / a.h <= t <= 1 / a.h)
 
@@ -180,7 +193,14 @@ Base.@kwdef struct InfinityNormDensityBand <: FLocalization
     rng = Random.MersenneTwister(1)
 end
 
+function Base.show(io::IO, d::InfinityNormDensityBand)
+    print(io, "∞-density band [Kernel: ")
+    Base.show(io, d.kernel)
+    print(io, "] [Bootstrap: ", string(d.bootstrap),"(",d.nboot,")]")
+end
+
 Empirikos.vexity(::InfinityNormDensityBand) = Empirikos.LinearVexity()
+
 function Empirikos._set_defaults(
     method::InfinityNormDensityBand,
     Zs::AbstractVector{<:Empirikos.AbstractNormalSample{<:Number}};
@@ -189,8 +209,28 @@ function Empirikos._set_defaults(
     Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
 
-    q = get(hints, :quantile, 0.1)
+    q = get(hints, :quantile, 0.02)
     a_min, a_max = quantile(response.(Zs), (q, 1 - q))
+    if isa(method.a_min, DataBasedDefault)
+        method = @set method.a_min = a_min
+    end
+    if isa(method.a_max, DataBasedDefault)
+        method = @set method.a_max = a_max
+    end
+    method
+end
+
+function Empirikos._set_defaults(
+    method::InfinityNormDensityBand,
+    Zs::AbstractVector{<:Empirikos.FoldedNormalSample{<:Number}};
+    hints...,
+)
+    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+        throw("Only implemented for Homoskedastic Gaussian data.")
+
+    q = get(hints, :quantile, 0.02)
+    a_max = quantile(response.(Zs), 1-q)
+    a_min = -a_max
     if isa(method.a_min, DataBasedDefault)
         method = @set method.a_min = a_min
     end
@@ -265,11 +305,49 @@ function StatsBase.fit(
     res
 end
 
+function StatsBase.fit(
+    opt::InfinityNormDensityBand,
+    Zs::AbstractVector{<:Empirikos.FoldedNormalSample{<:Number}};
+    kwargs...,
+)
+    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+        throw("Only implemented for Homoskedastic Gaussian data.")
+    opt = Empirikos.set_defaults(opt, Zs; kwargs...)
+
+    @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
+
+    # deepcopying below to make sure RNG status for sampling here remains the same.
+    rng = deepcopy(rng)
+
+    random_signs = 2 .* rand(rng, Bernoulli(), length(Zs)) .-1
+
+    res = certainty_banded_KDE(
+        random_signs .* response.(Zs),
+        a_min,
+        a_max;
+        absolute_value = true,
+        npoints = 2*npoints,
+        rng = rng,
+        kernel = kernel,
+        bootstrap = bootstrap,
+        nboot = nboot,
+        α = α,
+    )
+    res = @set res.method = opt
+    Z = Zs[1]
+    normal_midpoints = [@set Z.Z = mdpt for mdpt in res.midpoints]
+    res = @set res.midpoints = normal_midpoints
+    res = @set res.a_min = 0.0
+    res
+end
+
+
 function certainty_banded_KDE(
     Xs,
     a_min,
     a_max;
     kernel,
+    absolute_value = false,
     rng = Random._GLOBAL_RNG,
     npoints = 4096,
     nboot = 1_000,
@@ -277,10 +355,17 @@ function certainty_banded_KDE(
     α = 0.5,
 )
 
+    absolute_value && (a_min != -a_max) && error("a_min needs to be equal to a_max")
+
     h = kernel.h
     m = length(Xs)
 
-    lo, hi = extrema(Xs)
+    if absolute_value
+        hi = maximum(abs.(Xs))
+        lo = -hi
+    else
+        lo, hi = extrema(Xs)
+    end
     # avoid FFT wrap-around numerical difficulties
     lo_kde, hi_kde = min(a_min, lo - 6 * h), max(a_max, hi + 6 * h)
     midpts = range(lo_kde, hi_kde; length = npoints)
@@ -290,8 +375,15 @@ function certainty_banded_KDE(
 
     # quantities only at points of interest
     midpts_idx = findall((midpts .>= a_min) .& (midpts .<= a_max))
-    midpoints = fitted_kde.x[midpts_idx]
-    estimated_density = fitted_kde.density[midpts_idx]
+
+    if absolute_value
+        pos_idx = findall((midpts .> 0) .& (midpts .<= a_max))
+        neg_idx  = reverse(findall((midpts .< 0) .& (midpts .>= a_min)))
+        midpts[pos_idx] != -midpts[neg_idx] && error("symmetry not satisfied")
+        estimated_density = fitted_kde.density[pos_idx] + fitted_kde.density[neg_idx]
+    else
+        estimated_density = fitted_kde.density[midpts_idx]
+    end
 
     C∞_boot = Vector{Float64}(undef, nboot)
 
@@ -308,10 +400,20 @@ function certainty_banded_KDE(
             throw(error("Only :Multinomial and :Poisson supported."))
         end
         f_kde_pois = kde(Xs, ws, midpts, kernel)
-        C∞_boot[k] = maximum(abs.(estimated_density .- f_kde_pois.density[midpts_idx]))
+        if absolute_value
+            C∞_boot[k] = maximum(abs.(estimated_density .- f_kde_pois.density[pos_idx] .-  f_kde_pois.density[neg_idx]))
+        else
+            C∞_boot[k] = maximum(abs.(estimated_density .- f_kde_pois.density[midpts_idx]))
+        end
     end
 
     C∞ = quantile(C∞_boot, 1 - α)
+
+    if absolute_value
+        midpoints = fitted_kde.x[pos_idx]
+    else
+        midpoints = fitted_kde.x[midpts_idx]
+    end
 
     FittedInfinityNormDensityBand(
         C∞ = C∞,
@@ -332,7 +434,12 @@ end
 
     n = length(y_all)
     _step = div(n - 2, subsample)
-    idxs = [1; 2:_step:(n-1); n]
+
+    if _step <= 1
+        idxs = 1:1:n
+    else
+        idxs = [1; 2:_step:(n-1); n]
+    end
     x = x_all[idxs]
     y = y_all[idxs]
 
