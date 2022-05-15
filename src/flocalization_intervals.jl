@@ -221,18 +221,12 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
     min_postmean = _fit.lower
     max_postmean = _fit.upper
 
-    max_vals = Vector{Float64}(undef, n_bisection)
-    min_vals = Vector{Float64}(undef, n_bisection)
-
     postmean_range = range(min_postmean, stop=max_postmean, length=n_bisection)
     second_moment_targets = PosteriorSecondMoment.(location(target), postmean_range)
-    for (index, second_moment_target) in enumerate(second_moment_targets)
-        _tmp_confint = confint(StatsBase.fit(method, second_moment_target))
-        min_vals = _tmp_confint.lower
-        max_vals = _tmp_confint.upper
-    end
 
-    idx = argmin(min_vals)
+    _tmp_confints = confint.(method, second_moment_targets)
+
+    idx = argmin(getfield.(_tmp_confints, :lower))
 
     _fit = StatsBase.fit(method, second_moment_targets[idx])
     _fit = @set _fit.target = target
