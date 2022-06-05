@@ -25,6 +25,7 @@ using Optim
 using ParameterJuMP
 using QuadGK
 using Random
+using RangeHelpers
 using RecipesBase
 using Setfield
 using Statistics
@@ -67,6 +68,7 @@ include("datasets/Butterfly/Butterfly.jl")
 include("datasets/Surgery/Surgery.jl")
 include("datasets/CollinsLangman/CollinsLangman.jl")
 include("datasets/CressieSeheult/CressieSeheult.jl")
+include("datasets/Bichsel/Bichsel.jl")
 
 
 
