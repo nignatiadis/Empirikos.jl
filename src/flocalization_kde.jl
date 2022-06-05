@@ -194,7 +194,7 @@ Base.@kwdef struct InfinityNormDensityBand <: FLocalization
 end
 
 function Base.show(io::IO, d::InfinityNormDensityBand)
-    print(io, "∞-density band [Kernel: ")
+    print(io, "∞-density band [α: ",d.α, "] [Kernel: ")
     Base.show(io, d.kernel)
     print(io, "] [Bootstrap: ", string(d.bootstrap),"(",d.nboot,")]")
 end
@@ -209,7 +209,7 @@ function Empirikos._set_defaults(
     Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
 
-    q = get(hints, :quantile, 0.02)
+    q = get(hints, :quantile, 0.005)
     a_min, a_max = quantile(response.(Zs), (q, 1 - q))
     if isa(method.a_min, DataBasedDefault)
         method = @set method.a_min = a_min
@@ -228,7 +228,7 @@ function Empirikos._set_defaults(
     Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
 
-    q = get(hints, :quantile, 0.02)
+    q = get(hints, :quantile, 0.005)
     a_max = quantile(response.(Zs), 1-q)
     a_min = -a_max
     if isa(method.a_min, DataBasedDefault)

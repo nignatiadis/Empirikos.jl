@@ -8,6 +8,7 @@ function FoldedNormal(μ::T, σ::T) where {T <: Real}
     return FoldedNormal{T}(μ, σ)
 end
 
+
 function Distributions.pdf(d::FoldedNormal, x::Real)
     d_normal = Normal(d.μ, d.σ)
     d_pdf = pdf(d_normal, x) + pdf(d_normal, -x)
@@ -48,11 +49,20 @@ end
 FoldedNormalSample(Z) = FoldedNormalSample(Z, 1.0)
 FoldedNormalSample() = FoldedNormalSample(missing)
 
+function FoldedNormalSample(Z::AbstractNormalSample)
+    FoldedNormalSample(response(Z), std(Z))
+end
+
 response(Z::FoldedNormalSample) = Z.Z
 nuisance_parameter(Z::FoldedNormalSample) = Z.σ
 std(Z::FoldedNormalSample) = Z.σ
 var(Z::FoldedNormalSample) = abs2(std(Z))
 
+
+function _symmetrize(Zs::AbstractVector{<:FoldedNormalSample})
+   random_signs =  2 .* rand(Bernoulli(), length(Zs)) .-1
+   NormalSample.(random_signs .* response.(Zs), std.(Zs))
+end
 function likelihood_distribution(Z::FoldedNormalSample, μ)
     FoldedNormal(μ, nuisance_parameter(Z))
 end

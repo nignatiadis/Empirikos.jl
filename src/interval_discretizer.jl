@@ -17,6 +17,11 @@ function interval_discretizer(grid::AbstractVector; closed = :right, unbounded =
             Interval{Open,Closed}.(grid[1:end-1], grid[2:end])
             Interval{Open,Unbounded}(grid[end], nothing)
         ]
+    elseif (closed === :left) && (unbounded === :right)
+        ints = EBIntervalFlipped{eltype(grid)}[
+            Interval{Closed,Open}.(grid[1:end-1], grid[2:end])
+            Interval{Closed,Unbounded}(grid[end], nothing)
+        ]
     elseif (closed === :right) && (unbounded === :none)
         ints = Interval{Open,Closed}.(grid[1:end-1], grid[2:end])
     elseif (closed === :left) && (unbounded === :none)
