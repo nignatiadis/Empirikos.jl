@@ -118,22 +118,42 @@ of `support`∩`-support`, i.e., it represents all `DiscreteNonParametric` distr
 (so that components with same magnitude, but opposite sign have the same probability).
 `support` should include the nonnegative support points only.
 """
-struct SymmetricDiscretePriorClass{S} <: AbstractMixturePriorClass
-    support::S
+Base.@kwdef struct SymmetricDiscretePriorClass{S} <: AbstractMixturePriorClass
+    support::S = DataBasedDefault()
+    includes_zero::Bool = iszero(support[1])
 end
 
-SymmetricDiscretePriorClass(; support=DataBasedDefault()) = SymmetricDiscretePriorClass(support)
-
-support(convexclass::SymmetricDiscretePriorClass) = [-convexclass.support; convexclass.support]
+function support(convexclass::SymmetricDiscretePriorClass)
+    nonneg_supp = convexclass.support
+    if convexclass.includes_zero
+        supp = [-nonneg_supp[2:end]; nonneg_supp[1]; nonneg_supp[2:end]]
+    else
+        supp = [-nonneg_supp; nonneg_supp]
+    end
+    supp
+end
 
 function (convexclass::SymmetricDiscretePriorClass)(p::AbstractVector{<:Real})
-    DiscreteNonParametric(support(convexclass), [fix_πs(p)/2; fix_πs(p)/2] )
+    fixed_p = fix_πs(p)
+    if convexclass.includes_zero
+        πs = [fixed_p[2:end]/2; fixed_p[1]; fixed_p[2:end]/2]
+    else
+        πs = [fixed_p/2; fixed_p/2]
+    end
+    d = DiscreteNonParametric(support(convexclass), πs)
 end
 
 # The below is different than the default option. TODO: Test
 nparams(convexclass::SymmetricDiscretePriorClass) = length(convexclass.support)
+
 function Distributions.components(convexclass::SymmetricDiscretePriorClass)
-    [MixtureModel([Dirac(-x);Dirac(x)], [1/2; 1/2]) for x in convexclass.support]
+    if convexclass.includes_zero
+        comps =  [MixtureModel([Dirac(convexclass.support[1])], [1.0]);
+            [MixtureModel([Dirac(-x);Dirac(x)], [1/2; 1/2]) for x in convexclass.support[2:end]]]
+    else
+        comps = [MixtureModel([Dirac(-x);Dirac(x)], [0.5; 0.5]) for x in convexclass.support]
+    end
+    comps
 end
 
 function Base.show(io::IO, gcal::SymmetricDiscretePriorClass)
