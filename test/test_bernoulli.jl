@@ -39,8 +39,8 @@ ci_at_1_dkw = confint(floc_dkw_interval, pmf_at_1, Zs_summary)
 dkw_error = sqrt(log(2/α)/(2n))
 hatf_1 =  Zs_summary(BinomialSample(1,1))/n
 
-@test hatf_1 + dkw_error ≈ ci_at_1_dkw.upper
-@test hatf_1 - dkw_error ≈ ci_at_1_dkw.lower
+@test hatf_1 + dkw_error ≈ ci_at_1_dkw.upper atol=1e-6
+@test hatf_1 - dkw_error ≈ ci_at_1_dkw.lower atol=1e-6
 
 ci_at_1_chisq = confint(floc_chisq_interval, pmf_at_1, Zs_summary)
 
