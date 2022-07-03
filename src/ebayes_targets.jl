@@ -103,6 +103,10 @@ Base.:*(t::LinearEBayesTarget, s::Number) = s*t
 
 (t::AffineTransformedLinearTarget)(prior::Union{<:Number, <:Distribution}) = t.b * t.target(prior) + t.a
 
+
+
+
+
 """
 	cf(::LinearEBayesTarget, t)
 
@@ -260,6 +264,46 @@ function (post_null::PosteriorTargetNullHypothesis)(prior::T) where {T<:Union{Di
 end
 
 
+
+Base.@kwdef struct AffineTransformedPosteriorTarget{T, I, S} <: BasicPosteriorTarget
+    a::I = 0
+    b::S = 1
+    target::T
+end
+
+import Base.:*
+
+function Base.:*(s::Number, t::BasicPosteriorTarget)
+    AffineTransformedPosteriorTarget(;b=s, target=t)
+end
+
+Base.:*(t::BasicPosteriorTarget, s::Number) = s*t
+
+(t::AffineTransformedPosteriorTarget)(prior::Union{<:Number, <:Distribution}) = t.b * t.target(prior) + t.a
+
+location(target::AffineTransformedPosteriorTarget) = location(target.target)
+
+"""
+    PosteriorDensity(Z::EBayesSample, μ) <: AbstractPosteriorTarget
+
+Type representing the posterior density given Z at ``\\mu``, i.e.,
+
+```math
+p_G(\\mu \\mid Z_i = z)
+```
+"""
+struct PosteriorDensity{T,S} <: BasicPosteriorTarget
+    Z::T
+    μ::S
+end
+
+function compute_target(::Conjugate, target::PosteriorDensity, Z::EBayesSample, prior)
+    pdf(posterior(Z, prior), target.μ)
+end
+
+function (target::PosteriorDensity)(μ::Number)
+    one(Float64)
+end
 
 
 

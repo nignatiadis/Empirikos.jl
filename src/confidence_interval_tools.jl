@@ -57,12 +57,12 @@ end
 end
 
 function gaussian_ci(se; maxbias=0.0, α=0.05)
+    maxbias = abs(maxbias) # should throw an error?
     if iszero(se)
         return maxbias
     end
-    maxbias = abs(maxbias)
     rel_bias = maxbias/se
-    if abs(rel_bias) > 6
+    if abs(rel_bias) > 7
         pm = quantile(Normal(), 1-α) + abs(rel_bias)
     else
         pm = sqrt(quantile(NoncentralChisq(1, abs2(rel_bias)), 1-α))
@@ -70,17 +70,56 @@ function gaussian_ci(se; maxbias=0.0, α=0.05)
     se*pm
 end
 
-Base.@kwdef struct BiasVarianceConfidenceInterval <: ConfidenceInterval
-    target        = nothing
-    method        = nothing
-    α::Float64       = 0.05
+struct BiasVarianceConfidenceInterval <: ConfidenceInterval
+    target
+    method
+    α::Float64
+    tail::Symbol
     estimate::Float64
     se::Float64
-    maxbias::Float64 = 0.0
-    halflength::Float64 = gaussian_ci(se; maxbias=maxbias, α=α)
-    lower::Float64 = estimate - halflength
-    upper::Float64 = estimate + halflength
+    maxbias::Float64
+    halflength::Float64
+    lower::Float64
+    upper::Float64
 end
+
+function BiasVarianceConfidenceInterval(; target = nothing,
+    method = nothing,
+    α    = 0.05,
+    tail  = :both,
+    estimate,
+    se,
+    maxbias = 0.0)
+
+
+    if tail === :both
+        halflength = gaussian_ci(se; maxbias=maxbias, α=α)
+        lower = estimate - halflength
+        upper = estimate + halflength
+    elseif tail === :right
+        halflength = se*quantile(Normal(), 1-α) + abs(maxbias)
+        lower = estimate - halflength
+        upper = Inf
+    elseif tail == :left
+        halflength = se*quantile(Normal(), 1-α) + abs(maxbias)
+        lower = -Inf
+        upper = estimate + halflength
+    else
+        throw(ArgumentError("tail=$(tail) is not a valid keyword argument"))
+    end
+
+    BiasVarianceConfidenceInterval(target,
+        method,
+        α,
+        tail,
+        estimate,
+        se,
+        maxbias,
+        halflength,
+        lower,
+        upper)
+end
+
 
 function Base.show(io::IO, ci::BiasVarianceConfidenceInterval)
     print(io, "lower = ", round(ci.lower,sigdigits=4))
@@ -107,10 +146,13 @@ end
 
 Base.broadcastable(pair::BisectionPair) = Ref(pair)
 
-function confint(pair::BisectionPair, λ ; α=0.05)
+function confint(pair::BisectionPair, λ ; α=0.05, tail=:both)
     _se = sqrt( abs2(1-λ)*pair.var1 + abs2(λ)*pair.var2 + 2*λ*(1-λ)*pair.cov)
     _maxbias = (1-λ)*pair.max_bias1 + λ*pair.max_bias2
     _estimate = (1-λ)*pair.estimate1 + λ*pair.estimate2
-    bw = gaussian_ci(_se; maxbias=_maxbias, α=α)
-    _estimate -bw , _estimate +bw
+
+    bw = BiasVarianceConfidenceInterval(;
+        α=α, tail=tail, maxbias=_maxbias, se=_se, estimate = _estimate)
+
+    bw.lower, bw.upper
 end
