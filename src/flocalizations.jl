@@ -103,7 +103,6 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
     if max_constraints < n_constraints - 10
         _step = div(n_constraints-2, max_constraints)
         idxs = [1; 2:_step:(n_constraints-1); n_constraints]
-
         _Zs = _Zs[idxs]
         cdf_probs = cdf_probs[idxs]
     end

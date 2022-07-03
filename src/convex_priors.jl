@@ -22,8 +22,7 @@ function (priorvariable::PriorVariable)()
     priorvariable(JuMP.value.(priorvariable.finite_param))
 end
 
-abstract type AbstractSimplexPriorClass <: ConvexPriorClass end
-abstract type AbstractMixturePriorClass <: AbstractSimplexPriorClass end
+abstract type AbstractMixturePriorClass <: ConvexPriorClass end
 
 # TODO: implement correct projection onto simplex and check deviation is not too big
 # though this should mostly help with minor numerical difficulties
@@ -31,6 +30,45 @@ function fix_πs(πs)
     πs = max.(πs, 0.0)
     πs = πs ./ sum(πs)
 end
+
+function Distributions.component(mixclass::AbstractMixturePriorClass, i::Integer)
+    Distributions.components(mixclass)[i]
+end
+Distributions.ncomponents(mixclass::AbstractMixturePriorClass) = length(components(mixclass))
+nparams(mixclass::AbstractMixturePriorClass) = Distributions.ncomponents(mixclass)
+
+function (mixclass::AbstractMixturePriorClass)(p::AbstractVector{<:Real})
+    MixtureModel(components(mixclass), fix_πs(p))
+end
+
+function pdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
+    @unpack convexclass, finite_param, model = prior
+    pdf_combination = pdf.(components(convexclass), Z)
+    @expression(model, dot(finite_param, pdf_combination))
+end
+
+function cdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
+    @unpack convexclass, finite_param, model = prior
+    cdf_combination = cdf.(components(convexclass), Z)
+    @expression(model, dot(finite_param, cdf_combination))
+end
+
+function (target::LinearEBayesTarget)(prior::PriorVariable{<:AbstractMixturePriorClass})
+    @unpack convexclass, finite_param, model = prior
+    linear_functional_evals = target.(components(convexclass))
+    @expression(model, dot(finite_param, linear_functional_evals))
+end
+
+function prior_variable!(model, convexclass::AbstractMixturePriorClass)
+    n = nparams(convexclass)
+    tmp_vars = @variable(model, [i = 1:n])
+    set_lower_bound.(tmp_vars, 0.0)
+    con = @constraint(model, sum(tmp_vars) == 1.0)
+    PriorVariable(convexclass, tmp_vars, model)
+end
+
+
+
 
 """
     DiscretePriorClass(support) <: Empirikos.ConvexPriorClass
@@ -50,7 +88,7 @@ julia> gcal([0.2,0.2,0.6])
 DiscreteNonParametric{Float64, Float64, Vector{Float64}, Vector{Float64}}(support=[0.0, 0.5, 1.0], p=[0.2, 0.2, 0.6])
 ```
 """
-struct DiscretePriorClass{S} <: AbstractSimplexPriorClass
+struct DiscretePriorClass{S} <: AbstractMixturePriorClass
     support::S
 end
 
@@ -62,9 +100,7 @@ function (convexclass::DiscretePriorClass)(p::AbstractVector{<:Real})
     DiscreteNonParametric(support(convexclass), fix_πs(p))
 end
 
-nparams(convexclass::DiscretePriorClass) = length(support(convexclass))
 Distributions.components(convexclass::DiscretePriorClass) = Dirac.(support(convexclass))
-
 
 function Base.show(io::IO, gcal::DiscretePriorClass)
     print(io, "DiscretePriorClass | support = ")
@@ -72,33 +108,60 @@ function Base.show(io::IO, gcal::DiscretePriorClass)
 end
 
 
-function prior_variable!(model, convexclass::AbstractSimplexPriorClass)
-    n = nparams(convexclass)
-    tmp_vars = @variable(model, [i = 1:n])
-    set_lower_bound.(tmp_vars, 0.0)
-    con = @constraint(model, sum(tmp_vars) == 1.0)
-    PriorVariable(convexclass, tmp_vars, model)
+
+"""
+    SymmetricDiscretePriorClass(support) <: Empirikos.ConvexPriorClass
+
+Type representing the family of all symmetric discrete distributions supported on a subset
+of `support`∩`-support`, i.e., it represents all `DiscreteNonParametric` distributions with
+`support = [support;-support]` and `probs` taking values on the probability simplex
+(so that components with same magnitude, but opposite sign have the same probability).
+`support` should include the nonnegative support points only.
+"""
+Base.@kwdef struct SymmetricDiscretePriorClass{S} <: AbstractMixturePriorClass
+    support::S = DataBasedDefault()
+    includes_zero::Bool = iszero(support[1])
 end
 
-# Dirac
-function pdf(prior::PriorVariable{<:DiscretePriorClass}, Z::EBayesSample)
-    @unpack convexclass, finite_param, model = prior
-    pdf_combination = likelihood.(Z, support(convexclass))
-    @expression(model, dot(finite_param, pdf_combination))
+function support(convexclass::SymmetricDiscretePriorClass)
+    nonneg_supp = convexclass.support
+    if convexclass.includes_zero
+        supp = [-nonneg_supp[2:end]; nonneg_supp[1]; nonneg_supp[2:end]]
+    else
+        supp = [-nonneg_supp; nonneg_supp]
+    end
+    supp
 end
 
-# Dirac
-function cdf(prior::PriorVariable{<:DiscretePriorClass}, Z::EBayesSample)
-    @unpack convexclass, finite_param, model = prior
-    cdf_combination = _cdf.(likelihood_distribution.(Z, support(convexclass)), response(Z))
-    @expression(model, dot(finite_param, cdf_combination))
+function (convexclass::SymmetricDiscretePriorClass)(p::AbstractVector{<:Real})
+    fixed_p = fix_πs(p)
+    if convexclass.includes_zero
+        πs = [fixed_p[2:end]/2; fixed_p[1]; fixed_p[2:end]/2]
+    else
+        πs = [fixed_p/2; fixed_p/2]
+    end
+    d = DiscreteNonParametric(support(convexclass), πs)
 end
 
-function (target::LinearEBayesTarget)(prior::PriorVariable{<:DiscretePriorClass})
-    @unpack convexclass, finite_param, model = prior
-    linear_functional_evals = target.(support(convexclass))
-    @expression(model, dot(finite_param, linear_functional_evals))
+# The below is different than the default option. TODO: Test
+nparams(convexclass::SymmetricDiscretePriorClass) = length(convexclass.support)
+
+function Distributions.components(convexclass::SymmetricDiscretePriorClass)
+    if convexclass.includes_zero
+        comps =  [MixtureModel([Dirac(convexclass.support[1])], [1.0]);
+            [MixtureModel([Dirac(-x);Dirac(x)], [1/2; 1/2]) for x in convexclass.support[2:end]]]
+    else
+        comps = [MixtureModel([Dirac(-x);Dirac(x)], [0.5; 0.5]) for x in convexclass.support]
+    end
+    comps
 end
+
+function Base.show(io::IO, gcal::SymmetricDiscretePriorClass)
+    print(io, "SymmetricDiscretePriorClass | nonneg. support = ")
+    show(IOContext(io, :compact => true), gcal.support)
+end
+
+
 
 
 
@@ -131,14 +194,6 @@ end
 
 MixturePriorClass() = MixturePriorClass(nothing)
 Distributions.components(mixclass::MixturePriorClass) = mixclass.components
-function Distributions.component(mixclass::AbstractSimplexPriorClass, i::Integer)
-    Distributions.components(mixclass)[i]
-end
-nparams(mixclass::AbstractMixturePriorClass) = length(components(mixclass))
-Distributions.ncomponents(mixclass::AbstractSimplexPriorClass) = nparams(mixclass)
-function (mixclass::AbstractMixturePriorClass)(p::AbstractVector{<:Real})
-    MixtureModel(components(mixclass), fix_πs(p))
-end
 
 # Similar to show method for MixtureModel
 function Base.show(io::IO, gcal::MixturePriorClass)
@@ -153,23 +208,7 @@ function Base.show(io::IO, gcal::MixturePriorClass)
     end
 end
 
-function pdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
-    @unpack convexclass, finite_param, model = prior
-    pdf_combination = pdf.(components(convexclass), Z)
-    @expression(model, dot(finite_param, pdf_combination))
-end
 
-function cdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
-    @unpack convexclass, finite_param, model = prior
-    cdf_combination = cdf.(components(convexclass), Z)
-    @expression(model, dot(finite_param, cdf_combination))
-end
-
-function (target::LinearEBayesTarget)(prior::PriorVariable{<:AbstractMixturePriorClass})
-    @unpack convexclass, finite_param, model = prior
-    linear_functional_evals = target.(components(convexclass))
-    @expression(model, dot(finite_param, linear_functional_evals))
-end
 
 """
     GaussianScaleMixtureClass(σs) <: Empirikos.ConvexPriorClass

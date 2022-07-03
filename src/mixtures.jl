@@ -1,6 +1,23 @@
 #  Mixture of Conjugates functionality
 
 
+function default_target_computation(::BasicPosteriorTarget,
+    ::EBayesSample,
+    ::Dirac
+)
+    Conjugate()
+end
+
+function marginalize(Z::EBayesSample, G::Dirac)
+    likelihood_distribution(Z, G.value)
+end
+
+function posterior(Z::EBayesSample, G::Dirac)
+    G
+end
+
+
+
 function default_target_computation(
     ::BasicPosteriorTarget,
     ::EBayesSample,

@@ -39,8 +39,8 @@ ci_at_1_dkw = confint(floc_dkw_interval, pmf_at_1, Zs_summary)
 dkw_error = sqrt(log(2/α)/(2n))
 hatf_1 =  Zs_summary(BinomialSample(1,1))/n
 
-@test hatf_1 + dkw_error ≈ ci_at_1_dkw.upper
-@test hatf_1 - dkw_error ≈ ci_at_1_dkw.lower
+@test hatf_1 + dkw_error ≈ ci_at_1_dkw.upper atol=1e-6
+@test hatf_1 - dkw_error ≈ ci_at_1_dkw.lower atol=1e-6
 
 ci_at_1_chisq = confint(floc_chisq_interval, pmf_at_1, Zs_summary)
 
@@ -71,7 +71,7 @@ ci_postmean_at_1_chisq = confint(floc_chisq_interval, postmean_at_1, Zs_summary)
 
 
 
-Random.seed!(1)
+Random.seed!(2)
 
 n = 200
 
@@ -130,10 +130,10 @@ for amari_ in (amari_with_F, amari_without_F)
     tmp_fit = fit((@set floc_dkw.α = 0.01), Zs)
     dkw_lb = mean(response, Zs) - tmp_fit.band
 
-    @test amari_fit_prior_second_mean.max_bias ≈ dkw_lb*(1-dkw_lb)/2 rtol = 0.005
-    @test amari_fit_prior_second_mean.Q(BinomialSample(1,1)) ≈ 1.0 - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
-    @test amari_fit_prior_second_mean.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
-    @test ci_second_mean.estimate ≈ mean(response.(Zs)) - dkw_lb*(1-dkw_lb)/2 atol = 1e-3
+    @test amari_fit_prior_second_mean.max_bias ≈ dkw_lb*(1-dkw_lb)/2 atol = 0.0015
+    @test amari_fit_prior_second_mean.Q(BinomialSample(1,1)) ≈ 1.0 - dkw_lb*(1-dkw_lb)/2  atol = 0.0015
+    @test amari_fit_prior_second_mean.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 0.0015
+    @test ci_second_mean.estimate ≈ mean(response.(Zs)) - dkw_lb*(1-dkw_lb)/2 atol = 0.0015
     @test ci_second_mean.lower < ci_second_mean.estimate - quantile(Normal(), 1-α/2)*ci_second_mean.se
     @test ci_second_mean.lower > ci_second_mean.estimate - quantile(Normal(), 1-α/2)*ci_second_mean.se - ci_second_mean.maxbias
     @test ci_second_mean.se ≈ std(response.(Zs))/sqrt(nobs(Zs)) atol = 1e-7
@@ -154,13 +154,13 @@ for amari_ in (amari_with_F, amari_without_F)
 
     amari_fit_postmean_lin = fit(amari_, postmean_lin, Zs)
 
-    @test amari_fit_postmean_lin.max_bias ≈ dkw_lb*(1-dkw_lb)/2 rtol = 0.005
-    @test amari_fit_postmean_lin.Q(BinomialSample(1,1)) ≈ (1-c) - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
-    @test amari_fit_postmean_lin.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 1e-3
+    @test amari_fit_postmean_lin.max_bias ≈ dkw_lb*(1-dkw_lb)/2 atol = 0.0015
+    @test amari_fit_postmean_lin.Q(BinomialSample(1,1)) ≈ (1-c) - dkw_lb*(1-dkw_lb)/2  atol = 0.0015
+    @test amari_fit_postmean_lin.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 0.0015
 
     ci_postmean_lin = confint(amari_fit_postmean_lin, postmean_lin, Zs; level=1-α)
 
-    @test ci_postmean_lin.estimate ≈ (1-c)*mean(response.(Zs)) - dkw_lb*(1-dkw_lb)/2 atol = 1e-3
+    @test ci_postmean_lin.estimate ≈ (1-c)*mean(response.(Zs)) - dkw_lb*(1-dkw_lb)/2 atol = 0.0015
     @test ci_postmean_lin.lower < ci_postmean_lin.estimate - quantile(Normal(), 1-α/2)*ci_postmean_lin.se
     @test ci_postmean_lin.lower > ci_postmean_lin.estimate - quantile(Normal(), 1-α/2)*ci_postmean_lin.se - ci_postmean_lin.maxbias
     @test amari_fit_postmean_lin.unit_var_proxy ≈ (1-c)^2*mean(response.(Zs))*(1- mean(response.(Zs))) atol=1e-5
@@ -180,7 +180,7 @@ for amari_ in (amari_with_F, amari_without_F)
     c_left = cs[idx]
 
     ci_postmean = confint(amari_, PosteriorMean(BinomialSample(1,1)), Zs; level=1-α)
-    @test ci_postmean.upper ≈ 1.0
+    @test ci_postmean.upper ≈ 1.0 atol = 1e-7
     @test ci_postmean.lower ≈ c_left atol = 0.0015
 
     Zs_flip = BinomialSample.(1 .- response.(Zs), 1)

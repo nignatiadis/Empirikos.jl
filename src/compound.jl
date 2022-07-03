@@ -41,6 +41,11 @@ function likelihood_distribution(Z::CompoundSample, μ)
     MixtureModel(likelihood_distribution.(Z.vec, μ), Z.probs)
 end
 
+# TODO: remove this by improved type hierarchy
+function marginalize(Z::CompoundSample, G::Dirac)
+    likelihood_distribution(Z, G.value)
+end
+
 function marginalize(Z::CompoundSample, prior::Distribution)
     n = length(Z.vec)
     MixtureModel(marginalize.(Z.vec, Ref(prior)),  Z.probs)

@@ -155,7 +155,7 @@ Base.@kwdef struct AMARI{N, G, M, EB}
     flocalization::N
     solver
     discretizer = nothing#DataBasedDefault()
-    plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver)
+    plugin_G = NPMLE(convexclass, solver)
     data_split = :none
     delta_grid = 0.2:0.5:6.7
     delta_objective = RMSE()
@@ -218,7 +218,7 @@ function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, targ
         bound_delta=bound_delta, target=target)
 end
 
-function modulus_cholesky_factor(convexclass::AbstractSimplexPriorClass, plugin_G, discr,
+function modulus_cholesky_factor(convexclass::AbstractMixturePriorClass, plugin_G, discr,
             eb_samples::HeteroskedasticSamples)
     K = nparams(convexclass)
     chr = cholesky(zeros(K, K) + I)
@@ -284,9 +284,17 @@ function set_target!(modulus_model::AbstractModulusModel, target::Empirikos.Line
 end
 
 function default_support_discretizer(Zs::AbstractVector{<:AbstractNormalSample})
-    _low,_up = quantile(response.(Zs), (0.02, 0.98))
+    _low,_up = quantile(response.(Zs), (0.005, 0.995))
     _step = mean( std.(Zs))/100
-    interval_discretizer(range(_low; stop=_up, step=_step))
+    interval_discretizer(RangeHelpers.range(_low; stop=above(_up), step=_step))
+end
+
+function default_support_discretizer(Zs::AbstractVector{<:FoldedNormalSample})
+    _up = quantile(response.(Zs), 0.995)
+    _low = zero(_up)
+    _step = mean( std.(Zs) )/100
+    interval_discretizer(RangeHelpers.range(start=_low, stop=above(_up), step=_step);
+        closed=:left, unbounded=:right)
 end
 
 
@@ -482,25 +490,37 @@ function fit_initialized!(method::AMARI, target, Zs; kwargs...)
 end
 
 
-function confint(Q::SteinMinimaxEstimator, target, Zs; level=0.95)
+function confint(Q::SteinMinimaxEstimator, target, Zs; level=0.95, tail=:both)
     target == Q.modulus_model.target ||
            error("Target has changed")
     α = 1- level
     _bias = Q.max_bias
     _Qs = Q.Q.(Zs)
     _wts = StatsBase.weights(Zs)
-    _se = std(Q.Q.(Zs), _wts; corrected=true)/sqrt(nobs(Zs))
-    point_estimate = mean(Q.Q.(Zs), _wts)
-    halfwidth = gaussian_ci(_se; maxbias=_bias, α=α)
-    BiasVarianceConfidenceInterval(estimate = point_estimate,
+    _se = std(_Qs, _wts; corrected=true)/sqrt(nobs(Zs))
+    point_estimate = mean(_Qs, _wts)
+    BiasVarianceConfidenceInterval(;estimate = point_estimate,
                                    maxbias = _bias,
                                    se = _se,
-                                   α = α, method = nothing, target = target)
+                                   tail = tail,
+                                   α = α,
+                                   target = target)
 end
 
-function confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; initialize=true, kwargs...)
+function confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; initialize=true, constrain_outer=true, kwargs...)
     _fit = StatsBase.fit(method, target, Zs; initialize=initialize)
-    confint(_fit, target, Zs; kwargs...)
+    amari_ci = confint(_fit, target, Zs; kwargs...)
+    if constrain_outer
+        floc_worst_case = FLocalizationInterval(flocalization = _fit.method.flocalization,
+                                            convexclass = method.convexclass,
+                                            solver= method.solver)
+
+        outer_ci = confint(floc_worst_case, target)
+        amari_ci = @set amari_ci.lower = max(amari_ci.lower, outer_ci.lower)
+        amari_ci = @set amari_ci.upper = min(amari_ci.upper, outer_ci.upper)
+        # TODO: switch to LowerUpperConfidenceInterval in this case
+    end
+    amari_ci
 end
 
 function StatsBase.fit(method::AMARI, target, Zs; initialize=true, kwargs...)
@@ -526,15 +546,15 @@ function Base.broadcasted(::typeof(confint), amari::AMARI,
 end
 
 function Base.broadcasted_kwsyntax(::typeof(confint), amari::AMARI,
-    targets::AbstractArray{<:Empirikos.EBayesTarget}, Zs; level=0.95)
+    targets::AbstractArray{<:Empirikos.EBayesTarget}, Zs; level=0.95, tail=:both)
 
     init_target = isa(targets[1], LinearEBayesTarget) ? targets[1] : denominator(targets[1])
     method = initialize_method(amari, init_target, Zs)
 
-    _ci =  confint(method, targets[1], Zs; initialize=false, level=level)
+    _ci =  confint(method, targets[1], Zs; initialize=false, level=level, tail=tail)
     confint_vec = fill(_ci, axes(targets))
     for (index, target) in enumerate(targets[2:end])
-        confint_vec[index+1] = confint(method, target, Zs; initialize=false, level=level)
+        confint_vec[index+1] = confint(method, target, Zs; initialize=false, level=level, tail=tail)
     end
     confint_vec
 end
@@ -552,7 +572,7 @@ Form a confidence interval for the [`Empirikos.EBayesTarget`](@ref) `target` wit
     `level` based on the samples `Zs` using the [`AMARI`](@ref) `method`.
 """
 function confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
-                          initialize=true, level=0.95, kwargs...)
+                          initialize=true, level=0.95, tail=:both, kwargs...)
     if initialize
         init_target = Empirikos.PosteriorTargetNullHypothesis(target, 0.0)
         method = initialize_method(method, init_target, Zs; kwargs...)
@@ -598,7 +618,7 @@ function confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
 
 
     λs = range(0, stop=1, length=10_000)
-    all_cis = confint.(Ref(bisection_pair), λs; α = α)
+    all_cis = confint.(Ref(bisection_pair), λs; α = α, tail = tail)
     zero_in_ci = first.(all_cis) .<= 0.0 .<= last.(all_cis)
 
     idx_lhs = findfirst(zero_in_ci)

@@ -156,7 +156,9 @@ function _set_defaults(
 )
     grid_scaling = get(hints, :grid_scaling, sqrt(2))
 
-    σ_min =  minimum(std.(Zs))./ 10
+    _σ_min =  minimum(std.(Zs))./ 10
+    σ_min = get(hints, :σ_min, _σ_min)
+
     _max = maximum(response.(Zs).^2 .-  var.(Zs))
     _σ_max = _max > 0.0 ? 2*sqrt(_max) : 8*σ_min
     σ_max = get(hints, :σ_max, _σ_max) #somewhat redundant computations above.

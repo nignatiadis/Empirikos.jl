@@ -82,10 +82,6 @@ Normal{Float64}(μ=2.0, σ=1.9999999999999998)
 """
 function marginalize end
 
-function marginalize(Z::EBayesSample, G::Dirac)
-    likelihood_distribution(Z, G.value)
-end
-
 function posterior end
 
 Broadcast.broadcastable(Z::EBayesSample) = Ref(Z)
@@ -273,6 +269,24 @@ end
 function _pdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
     ccdf(dbn, first(interval)) + pdf(dbn, first(interval))
 end
+
+function _pdf(dbn::Normal, interval::Interval{T,Closed,Unbounded}) where {T}
+    if iszero(var(dbn))
+        return _pdf(Dirac(mean(dbn)), interval)
+    else
+        return ccdf(dbn, first(interval))
+    end
+end
+
+function _pdf(dbn::Normal, interval::Interval{T,Closed,Closed}) where {T}
+    if iszero(var(dbn))
+        return _pdf(Dirac(mean(dbn)), interval)
+    else
+        return  cdf(dbn, last(interval)) - cdf(dbn, first(interval))
+    end
+end
+
+
 
 function _logpdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
     log(_pdf(dbn, interval))
