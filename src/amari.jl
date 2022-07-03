@@ -511,7 +511,7 @@ function confint(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; initia
     _fit = StatsBase.fit(method, target, Zs; initialize=initialize)
     amari_ci = confint(_fit, target, Zs; kwargs...)
     if constrain_outer
-        floc_worst_case = FLocalizationInterval(flocalization = method.flocalization,
+        floc_worst_case = FLocalizationInterval(flocalization = _fit.method.flocalization,
                                             convexclass = method.convexclass,
                                             solver= method.solver)
 
