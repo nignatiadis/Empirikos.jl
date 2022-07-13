@@ -6,7 +6,7 @@ using ForwardDiff
 using Hypatia
 using QuadGK
 using Documenter
-
+using CSV
 
 # Doctests
 

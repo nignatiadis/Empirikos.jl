@@ -40,3 +40,21 @@ ci_no_se = Empirikos.BiasVarianceConfidenceInterval(estimate=1.0, se=0.0, maxbia
 @test ci_no_se.upper ≈ 1.0 + 1.0
 
 @test Empirikos.gaussian_ci(0.0; maxbias=2.0) == 2.0
+
+# Test implementation against table 1 of Armstrong-Kolesar (2018)
+
+1+1
+tbl = CSV.File(joinpath(@__DIR__, "data_for_testing", "ak_2018_table1.csv"))
+
+bs_tbl1 = tbl.b
+αs_tbl1 = [0.01; 0.05; 0.1]
+
+for α_tmp in αs_tbl1, i in Base.OneTo(length(bs_tbl1))
+    b_tmp = bs_tbl1[i]
+    halflength_ak = tbl[Symbol(α_tmp)][i]
+    @test Empirikos.gaussian_ci(1.0; maxbias=b_tmp, α=α_tmp) ≈ halflength_ak atol=0.0005
+    U_tmp = rand()
+    ci_tmp = Empirikos.BiasVarianceConfidenceInterval(estimate=U_tmp, se=1.0, α=α_tmp, maxbias=b_tmp)
+    @test ci_tmp.lower ≈ U_tmp - halflength_ak atol=0.0006
+    @test ci_tmp.upper ≈ U_tmp + halflength_ak atol=0.0006
+end
