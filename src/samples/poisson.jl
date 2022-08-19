@@ -68,17 +68,6 @@ function posterior(Z::PoissonSample, prior::Gamma)
     Gamma(α_post, 1 / β_post)
 end
 
-function StatsBase.fit(::ParametricMLE{<:Gamma}, Zs::VectorOrSummary{<:PoissonSample})
-    func = TwiceDifferentiable(
-        params -> -loglikelihood(Zs, Gamma(params...)),
-        [1.0; 1.0];
-        autodiff = :forward,
-    )
-    dfc = TwiceDifferentiableConstraints([0.0; 0.0], [Inf; Inf])
-
-    opt = optimize(func, dfc, [1.0; 1.0], IPNewton())
-    Gamma(Optim.minimizer(opt)...)
-end
 
 
 # DiscretePriorClass

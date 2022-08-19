@@ -104,29 +104,6 @@ function StatsBase.fit(
     Beta(α, β)
 end
 
-function StatsBase.fit(
-    method::ParametricMLE{<:Beta},
-    Zs::AbstractVector{<:BinomialSample},
-    skedasticity,
-)
-    StatsBase.fit(method, summarize(Zs), skedasticity)
-end
-
-function StatsBase.fit(
-    ::ParametricMLE{<:Beta},
-    Zs_summary::MultinomialSummary{<:BinomialSample},
-    skedasticity,
-)
-    func = TwiceDifferentiable(
-        params -> -loglikelihood(Zs_summary, Beta(params...)),
-        [1.0; 1.0];
-        autodiff = :forward,
-    )
-    dfc = TwiceDifferentiableConstraints([0.0; 0.0], [Inf; Inf])
-
-    opt = optimize(func, dfc, [1.0; 1.0], IPNewton())
-    Beta(Optim.minimizer(opt)...)
-end
 
 
 

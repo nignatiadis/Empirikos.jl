@@ -21,7 +21,6 @@ using KernelDensity
 using LinearAlgebra
 using LinearFractional
 using MathOptInterface
-using Optim
 using ParameterJuMP
 using QuadGK
 using Random
