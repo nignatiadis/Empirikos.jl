@@ -51,6 +51,7 @@ include("samples/normal.jl")
 include("samples/poisson.jl")
 include("samples/truncatedpoisson.jl")
 include("samples/noncentralhypergeometric.jl")
+include("samples/scaledchisquare.jl")
 
 include("samples/foldednormal.jl")
 include("example_priors.jl")
@@ -68,6 +69,7 @@ include("datasets/Surgery/Surgery.jl")
 include("datasets/CollinsLangman/CollinsLangman.jl")
 include("datasets/CressieSeheult/CressieSeheult.jl")
 include("datasets/Bichsel/Bichsel.jl")
+include("datasets/Tacks/tacks.jl")
 
 
 
@@ -87,7 +89,6 @@ export EBayesSample,
     nuisance_parameter,
     skedasticity,
     MethodOfMoments,
-    ParametricMLE,
     PosteriorMean,
     PosteriorVariance,
     MarginalDensity,
