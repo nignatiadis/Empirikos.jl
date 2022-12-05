@@ -27,6 +27,7 @@ using Random
 using RangeHelpers
 using RecipesBase
 using Setfield
+import SpecialFunctions: trigamma, digamma, polygamma
 using Statistics
 import Statistics: std, var
 
@@ -79,6 +80,7 @@ export EBayesSample,
     BinomialSample,
     PoissonSample,
     TruncatedPoissonSample,
+    ScaledChiSquareSample,
     marginalize,
     compound,
     discretize,

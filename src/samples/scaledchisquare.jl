@@ -21,6 +21,7 @@ support(Z::ScaledChiSquareSample) = RealInterval(0, +Inf)
 
 response(Z::ScaledChiSquareSample) = Z.Z
 nuisance_parameter(Z::ScaledChiSquareSample) = Z.ν
+StatsBase.dof(Z::ScaledChiSquareSample) = Z.ν
 
 function likelihood_distribution(Z::ScaledChiSquareSample, σ²)
     ν = Z.ν
@@ -61,6 +62,22 @@ function Distributions.cdf(d::InverseScaledChiSquare, x::Real)
 end
 
 
+function Distributions.mean(d::InverseScaledChiSquare)
+    Distributions.mean(InverseGamma(d))
+end
+
+function Distributions.std(d::InverseScaledChiSquare)
+    Distributions.std(InverseGamma(d))
+end
+
+function Distributions.quantile(d::InverseScaledChiSquare, p)
+    Distributions.quantile(InverseGamma(d), p)
+end
+
+function Distributions.rand(rng::AbstractRNG, d::InverseScaledChiSquare)
+    Distributions.rand(rng, InverseGamma(d))
+end
+
 # Conjugate computations
 
 function default_target_computation(::BasicPosteriorTarget, ::ScaledChiSquareSample, ::InverseScaledChiSquare)
@@ -78,6 +95,12 @@ function posterior(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
 end
 
 
+function limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::Dirac)
+    σ = prior.value
+    2*ccdf(Normal(0, σ), abs(β_hat))
+end
+
+
 function limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
     post = posterior(Z, prior)
     t_moderated = β_hat / sqrt.(post.σ²)
@@ -92,4 +115,82 @@ function limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::DiscreteNonParame
 
     pvals = 2 .* ccdf.(Normal.(0, σs), (abs(β_hat)))
     LinearAlgebra.dot(pvals, πs)
+end
+
+function limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::MixtureModel)
+    comps = components(prior)
+    pvals_by_comp = limma_pvalue.(β_hat, Z, comps)
+    post = posterior(Z, prior)
+    πs_post = probs(post)
+    LinearAlgebra.dot(pvals_by_comp, πs_post)
+end
+
+
+
+function fit_limma(Zs::AbstractVector{<:Empirikos.ScaledChiSquareSample})
+    zs = response.(Zs)
+    νs = dof.(Zs)
+    logzs = log.(zs)
+
+    es = logzs .- digamma.(νs/2) .+ log.(νs/2)
+    μ_e = mean(es)
+    var_e = Statistics.var(es; corrected=false)
+    var_demeaned = var_e - mean(trigamma.(νs/2))
+
+    if var_demeaned >0
+        ν0 = 2invtrigamma(var_demeaned)
+        σ² = exp(μ_e + digamma(ν0/2)-log(ν0/2))
+    else
+        ν0 = Inf
+        σ² = mean(zs)
+    end
+
+    if ν0 == Inf
+        prior = Dirac(σ²)
+    else
+        prior = InverseScaledChiSquare(σ², ν0)
+    end
+    prior
+end
+
+
+"""
+    invtrigamma(x)
+Compute the inverse [`trigamma`](@ref) function of `x`.
+"""
+invtrigamma(y::Number) = _invtrigamma(float(y))
+
+function _invtrigamma(y::Float64)
+    # Implementation of Newton algorithm described in
+    # "Linear Models and Empirical Bayes Methods for Assessing
+    #  Differential Expression in Microarray Experiments"
+    # (Appendix "Inversion of Trigamma Function")
+    #  by Gordon K. Smyth, 2004
+
+    if y <= 0
+        throw(DomainError(y, "Only positive `y` supported."))
+    end
+
+    if y > 1e7
+        return inv(sqrt(y))
+    elseif y < 1e-6
+        return inv(y)
+    end
+
+    x_old = inv(y) + 0.5
+    x_new = x_old
+
+    # Newton iteration
+    δ = Inf
+    iteration = 0
+    while δ > 1e-8 && iteration <= 25
+        iteration += 1
+        f_x_old = trigamma(x_old)
+        δx =  f_x_old*(1-f_x_old/y) / polygamma(2, x_old)
+        x_new = x_old + δx
+        δ = - δx / x_new
+        x_old = x_new
+    end
+
+    return x_new
 end
