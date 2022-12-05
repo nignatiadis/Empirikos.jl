@@ -70,7 +70,7 @@ include("datasets/Surgery/Surgery.jl")
 include("datasets/CollinsLangman/CollinsLangman.jl")
 include("datasets/CressieSeheult/CressieSeheult.jl")
 include("datasets/Bichsel/Bichsel.jl")
-include("datasets/Tacks/tacks.jl")
+include("datasets/Tacks/Tacks.jl")
 
 
 
