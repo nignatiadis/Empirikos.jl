@@ -22,17 +22,12 @@ end
 BinomialSample(n::Integer) = BinomialSample(missing, n)
 
 function Base.show(io::IO, Z::BinomialSample)
-    spaces_to_keep = ismissing(response(Z)) ? 1 : max(3 - ndigits(response(Z)), 1)
-    spaces = repeat(" ", spaces_to_keep)
-    print(io, "Z=", response(Z), spaces, "| ", "n=", ntrials(Z))
+    resp_Z = response(Z)
+    n = nuisance_parameter(Z)
+    print(io, "ℬ𝒾𝓃(", resp_Z,"; ", primary_parameter(Z),", n=", n,")")
 end
 
-function Base.show(io::IO, Z::BinomialSample{<:Interval})
-    Zz = response(Z)
-    print(io, "Z ∈ ")
-    show(IOContext(io, :compact => true), Zz)
-    print(io, " | ", "n=", ntrials(Z))
-end
+primary_parameter(::BinomialSample) = :p
 
 summarize_by_default(::AbstractVector{<:BinomialSample}) = true
 

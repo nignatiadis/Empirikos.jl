@@ -149,6 +149,10 @@ Here `flocalization` is a  pilot [`Empirikos.FLocalization`](@ref), `convexclass
 a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
 `plugin_G` is a [`Empirikos.EBayesMethod`](@ref) used as an initial estimate of the marginal
 distribution of the i.i.d. samples ``Z``.
+
+## References
+
+@ignatiadis2022confidence
 """
 Base.@kwdef struct AMARI{N, G, M, EB}
     convexclass::G

@@ -16,6 +16,7 @@ end
 
 ScaledChiSquareSample(ν) = ScaledChiSquareSample(missing, ν)
 
+
 eltype(Z::ScaledChiSquareSample{T}) where {T} = T
 support(Z::ScaledChiSquareSample) = RealInterval(0, +Inf)
 
@@ -31,9 +32,7 @@ end
 
 function Base.show(io::IO, Z::ScaledChiSquareSample)
     resp_Z = response(Z)
-    spaces_to_keep = 1
-    spaces = repeat(" ", spaces_to_keep)
-    print(io, "Z=", resp_Z, spaces, "| ", "ν=", Z.ν)
+    print(io, "ScaledΧ²(", resp_Z, "; σ², ν=", Z.ν,")")
 end
 
 struct InverseScaledChiSquare{T, S} <: ContinuousUnivariateDistribution

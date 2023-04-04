@@ -1,3 +1,7 @@
+function check_moi_optimal(model)
+    JuMP.termination_status(model) == MathOptInterface.OPTIMAL || throw("status_not_optimal")
+end
+
 """
     FLocalizationInterval(flocalization::Empirikos.FLocalization,
                           convexclass::Empirikos.ConvexPriorClass,
@@ -125,10 +129,13 @@ function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.AbstractP
 
     set_objective(lfp, JuMP.MOI.MIN_SENSE, target_numerator_g, target_denominator_g)
     optimize!(lfp)
+    check_moi_optimal(lfp)
     _min = objective_value(lfp)
+
     g1 = g()
     set_objective(lfp, JuMP.MOI.MAX_SENSE, target_numerator_g, target_denominator_g)
     optimize!(lfp)
+    check_moi_optimal(lfp)
     _max = objective_value(lfp)
     g2 = g()
 
@@ -164,9 +171,12 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
 
     @objective(model, Max, denom_target_g)
     optimize!(model)
+    check_moi_optimal(model)
     _max_denom = JuMP.objective_value(model)
+
     @objective(model, Min, denom_target_g)
     optimize!(model)
+    check_moi_optimal(model)
     _min_denom = JuMP.objective_value(model)
 
     _denom_range = range(_min_denom, stop=_max_denom, length=n_bisection)
@@ -177,9 +187,12 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
         set_value(t, _denom)
         @objective(model, Max, num_target_g)
         optimize!(model)
+        check_moi_optimal(model)
+
         _max_vals[i] = target(g())
         @objective(model, Min, num_target_g)
         optimize!(model)
+        check_moi_optimal(model)
         _min_vals[i] = target(g())
     end
 
@@ -272,11 +285,13 @@ function StatsBase.fit(method::FittedFLocalizationInterval{<:Empirikos.LinearEBa
 
     @objective(lp, Min, target_g)
     optimize!(lp)
+    check_moi_optimal(lp)
     _min = objective_value(lp)
     g1 = g()
 
     @objective(lp, Max, target_g)
     optimize!(lp)
+    check_moi_optimal(lp)
     _max = objective_value(lp)
     g2 = g()
 

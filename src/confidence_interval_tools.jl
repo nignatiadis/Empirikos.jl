@@ -50,7 +50,7 @@ end
 	    cis_ribbon  = estimate .- lower, upper .- estimate
 	    fillalpha --> 0.36
 	    seriescolor --> "#018AC4"
-	    ribbon --> cis_ribbon
+	    ribbon := cis_ribbon
         linealpha --> 0
         return x, estimate
     end

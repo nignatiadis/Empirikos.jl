@@ -11,10 +11,10 @@ in the `convexclass` ``\\mathcal{G}``, estimate ``G`` by Nonparametric Maximum L
 where ``f_{i,G}(z) = \\int p_i(z \\mid \\mu) dG(\\mu)`` is the marginal density of the ``i``-th sample.
 The optimization is conducted by a JuMP compatible `solver`.
 """
-struct NPMLE{C} <: ConvexMinimumDistanceMethod
+struct NPMLE{C, S} <: ConvexMinimumDistanceMethod
     convexclass::C
-    solver::Any
-    dict::Any
+    solver::S
+    kwargs::Any
 end
 
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
@@ -74,7 +74,7 @@ function _fit(npmle::NPMLE, Zs)
     π = Empirikos.prior_variable!(model, convexclass)
     f = pdf.(π, Zs)
 
-    _mult = multiplicity(Zs)
+    _mult = multiplicity(Zs) ./ nobs(Zs)
     n = length(_mult)
 
     @variable(model, u)

@@ -18,6 +18,7 @@ end
 function ebayes_samples()
     tbl = load_table()
     Zs = NonCentralHypergeometricSample.(tbl.XC, tbl.NC, tbl.NT, tbl.XC + tbl.XT)
+    Zs
 end
 
 

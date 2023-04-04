@@ -67,26 +67,17 @@ std(Z::StandardNormalSample) = one(eltype(response(Z)))
 std(Z::StandardNormalSample{Missing}) = 1.0
 
 nuisance_parameter(Z::AbstractNormalSample) = std(Z)
+primary_parameter(::AbstractNormalSample) = :μ
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 
 
-function Base.show(io::IO, Z::AbstractNormalSample{<:Real})
+function Base.show(io::IO, Z::AbstractNormalSample)
     Zz = response(Z)
-    print(io, "Z=")
-    print(io, lpad(round(Zz, digits = 4),8))
-    print(io, " | ", "σ=")
-    print(io, rpad(round(std(Z), digits = 3),5))
+    print(io, " 𝒩(", Zz, "; μ, σ=", std(Z),")")
 end
 
 
-function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
-    Zz = response(Z)
-    print(io, "Z ∈ ")
-    show(IOContext(io, :compact => true), Zz)
-    print(io, " | ", "σ=")
-    print(io, rpad(round(std(Z), digits = 3),5))
-end
 
 
 

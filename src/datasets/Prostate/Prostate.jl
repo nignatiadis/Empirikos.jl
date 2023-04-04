@@ -15,7 +15,7 @@ See the following monograph for further illustrations
 of empirical Bayes methods on this dataset:
 
 > Bradley Efron. Large-scale inference: Empirical Bayes methods for estimation, testing,
-and prediction. Cambridge University Press, 2012.
+  and prediction. Cambridge University Press, 2012
 """
 module Prostate
 

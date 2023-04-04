@@ -14,6 +14,13 @@ end
 
 MethodOfMoments(o) = MethodOfMoments(o, nothing)
 
+Base.@kwdef struct ParametricMLE{O, S} <: EBayesMethod
+    model::O
+    solver::S
+    kwargs::Any = nothing
+end
+
+
 
 # struct SURE <: EBayesMethod
 #   object::SoftThreshold,

@@ -21,6 +21,7 @@ using KernelDensity
 using LinearAlgebra
 using LinearFractional
 using MathOptInterface
+using Optim
 using ParameterJuMP
 using QuadGK
 using Random
@@ -34,6 +35,7 @@ import Statistics: std, var
 using StatsBase
 import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 
+using TransformVariables
 using UnPack
 
 include("set_defaults.jl")
@@ -48,29 +50,38 @@ include("convex_priors.jl")
 include("flocalizations.jl")
 include("NPMLE.jl")
 include("samples/binomial.jl")
+include("samples/bivariate_binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
 include("samples/truncatedpoisson.jl")
 include("samples/noncentralhypergeometric.jl")
 include("samples/scaledchisquare.jl")
-
 include("samples/foldednormal.jl")
+
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
 
+include("optim_methods.jl")
 
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
 include("datasets/Neighborhoods/neighborhoods.jl")
 include("datasets/Butterfly/Butterfly.jl")
+include("datasets/BertrandMullainathan/BertrandMullainathan.jl")
+include("datasets/ArceoGomezCamposVasquez/ArceoGomezCamposVasquez.jl")
+
 include("datasets/Surgery/Surgery.jl")
 include("datasets/CollinsLangman/CollinsLangman.jl")
 include("datasets/CressieSeheult/CressieSeheult.jl")
+include("datasets/EfronMorrisBaseball/EfronMorrisBaseball.jl")
 include("datasets/Bichsel/Bichsel.jl")
+include("datasets/Thyrion/Thyrion.jl")
 include("datasets/Tacks/Tacks.jl")
+include("datasets/Shakespeare/Shakespeare.jl")
+include("datasets/PsychologyReproducibility/PsychologyReproducibility.jl")
 
 
 
@@ -78,6 +89,7 @@ export EBayesSample,
     NormalSample,
     StandardNormalSample,
     BinomialSample,
+    BivariateBinomialSample,
     PoissonSample,
     TruncatedPoissonSample,
     ScaledChiSquareSample,

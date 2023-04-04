@@ -107,7 +107,12 @@ function Base.show(io::IO, gcal::DiscretePriorClass)
     show(IOContext(io, :compact => true), support(gcal))
 end
 
-
+function clean(G::DiscreteNonParametric; tol = 10*sqrt(eps()))
+    πs = probs(G)
+    non_zero_idx = πs .> tol
+    new_πs = fix_πs( πs[non_zero_idx])
+    DiscreteNonParametric(support(G)[non_zero_idx], new_πs)
+end
 
 """
     SymmetricDiscretePriorClass(support) <: Empirikos.ConvexPriorClass
@@ -239,3 +244,19 @@ function Base.show(io::IO, gcal::GaussianScaleMixtureClass)
 end
 
 components(convexclass::GaussianScaleMixtureClass) = Normal.(0, convexclass.σs)
+
+
+struct BetaMixtureClass{S} <: AbstractMixturePriorClass
+    αs::S
+    βs::S
+end
+
+BetaMixtureClass() = BetaMixtureClass(DataBasedDefault(), DataBasedDefault())
+
+components(convexclass::BetaMixtureClass) = Beta.(convexclass.αs, convexclass.βs)
+
+function auto_convexclass(class::BetaMixtureClass, bandwidth, grid)
+    αs = 1 .+ (grid ./bandwidth)
+    βs = 1 .+ ((1 .- grid) ./bandwidth)
+    BetaMixtureClass(αs, βs)
+end
