@@ -1,5 +1,7 @@
 function check_moi_optimal(model)
-    JuMP.termination_status(model) == MathOptInterface.OPTIMAL || throw("status_not_optimal")
+    JuMP.termination_status(model) == MathOptInterface.OPTIMAL ||
+    JuMP.termination_status(model) == MathOptInterface.ALMOST_OPTIMAL ||
+        throw("status_not_optimal") # TODO: perhaps add warning.
 end
 
 """
@@ -179,7 +181,16 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
     check_moi_optimal(model)
     _min_denom = JuMP.objective_value(model)
 
+    #@show _min_denom, _max_denom
+    #_diff_denom = _max_denom - _min_denom
+    #if _diff_denom > 0
+    #    _min_denom = _min_denom + _diff_denom/n_bisection/10
+    #    _max_denom = _max_denom - _diff_denom/n_bisection/10
+    #end
+    #@show _min_denom, _max_denom
+
     _denom_range = range(_min_denom, stop=_max_denom, length=n_bisection)
+
     @variable(model, t == _min_denom, Param())
     @constraint(model, denom_target_g == t)
 

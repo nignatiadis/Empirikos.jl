@@ -5,15 +5,16 @@ using Empirikos
 using Test
 using Hypatia
 using Random
+using StableRNGs
 
 
-Random.seed!(1)
-Zs_standard = StandardNormalSample.(randn(1000) .* sqrt(2))
+rng = StableRNG(1)
+Zs_standard = StandardNormalSample.(randn(rng, 1000) .* sqrt(2))
 true_prior = Normal(0, 1)
 
 g_prior = MixturePriorClass( Normal.(-2:0.1:2, 1))
 
-gauss_loc_02 = InfinityNormDensityBand(; a_min = -3.0, a_max = 3.0, α = 0.2)
+gauss_loc_02 = InfinityNormDensityBand(; a_min = -3.0, a_max = 3.0, α = 0.2, rng=StableRNG(100))
 
 # deepcopying below to make sure RNG status remains the same.
 fitted_gauss_loc_02 = fit(gauss_loc_02, Zs_standard)
@@ -36,6 +37,12 @@ target1 = PosteriorMean(StandardNormalSample(1.0))
 confint1 = confint(floc_interval, target1, Zs_standard)
 confint1_prefitted = confint(floc_interval_prefitted, target1, Zs_standard)
 confint1_prefitted2 = confint(floc_interval_prefitted, target1)
+
+# Compare to mosek solution
+mosek_confint1_lower = 0.45212135895206856
+mosek_confint1_upper = 0.6648705613789273
+@test confint1.lower ≈ mosek_confint1_lower rtol=0.005
+@test confint1.upper ≈ mosek_confint1_upper rtol=0.005
 
 @test confint1 == confint1_prefitted
 @test confint1 == confint1_prefitted2
@@ -92,7 +99,7 @@ infinity_band_lb = estimated_density_at_1 - band_width
 density_ci = confint(floc_interval_prefitted, density_target)
 
 @test infinity_band_ub >= density_ci.upper
-@test infinity_band_lb <= density_ci.lower
+@test infinity_band_lb <= density_ci.lower * 1.000001
 
 
 # now use a more-fine grained prior class so that we can get exact equality

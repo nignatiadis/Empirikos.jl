@@ -1,6 +1,6 @@
 using Empirikos
 using Test
-using Random
+using StableRNGs
 using Hypatia
 
 Z = BinomialSample(10)
@@ -9,7 +9,7 @@ Z = BinomialSample(10)
 
 betabin = marginalize(Z, Beta(2,1))
 
-Zs = BinomialSample.(rand(MersenneTwister(1), betabin, 100), 10);
+Zs = BinomialSample.(rand(StableRNG(1), betabin, 100), 10);
 unique_Zs = sort(unique(Zs))
 Zs_summary = summarize(Zs)
 
@@ -19,9 +19,13 @@ npmle = NPMLE(cvx_class, Hypatia.Optimizer)
 npmle_fit = fit(NPMLE(cvx_class, Hypatia.Optimizer), Zs)
 npmle_fit_summary = fit(NPMLE(cvx_class, Hypatia.Optimizer), Zs_summary)
 
-mosek_loglikelihood = -225.94642846739816
+#using MosekTools
+#npmle_mosek_fit = fit(NPMLE(cvx_class, Mosek.Optimizer), Zs)
+#loglikelihood(Zs, npmle_mosek_fit.prior)
+
+mosek_loglikelihood = -220.2670724305244
 # figure out why tolerance has changed
-@test loglikelihood(Zs, npmle_fit_summary.prior) ≈ mosek_loglikelihood atol = 0.1# 1e-3
+@test loglikelihood(Zs, npmle_fit_summary.prior) ≈ mosek_loglikelihood atol = 1e-3
 @test loglikelihood(Zs, npmle_fit_summary.prior) ≈ loglikelihood(Zs, npmle_fit.prior) atol = 1e-3
 @test loglikelihood(Zs, npmle_fit_summary.prior) ≈ loglikelihood(Zs_summary, npmle_fit_summary.prior) atol = 1e-3
 @test loglikelihood(Zs, npmle_fit.prior) ≈ loglikelihood(Zs_summary, npmle_fit.prior) atol = 1e-3

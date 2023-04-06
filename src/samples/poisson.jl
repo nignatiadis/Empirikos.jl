@@ -12,9 +12,9 @@ The multiplying intensity ``E`` is assumed to be known (and equal to `1.0` by de
 
 ```jldoctest
 julia> PoissonSample(3)
-Z=3  | E=1.0
+𝒫ℴ𝒾(3; μ)
 julia> PoissonSample(3, 1.5)
-Z=3  | E=1.5
+𝒫ℴ𝒾(3; μ⋅1.5)
 ```
 """
 struct PoissonSample{T,S} <: DiscreteEBayesSample{T}

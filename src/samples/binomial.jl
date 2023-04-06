@@ -11,7 +11,7 @@ Z \\sim \\text{Binomial}(n, p)
 
 ```jldoctest
 julia> BinomialSample(2, 10)          # 2 out of 10 trials successful
-Z=2  | n=10
+ℬ𝒾𝓃(2; p, n=10)
 ```
 """
 struct BinomialSample{T,S<:Integer} <: DiscreteEBayesSample{T}
