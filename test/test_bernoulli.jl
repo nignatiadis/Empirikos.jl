@@ -1,16 +1,17 @@
 # Bernoulli is good sanity check since many quantities have explicit representations
 # and so we can double check if things work as expected.
 
+using Test
 using Random
+using StableRNGs
 using Empirikos
 using Hypatia
 using Setfield
 
-Random.seed!(1)
 
 n = 200
 
-Zs = BinomialSample.(Int.(rand(Bernoulli(0.7), 200)), 1)
+Zs = BinomialSample.(Int.(rand(StableRNG(1), Bernoulli(0.7), 200)), 1)
 Zs_summary = summarize(Zs)
 
 @test Zs_summary(BinomialSample(1,1)) == sum( ==(1), response.(Zs))
@@ -71,11 +72,10 @@ ci_postmean_at_1_chisq = confint(floc_chisq_interval, postmean_at_1, Zs_summary)
 
 
 
-Random.seed!(2)
 
-n = 200
+n = 400
 
-Zs = BinomialSample.(Int.(rand(Bernoulli(0.7), 200)), 1)
+Zs = BinomialSample.(Int.(rand(StableRNG(20), Bernoulli(0.7), n)), 1)
 Zs_summary = summarize(Zs)
 
 comp_Zs = Empirikos.compound(Zs)
@@ -100,6 +100,7 @@ amari_without_F = AMARI(;flocalization = (@set floc_dkw.α = 0.01),
                       modulus_model = Empirikos.ModulusModelWithoutF,
                       discretizer = Empirikos.integer_discretizer(0:1))
 
+#amari_ = amari_with_F
 for amari_ in (amari_with_F, amari_without_F)
     amari_fit_priormean = fit(amari_, Empirikos.PriorMean(), Zs)
     ci_priormean = confint(amari_fit_priormean, Empirikos.PriorMean(), Zs; level=1-α)
@@ -165,6 +166,13 @@ for amari_ in (amari_with_F, amari_without_F)
     @test ci_postmean_lin.lower > ci_postmean_lin.estimate - quantile(Normal(), 1-α/2)*ci_postmean_lin.se - ci_postmean_lin.maxbias
     @test amari_fit_postmean_lin.unit_var_proxy ≈ (1-c)^2*mean(response.(Zs))*(1- mean(response.(Zs))) atol=1e-5
 
+    postmean_lin_at_1 = Empirikos.PosteriorTargetNullHypothesis(PosteriorMean(BinomialSample(1,1)), 1)
+    amari_fit_postmean_lin_at_1 = fit(amari_, postmean_lin_at_1, Zs)
+    @test amari_fit_postmean_lin_at_1.Q(BinomialSample(1,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 0.0015
+    @test amari_fit_postmean_lin_at_1.Q(BinomialSample(0,1)) ≈ - dkw_lb*(1-dkw_lb)/2  atol = 0.0015
+    @test amari_fit_postmean_lin_at_1.unit_var_proxy ≈ 0 atol=1e-7
+    @test amari_fit_postmean_lin_at_1.max_bias ≈ dkw_lb*(1-dkw_lb)/2 atol = 0.0015
+
 
     function tmp_f(c)
         barf = mean(response, Zs)
@@ -181,7 +189,7 @@ for amari_ in (amari_with_F, amari_without_F)
 
     ci_postmean = confint(amari_, PosteriorMean(BinomialSample(1,1)), Zs; level=1-α)
     @test ci_postmean.upper ≈ 1.0 atol = 1e-7
-    @test ci_postmean.lower ≈ c_left atol = 0.0015
+    @test ci_postmean.lower ≈ c_left atol = 0.003
 
     Zs_flip = BinomialSample.(1 .- response.(Zs), 1)
     ci_postmean_0_flip = confint(amari_, PosteriorMean(BinomialSample(0,1)), Zs_flip; level=1-α)

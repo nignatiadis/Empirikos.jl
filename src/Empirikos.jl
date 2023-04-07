@@ -56,6 +56,7 @@ include("samples/poisson.jl")
 include("samples/truncatedpoisson.jl")
 include("samples/noncentralhypergeometric.jl")
 include("samples/scaledchisquare.jl")
+include("samples/normalchisquare.jl")
 include("samples/foldednormal.jl")
 
 include("example_priors.jl")
@@ -93,6 +94,7 @@ export EBayesSample,
     PoissonSample,
     TruncatedPoissonSample,
     ScaledChiSquareSample,
+    NormalChiSquareSample,
     marginalize,
     compound,
     discretize,
