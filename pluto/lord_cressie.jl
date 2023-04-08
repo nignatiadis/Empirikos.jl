@@ -179,6 +179,34 @@ plot!(0:20, [lower_dkw_ci upper_dkw_ci], seriestype=:scatter,  markershape=:circ
 plot!([0;20], [0.0; 1.0], seriestype=:line, linestyle=:dot, label=nothing, color=:lightgrey)
 end
 
+
+postmean_plot = begin
+    plot(0:20, upper_amari_ci, fillrange=lower_amari_ci ,seriestype=:sticks,
+                frame=:box,
+                grid=nothing,
+                xguide = L"z",
+                yguide = L"\EE{\mu \mid Z=z}",
+                legend = :topleft,
+                linewidth=2,
+                linecolor=:blue,
+                alpha = 0.4,
+                background_color_legend = :transparent,
+                legendfonthalign = :left,
+                foreground_color_legend = :transparent, ylim=(-0.01,1.01), thickness_scaling=1.5,
+                label="AMARI",
+                size=(500,350))
+
+    plot!(0:20, [lower_chisq_ci upper_chisq_ci], seriestype=:scatter,  markershape=:hline,
+                label=[L"\chi^2\textrm{-F-Loc}" nothing], markerstrokecolor= :darkorange, markersize=4.5)
+
+    plot!(20:-1:0, lord_cressie.post_mean, seriestype=:scatter,  markershape=:circle,
+                 label="Point estimate", markersize=1.5, color=:black, alpha=0.9, markerstrokealpha=0)
+
+    plot!([0;20], [0.0; 1.0], seriestype=:line, linestyle=:dot, label=nothing, color=:lightgrey)
+end
+
+savefig("cressie.pdf")
+
 # ╔═╡ f75f3898-4bd6-11eb-0c18-1bcfedf36254
 #savefig(postmean_plot, "lord_cressie_posterior_mean.tikz")
 
