@@ -35,7 +35,7 @@ struct NonCentralHypergeometricSample{T} <: DiscreteEBayesSample{T}
     Z₁pZ₂::T
 end
 
-function NonCentralHypergeometricSample(a,b,c,d; margin_entries=true)
+function NonCentralHypergeometricSample(a, b, c, d; margin_entries = true)
     Z₁ = a
     if margin_entries
         n₁ = b
@@ -52,26 +52,26 @@ function NonCentralHypergeometricSample(a,b,c,d; margin_entries=true)
         n₂ = Z₂ + X₂
         Z₁pZ₂ = Z₁ + Z₂
     end
-    NonCentralHypergeometricSample(Z₁,X₁,Z₂,X₂,n₁,n₂,Z₁pZ₂)
+    NonCentralHypergeometricSample(Z₁, X₁, Z₂, X₂, n₁, n₂, Z₁pZ₂)
 end
 
 
 function Base.show(io::IO, Z::NonCentralHypergeometricSample)
-    print(io, "HGeom({", Z.Z₁,"/", Z.X₁,"}/{", Z.Z₂, "/", Z.Z₂,"}; θ)")
+    print(io, "HGeom({", Z.Z₁, "/", Z.X₁, "}/{", Z.Z₂, "/", Z.Z₂, "}; θ)")
 end
 
 
 function response(Z::NonCentralHypergeometricSample)
     Z.Z₁
- end
+end
 
 function likelihood_distribution(Z::NonCentralHypergeometricSample, θ)
     FisherNoncentralHypergeometric(Z.n₁, Z.n₂, Z.Z₁pZ₂, exp(θ))
 end
 
 
-function odds_ratio(Z::NonCentralHypergeometricSample; offset=0.5)
-    num = (Z.Z₁ + offset)/(Z.X₁ + offset)
-    denom = (Z.Z₂ + offset)/(Z.X₂ + offset)
-    num/denom
+function odds_ratio(Z::NonCentralHypergeometricSample; offset = 0.5)
+    num = (Z.Z₁ + offset) / (Z.X₁ + offset)
+    denom = (Z.Z₂ + offset) / (Z.X₂ + offset)
+    num / denom
 end
