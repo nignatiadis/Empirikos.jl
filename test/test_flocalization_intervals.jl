@@ -6,8 +6,8 @@ using Test
 using Hypatia
 using Random
 using StableRNGs
-
-hypatia_slow = optimizer_with_attributes(Hypatia.Optimizer, "tol_slow" => 1e-5)
+using JuMP
+hypatia_slow = JuMP.optimizer_with_attributes(Hypatia.Optimizer, "tol_slow" => 1e-5)
 
 Hypatia.Optimizer(;tol_slow=1e-5, iter_limit=2000)
 
