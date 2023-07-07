@@ -18,7 +18,7 @@ struct NPMLE{C, S} <: ConvexMinimumDistanceMethod
 end
 
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
-NPMLE(;convexclass, solver, kwargs...) = NPMLE(convexclass, solver; kwargs)
+NPMLE(;convexclass, solver = Hypatia.Optimizer, kwargs...) = NPMLE(convexclass, solver; kwargs)
 
 function Base.show(io::IO, npmle::NPMLE)
     print(io, "NPMLE with ")

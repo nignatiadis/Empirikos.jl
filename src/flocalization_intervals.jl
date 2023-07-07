@@ -207,15 +207,31 @@ function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocaliza
         _min_vals[i] = target(g())
     end
 
-    _max = maximum(_max_vals)
-    _min = minimum(_min_vals)
+    _max, _max_idx = findmax(_max_vals)
+    _min, _min_idx = findmin(_min_vals)
+
+    # get g2
+    set_value(t, _denom_range[_max_idx])
+    @objective(model, Max, num_target_g)
+    optimize!(model)
+    g2 = g()
+
+    # get g1
+    set_value(t, _denom_range[_min_idx])
+    @objective(model, Min, num_target_g)
+    optimize!(model)
+    g1 = g()
+
+
+
+
 
     FittedFLocalizationInterval(method=method,
         target=target,
         model=model,
         gmodel=g,
-        g1=nothing, # TODO: Keep track of this? -> Would require resolve though.
-        g2=nothing,
+        g1=g1,
+        g2=g2,
         lower=_min,
         upper=_max)
 end

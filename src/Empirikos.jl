@@ -8,6 +8,7 @@ using DataStructures
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
 
+using Hypatia
 import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded,
     RightEndpoint
 export Interval, Closed, Open, Unbounded # instead of @reexport
@@ -21,7 +22,6 @@ using KernelDensity
 using LinearAlgebra
 using LinearFractional
 using MathOptInterface
-using Optim
 using ParameterJuMP
 using QuadGK
 using Random
@@ -35,7 +35,6 @@ import Statistics: std, var
 using StatsBase
 import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 
-using TransformVariables
 using UnPack
 
 include("set_defaults.jl")
@@ -65,8 +64,6 @@ include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
 
-include("optim_methods.jl")
-
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
 include("datasets/Neighborhoods/neighborhoods.jl")
@@ -95,6 +92,7 @@ export EBayesSample,
     TruncatedPoissonSample,
     ScaledChiSquareSample,
     NormalChiSquareSample,
+    NonCentralHypergeometricSample,
     marginalize,
     compound,
     discretize,

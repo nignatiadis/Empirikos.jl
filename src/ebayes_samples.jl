@@ -127,7 +127,7 @@ Given a `prior` ``G`` and `EBayesSample` ``Z``, compute the marginal density of 
 # Examples
 ```jldoctest
 julia> Z = StandardNormalSample(1.0)
-𝒩(1.0; μ, σ=1.0)
+N(1.0; μ, σ=1.0)
 julia> prior = Normal(2.0, sqrt(3))
 Normal{Float64}(μ=2.0, σ=1.7320508075688772)
 julia> pdf(prior, Z)

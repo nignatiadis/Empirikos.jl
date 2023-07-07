@@ -1,15 +1,20 @@
+
+
+
+
 """
     NormalChiSquareSample(Z, S², ν)
 
-
-The sample is assumed to be
-An observed sample ``Z`` drawn from a scaled chi-square distribution with unknown scale ``\\sigma^2 > 0``.
+This type represents a tuple ``(Z, S^2)`` consisting of the following two measurements:
+* `Z`, a Gaussian measurement ``Z \\sim \\mathcal{N}(\\mu, \\sigma^2)`` centered around ``\\mu`` with variance ``\\sigma^2``,
+* `S²`, an independent unbiased measurement ``S^2`` of ``\\sigma^2`` whose law is the scaled ``\\chi^2`` distribution with `ν` (``\\nu \\geq 1``) degrees of freedom:
 
 ```math
-Z \\sim \\frac{\\sigma^2}{\\nu}}\\chi^2_{\\nu}
+(Z, S) \\, \\sim \\, \\mathcal{N}(\\mu, \\sigma^2) \\otimes \\frac{\\sigma^2}{\\nu} \\chi^2_{\\nu}.
 ```
 
-``\\sigma^2`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
+Here ``\\sigma^2 > 0`` and ``\\mu \\in \\mathbb R`` are assumed unknown.
+``(Z, S^2)`` is to be used for estimation or inference of ``\\mu`` and ``\\sigma^2``.
 """
 struct NormalChiSquareSample{T, S} <: EBayesSample{T}
     Z::T

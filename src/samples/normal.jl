@@ -13,7 +13,7 @@ Z \\sim \\mathcal{N}(\\mu, \\sigma^2)
 
 ```jldoctest
 julia> NormalSample(0.5, 1.0)          #Z=0.5, σ=1
-𝒩(0.5; μ, σ=1.0)
+N(0.5; μ, σ=1.0)
 ```
 """
 struct NormalSample{T,S} <: AbstractNormalSample{T}
@@ -45,7 +45,7 @@ Z \\sim \\mathcal{N}(\\mu, 1)
 
 ```jldoctest
 julia> StandardNormalSample(0.5)          #Z=0.5
-𝒩(0.5; μ, σ=1.0)
+N(0.5; μ, σ=1.0)
 ```
 """
 struct StandardNormalSample{T} <: AbstractNormalSample{T}
@@ -74,7 +74,7 @@ likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 
 function Base.show(io::IO, Z::AbstractNormalSample)
     Zz = response(Z)
-    print(io, "𝒩(", Zz, "; μ, σ=", std(Z),")")
+    print(io, "N(", Zz, "; μ, σ=", std(Z),")")
 end
 
 
