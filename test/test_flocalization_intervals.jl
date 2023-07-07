@@ -7,6 +7,7 @@ using Hypatia
 using Random
 using StableRNGs
 
+hypatia_slow = Hypatia.Optimizer(;tol_slow=1e-5, iter_limit=200)
 
 rng = StableRNG(1)
 Zs_standard = StandardNormalSample.(randn(rng, 1000) .* sqrt(2))
@@ -20,7 +21,7 @@ gauss_loc_02 =
 # deepcopying below to make sure RNG status remains the same.
 floc_interval = FLocalizationInterval(;
     flocalization = deepcopy(gauss_loc_02),
-    solver = Hypatia.Optimizer,
+    solver = hypatia_slow,
     convexclass = g_prior,
 )
 
@@ -30,7 +31,7 @@ fitted_gauss_loc_02 = fit(gauss_loc_02, Zs_standard)
 
 floc_interval_prefitted = FLocalizationInterval(;
     flocalization = fitted_gauss_loc_02,
-    solver = Hypatia.Optimizer,
+    solver = hypatia_slow,
     convexclass = g_prior,
 )
 
@@ -111,7 +112,7 @@ density_ci = confint(floc_interval_prefitted, density_target)
 # now use a more-fine grained prior class so that we can get exact equality
 floc_interval_discrete = FLocalizationInterval(;
     flocalization = fitted_gauss_loc_02,
-    solver = Hypatia.Optimizer,
+    solver = hypatia_slow,
     convexclass = DiscretePriorClass(-3:0.01:3),
 )
 
@@ -128,7 +129,7 @@ gauss_loc_01 =
 
 floc_interval_01 = FLocalizationInterval(;
     flocalization = gauss_loc_01,
-    solver = Hypatia.Optimizer,
+    solver = hypatia_slow,
     convexclass = g_prior,
 )
 confint1_01 = confint(floc_interval_01, target1, Zs_standard)
