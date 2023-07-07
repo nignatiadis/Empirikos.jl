@@ -7,7 +7,9 @@ using Hypatia
 using Random
 using StableRNGs
 
-hypatia_slow = Hypatia.Optimizer(;tol_slow=1e-5, iter_limit=200)
+hypatia_slow = optimizer_with_attributes(Hypatia.Optimizer, "tol_slow" => 1e-5)
+
+Hypatia.Optimizer(;tol_slow=1e-5, iter_limit=2000)
 
 rng = StableRNG(1)
 Zs_standard = StandardNormalSample.(randn(rng, 1000) .* sqrt(2))

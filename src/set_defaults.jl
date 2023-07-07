@@ -6,6 +6,7 @@ function _set_defaults end
 
 requires_defaults(::AbstractDefault) = true
 requires_defaults(::Type) = false
+requires_defaults(::Hypatia.Optimizer) = false
 
 function requires_defaults(obj)
     if nfields(obj) == 0

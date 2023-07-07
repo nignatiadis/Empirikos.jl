@@ -65,6 +65,9 @@ function response(Z::NonCentralHypergeometricSample)
     Z.Z₁
 end
 
+primary_parameter(::NonCentralHypergeometricSample) = :θ
+
+
 function likelihood_distribution(Z::NonCentralHypergeometricSample, θ)
     FisherNoncentralHypergeometric(Z.n₁, Z.n₂, Z.Z₁pZ₂, exp(θ))
 end
