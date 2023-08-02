@@ -255,7 +255,7 @@ BetaMixtureClass() = BetaMixtureClass(DataBasedDefault(), DataBasedDefault())
 
 components(convexclass::BetaMixtureClass) = Beta.(convexclass.αs, convexclass.βs)
 
-function auto_convexclass(class::BetaMixtureClass, bandwidth, grid)
+function autoconvexclass(class::BetaMixtureClass; bandwidth, grid)
     αs = 1 .+ (grid ./bandwidth)
     βs = 1 .+ ((1 .- grid) ./bandwidth)
     BetaMixtureClass(αs, βs)

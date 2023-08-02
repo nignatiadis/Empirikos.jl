@@ -21,6 +21,7 @@ import JuMP: @constraint, @variable, set_lower_bound, @expression,
 using KernelDensity
 using LinearAlgebra
 using LinearFractional
+using LogExpFunctions
 using MathOptInterface
 using ParameterJuMP
 using QuadGK
@@ -57,6 +58,10 @@ include("samples/noncentralhypergeometric.jl")
 include("samples/scaledchisquare.jl")
 include("samples/normalchisquare.jl")
 include("samples/foldednormal.jl")
+include("samples/truncated.jl")
+
+include("autoconvexclass.jl")
+
 
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
@@ -86,6 +91,7 @@ include("datasets/PsychologyReproducibility/PsychologyReproducibility.jl")
 export EBayesSample,
     NormalSample,
     StandardNormalSample,
+    FoldedNormalSample,
     BinomialSample,
     BivariateBinomialSample,
     PoissonSample,

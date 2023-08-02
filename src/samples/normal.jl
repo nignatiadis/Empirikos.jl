@@ -9,7 +9,8 @@ An observed sample ``Z`` drawn from a Normal distribution with known variance ``
 Z \\sim \\mathcal{N}(\\mu, \\sigma^2)
 ```
 
-``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
+``\\mu`` is assumed unknown.
+The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
 
 ```jldoctest
 julia> NormalSample(0.5, 1.0)          #Z=0.5, σ=1
