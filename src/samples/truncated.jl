@@ -30,6 +30,9 @@ Base.@kwdef struct SelectionTilted{D<:Distributions.ContinuousUnivariateDistribu
     truncation_set::S
 end
 
+function Base.show(io::IO, d::SelectionTilted)
+    print(io, "SelectionTilted{", string(d.untilted)," to ", string(d.truncation_sample),"}")
+end
 function tilt(d, Z)
     selection_probability = pdf(d, Z)
     log_selection_probability = logpdf(d, Z)
@@ -43,6 +46,19 @@ function tilt(d, Z)
         truncation_set = truncation_set
     )
 end
+
+function untilt(d::SelectionTilted)
+    d.untilted
+end
+
+function selection_probability(d::SelectionTilted)
+    d.selection_probability
+end
+
+function tilt(𝒢::AbstractMixturePriorClass, Z_trunc_set)
+    MixturePriorClass(tilt.(components(𝒢), Z_trunc_set))
+end
+
 
 function Distributions.pdf(d::SelectionTilted, x::Real)
     Distributions.pdf(d.untilted, x) / d.selection_probability * d.tilting_function(x)
@@ -77,9 +93,79 @@ function (target::ExtendedMarginalDensity)(prior::SelectionTilted)
 end
 
 
-#function (target::ExtendedMarginalDensity)(d::MixtureModel)
-#    sum( probs(d) .* target.(components(d)))
-#end
+function (target::ExtendedMarginalDensity)(d::MixtureModel)
+    sum( probs(d) .* target.(components(d)))
+end
+
+
+struct UntiltNormalizationConstant <: LinearEBayesTarget
+end
+
+(::UntiltNormalizationConstant)(d::SelectionTilted) = 1/selection_probability(d)
+function (target::UntiltNormalizationConstant)(d::MixtureModel)
+    sum(Distributions.probs(d) .*  target.(components(d)))
+end
+
+#
+# probably need to say how we are pretilting to avoid bugs
+# but for now let's assume pretilt is with respect to identical tilt of selection measure
+struct UntiltLinearFunctionalNumerator{T} <: LinearEBayesTarget
+    target::T
+end
+
+function (pretilt_target::UntiltLinearFunctionalNumerator)(d::SelectionTilted)
+    target = pretilt_target.target
+    target(untilt(d)) / selection_probability(d)
+end
+
+function (target::UntiltLinearFunctionalNumerator)(d::MixtureModel)
+    sum(Distributions.probs(d) .*  target.(components(d)))
+end
+
+
+struct UntiltedLinearTarget{T<:LinearEBayesTarget} <: AbstractPosteriorTarget
+    target::T
+end
+
+function untilt(target::LinearEBayesTarget)
+    UntiltedLinearTarget(target)
+end
+
+
+Base.denominator(::UntiltedLinearTarget) = UntiltNormalizationConstant()
+function Base.numerator(target::UntiltedLinearTarget)
+    UntiltLinearFunctionalNumerator(target.target)
+end
+
+function (target::UntiltedLinearTarget)(d)
+    numerator(target)(d) / denominator(target)(d)
+end
+
+
+struct UntiltedPosteriorTarget{T<:BasicPosteriorTarget} <: AbstractPosteriorTarget
+    target::T
+end
+
+function untilt(target::BasicPosteriorTarget)
+    UntiltedPosteriorTarget(target)
+end
+
+
+
+function (target::UntiltedPosteriorTarget)(d)
+    numerator(target)(d) / denominator(target)(d)
+end
+
+
+function Base.denominator(target::UntiltedPosteriorTarget)
+    Base.numerator(untilt(Base.denominator(target.target)))
+end
+
+function Base.numerator(target::UntiltedPosteriorTarget)
+    Base.numerator(untilt(Base.numerator(target.target)))
+end
+
+
 
 #=
 struct SelectionTilted{D<:Distributions.ContinuousUnivariateDistribution, EB, I,
