@@ -43,6 +43,7 @@ The supremum above is enforced discretely on at most `max_constraints` number of
 """
 Base.@kwdef struct DvoretzkyKieferWolfowitz{T,N} <: FLocalization
     α::T = 0.05
+    side::Symbol = :both
     max_constraints::N = 1000
 end
 
@@ -55,6 +56,7 @@ struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
         FittedFLocalization
     summary::D
     band::S
+    side::Symbol
     dkw::DKW
     homoskedastic::Bool
 end
@@ -74,6 +76,7 @@ end
 function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSummary{T}) where T
     α = nominal_alpha(dkw)
     n = nobs(Zs_summary)
+    side = dkw.side
 
     if skedasticity(Zs_summary) === Heteroskedastic()
         homoskedastic = false
@@ -88,9 +91,11 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
             multiplier = 1
         end
     end
+    bonferroni_correction = side == :both ? 2 : 1
+    band = sqrt(log(bonferroni_correction * multiplier / α) / (2n))
+
     n_constraints = length(Zs_summary)
 
-    band = sqrt(log(2 *multiplier / α) / (2n))
 
     cdf_probs = cumsum([v for (k, v) in Zs_summary.store]) #SORTED important here
     cdf_probs /= cdf_probs[end]
@@ -109,7 +114,7 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
     # TODO: report issue with SortedDict upstream
     _dict = SortedDict(Dict(_Zs .=> cdf_probs))
 
-    FittedDvoretzkyKieferWolfowitz(_dict, band, dkw, homoskedastic)
+    FittedDvoretzkyKieferWolfowitz(_dict, band, side, dkw, homoskedastic)
 end
 
 
@@ -120,13 +125,22 @@ function flocalization_constraint!(
     prior::PriorVariable,
 )
     band = dkw.band
+    side = dkw.side
+
+    bound_upper = (side == :both) || (side == :upper)
+    bound_lower = (side == :both) || (side == :lower)
+
     for (Z, cdf_value) in dkw.summary
         marginal_cdf = cdf(prior, Z::EBayesSample)
-        if cdf_value + band < 1
-            @constraint(model, marginal_cdf <= cdf_value + band)
+        if bound_upper
+            if cdf_value + band < 1
+                @constraint(model, marginal_cdf <= cdf_value + band)
+            end
         end
-        if cdf_value - band > 0
-            @constraint(model, marginal_cdf >= cdf_value - band)
+        if bound_lower
+            if cdf_value - band > 0
+                @constraint(model, marginal_cdf >= cdf_value - band)
+            end
         end
     end
     model

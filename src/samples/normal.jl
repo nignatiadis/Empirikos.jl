@@ -9,11 +9,12 @@ An observed sample ``Z`` drawn from a Normal distribution with known variance ``
 Z \\sim \\mathcal{N}(\\mu, \\sigma^2)
 ```
 
-``\\mu`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
+``\\mu`` is assumed unknown.
+The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
 
 ```jldoctest
 julia> NormalSample(0.5, 1.0)          #Z=0.5, σ=1
-Z=     0.5 | σ=1.0
+N(0.5; μ, σ=1.0)
 ```
 """
 struct NormalSample{T,S} <: AbstractNormalSample{T}
@@ -45,7 +46,7 @@ Z \\sim \\mathcal{N}(\\mu, 1)
 
 ```jldoctest
 julia> StandardNormalSample(0.5)          #Z=0.5
-Z=     0.5 | σ=1.0
+N(0.5; μ, σ=1.0)
 ```
 """
 struct StandardNormalSample{T} <: AbstractNormalSample{T}
@@ -67,26 +68,17 @@ std(Z::StandardNormalSample) = one(eltype(response(Z)))
 std(Z::StandardNormalSample{Missing}) = 1.0
 
 nuisance_parameter(Z::AbstractNormalSample) = std(Z)
+primary_parameter(::AbstractNormalSample) = :μ
 
 likelihood_distribution(Z::AbstractNormalSample, μ) = Normal(μ, std(Z))
 
 
-function Base.show(io::IO, Z::AbstractNormalSample{<:Real})
+function Base.show(io::IO, Z::AbstractNormalSample)
     Zz = response(Z)
-    print(io, "Z=")
-    print(io, lpad(round(Zz, digits = 4),8))
-    print(io, " | ", "σ=")
-    print(io, rpad(round(std(Z), digits = 3),5))
+    print(io, "N(", Zz, "; μ, σ=", std(Z),")")
 end
 
 
-function Base.show(io::IO, Z::AbstractNormalSample{<:Interval})
-    Zz = response(Z)
-    print(io, "Z ∈ ")
-    show(IOContext(io, :compact => true), Zz)
-    print(io, " | ", "σ=")
-    print(io, rpad(round(std(Z), digits = 3),5))
-end
 
 
 

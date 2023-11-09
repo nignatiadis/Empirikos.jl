@@ -6,11 +6,11 @@ using ForwardDiff
 using Hypatia
 using QuadGK
 using Documenter
-
+using CSV
 
 # Doctests
 
-DocMeta.setdocmeta!(Empirikos, :DocTestSetup, :(using Empirikos); recursive=true)
+DocMeta.setdocmeta!(Empirikos, :DocTestSetup, :(using Empirikos); recursive = true)
 doctest(Empirikos)
 
 # Other tests

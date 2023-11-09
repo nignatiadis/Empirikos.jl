@@ -14,25 +14,13 @@ end
 
 MethodOfMoments(o) = MethodOfMoments(o, nothing)
 
-struct ParametricMLE{O} <: EBayesMethod
-    object::O
-    params::Any
+Base.@kwdef struct ParametricMLE{O, S} <: EBayesMethod
+    model::O
+    solver::S
+    kwargs::Any = nothing
 end
 
-ParametricMLE(o) = ParametricMLE(o, nothing)
 
-
-# Some defaults for parametric distribution fitting
-_default_constraints(::Normal) = TwiceDifferentiableConstraints([-Inf; 0.0], [Inf; Inf])
-_default_init(::Normal) = [0.0; 1.0]
-
-function _default_constraints(::Union{Beta,Gamma})
-    TwiceDifferentiableConstraints([0.0; 0.0], [Inf; Inf])
-end
-
-function _default_init(::Union{Beta,Gamma})
-    [1.0; 1.0]
-end
 
 # struct SURE <: EBayesMethod
 #   object::SoftThreshold,

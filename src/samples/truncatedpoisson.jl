@@ -76,6 +76,7 @@ TruncatedPoissonSample() = TruncatedPoissonSample(missing)
 
 response(Z::TruncatedPoissonSample) = Z.Z
 nuisance_parameter(Z::TruncatedPoissonSample) = Z.E
+primary_parameter(::TruncatedPoissonSample) = :μ
 
 function likelihood_distribution(Z::TruncatedPoissonSample, λ)
     ZeroTruncatedPoisson(λ * nuisance_parameter(Z))
@@ -83,14 +84,43 @@ end
 
 summarize_by_default(Zs::Vector{<:TruncatedPoissonSample}) = skedasticity(Zs) == Homoskedastic()
 
-
 function Base.show(io::IO, Z::TruncatedPoissonSample)
     resp_Z = response(Z)
-    if ismissing(resp_Z) || isa(resp_Z, Interval)
-        spaces_to_keep = 1
-    else
-        spaces_to_keep = max(3 - ndigits(response(Z)), 1)
-    end
-    spaces = repeat(" ", spaces_to_keep)
-    print(io, "Z=", resp_Z, spaces, "| ", "E=", Z.E)
+    E = nuisance_parameter(Z)
+    μ_string = E==1 ? "μ" : "μ⋅$(E)"
+    print(io, "𝒫ℴ𝒾[>0](", resp_Z,"; ",  μ_string,")")
+end
+
+
+struct MarginallyTruncatedPoissonSample{T,S} <: DiscreteEBayesSample{T}
+    Z::T
+    E::S
+end
+
+MarginallyTruncatedPoissonSample(Z) = MarginallyTruncatedPoissonSample(Z, 1.0)
+summarize_by_default(Zs::Vector{<:MarginallyTruncatedPoissonSample}) = skedasticity(Zs) == Homoskedastic()
+
+response(Z::MarginallyTruncatedPoissonSample) = Z.Z
+nuisance_parameter(Z::MarginallyTruncatedPoissonSample) = Z.E
+
+function pdf(prior::Distribution, Z::MarginallyTruncatedPoissonSample)
+    pois_Z = PoissonSample(Z.Z, Z.E)
+    pois_0 = PoissonSample(0.0, Z.E)
+    pdf(prior, pois_Z)/(1-pdf(prior, pois_0))
+end
+
+function loglikelihood(Z::MarginallyTruncatedPoissonSample, prior::Distribution)
+    pois_Z = PoissonSample(Z.Z, Z.E)
+    pois_0 = PoissonSample(0.0, Z.E)
+    log_Z = loglikelihood(pois_Z, prior)
+    log_0 = loglikelihood(pois_0, prior)
+    prob_0 = exp(log_0)
+    log_Z - log(1-prob_0)
+end
+
+function Base.show(io::IO, Z::MarginallyTruncatedPoissonSample)
+    resp_Z = response(Z)
+    E = nuisance_parameter(Z)
+    μ_string = E==1 ? "μ" : "μ⋅$(E)"
+    print(io, "𝒫ℴ𝒾(", resp_Z,"; ",  μ_string,")[>0]")
 end

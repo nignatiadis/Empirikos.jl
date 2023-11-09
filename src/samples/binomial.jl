@@ -11,7 +11,7 @@ Z \\sim \\text{Binomial}(n, p)
 
 ```jldoctest
 julia> BinomialSample(2, 10)          # 2 out of 10 trials successful
-Z=2  | n=10
+ℬ𝒾𝓃(2; p, n=10)
 ```
 """
 struct BinomialSample{T,S<:Integer} <: DiscreteEBayesSample{T}
@@ -22,17 +22,12 @@ end
 BinomialSample(n::Integer) = BinomialSample(missing, n)
 
 function Base.show(io::IO, Z::BinomialSample)
-    spaces_to_keep = ismissing(response(Z)) ? 1 : max(3 - ndigits(response(Z)), 1)
-    spaces = repeat(" ", spaces_to_keep)
-    print(io, "Z=", response(Z), spaces, "| ", "n=", ntrials(Z))
+    resp_Z = response(Z)
+    n = nuisance_parameter(Z)
+    print(io, "ℬ𝒾𝓃(", resp_Z,"; ", primary_parameter(Z),", n=", n,")")
 end
 
-function Base.show(io::IO, Z::BinomialSample{<:Interval})
-    Zz = response(Z)
-    print(io, "Z ∈ ")
-    show(IOContext(io, :compact => true), Zz)
-    print(io, " | ", "n=", ntrials(Z))
-end
+primary_parameter(::BinomialSample) = :p
 
 summarize_by_default(::AbstractVector{<:BinomialSample}) = true
 
@@ -104,29 +99,6 @@ function StatsBase.fit(
     Beta(α, β)
 end
 
-function StatsBase.fit(
-    method::ParametricMLE{<:Beta},
-    Zs::AbstractVector{<:BinomialSample},
-    skedasticity,
-)
-    StatsBase.fit(method, summarize(Zs), skedasticity)
-end
-
-function StatsBase.fit(
-    ::ParametricMLE{<:Beta},
-    Zs_summary::MultinomialSummary{<:BinomialSample},
-    skedasticity,
-)
-    func = TwiceDifferentiable(
-        params -> -loglikelihood(Zs_summary, Beta(params...)),
-        [1.0; 1.0];
-        autodiff = :forward,
-    )
-    dfc = TwiceDifferentiableConstraints([0.0; 0.0], [Inf; Inf])
-
-    opt = optimize(func, dfc, [1.0; 1.0], IPNewton())
-    Beta(Optim.minimizer(opt)...)
-end
 
 
 

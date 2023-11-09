@@ -8,6 +8,7 @@ using DataStructures
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
 
+using Hypatia
 import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded,
     RightEndpoint
 export Interval, Closed, Open, Unbounded # instead of @reexport
@@ -20,14 +21,15 @@ import JuMP: @constraint, @variable, set_lower_bound, @expression,
 using KernelDensity
 using LinearAlgebra
 using LinearFractional
+using LogExpFunctions
 using MathOptInterface
-using Optim
 using ParameterJuMP
 using QuadGK
 using Random
 using RangeHelpers
 using RecipesBase
 using Setfield
+import SpecialFunctions: trigamma, digamma, polygamma
 using Statistics
 import Statistics: std, var
 
@@ -48,36 +50,55 @@ include("convex_priors.jl")
 include("flocalizations.jl")
 include("NPMLE.jl")
 include("samples/binomial.jl")
+include("samples/bivariate_binomial.jl")
 include("samples/normal.jl")
 include("samples/poisson.jl")
 include("samples/truncatedpoisson.jl")
 include("samples/noncentralhypergeometric.jl")
-
+include("samples/scaledchisquare.jl")
+include("samples/normalchisquare.jl")
 include("samples/foldednormal.jl")
+include("samples/truncated.jl")
+
+include("autoconvexclass.jl")
+
+
 include("example_priors.jl")
 include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
 
-
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")
 include("datasets/Neighborhoods/neighborhoods.jl")
 include("datasets/Butterfly/Butterfly.jl")
+include("datasets/BertrandMullainathan/BertrandMullainathan.jl")
+include("datasets/ArceoGomezCamposVasquez/ArceoGomezCamposVasquez.jl")
+
 include("datasets/Surgery/Surgery.jl")
 include("datasets/CollinsLangman/CollinsLangman.jl")
 include("datasets/CressieSeheult/CressieSeheult.jl")
+include("datasets/EfronMorrisBaseball/EfronMorrisBaseball.jl")
 include("datasets/Bichsel/Bichsel.jl")
+include("datasets/Thyrion/Thyrion.jl")
+include("datasets/Tacks/Tacks.jl")
+include("datasets/Shakespeare/Shakespeare.jl")
+include("datasets/PsychologyReproducibility/PsychologyReproducibility.jl")
 
 
 
 export EBayesSample,
     NormalSample,
     StandardNormalSample,
+    FoldedNormalSample,
     BinomialSample,
+    BivariateBinomialSample,
     PoissonSample,
     TruncatedPoissonSample,
+    ScaledChiSquareSample,
+    NormalChiSquareSample,
+    NonCentralHypergeometricSample,
     marginalize,
     compound,
     discretize,
@@ -88,7 +109,6 @@ export EBayesSample,
     nuisance_parameter,
     skedasticity,
     MethodOfMoments,
-    ParametricMLE,
     PosteriorMean,
     PosteriorVariance,
     MarginalDensity,

@@ -2,3 +2,8 @@
 *.jl.cov
 *.jl.mem
 /Manifest.toml
+/.quarto/
+/_site/
+.Rproj.user
+
+/.luarc.json

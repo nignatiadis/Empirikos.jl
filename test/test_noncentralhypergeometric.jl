@@ -14,13 +14,13 @@ tbl = Empirikos.CollinsLangman.load_table()
 
 Zs_all =  Empirikos.CollinsLangman.ebayes_samples()
 
-ors =  [((Z.Z + 0.5)/(Z.m1 - Z.Z +0.5)) / ((Z.n - Z.Z + 0.5)/(Z.m2 - Z.n + Z.Z + 0.5)) for Z ∈ Zs_all]
+Zs_alt = NonCentralHypergeometricSample.(tbl.XC, tbl.NC .- tbl.XC, tbl.XT, tbl.NT .- tbl.XT; margin_entries=false)
+@test Zs_all == Zs_alt
+
+ors = Empirikos.odds_ratio.(Zs_all)
 @test round.(ors; digits=2) == tbl.OR
 
-
-
-
-Zs = Zs_all[getfield.(Zs_all, :n) .!= 0]
+Zs = Zs_all[getfield.(Zs_all, :Z₁pZ₂) .!= 0]
 θs = -4:0.01:4
 likelihoods = [likelihood(z, θ) for θ ∈ θs, z ∈ Zs]
 

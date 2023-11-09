@@ -3,7 +3,6 @@ Abstract type that describes Empirical Bayes estimands (which we want to estimat
 """
 abstract type EBayesTarget end
 
-Base.broadcastable(target::EBayesTarget) = Ref(target)
 
 function (targets::AbstractArray{<:EBayesTarget})(prior)
     [target(prior) for target in targets]
@@ -328,6 +327,13 @@ end
 function (postmean::PosteriorMean)(μ::Number)
     μ
 end
+
+function Base.show(io::IO, target::PosteriorMean)
+    Z = target.Z
+    param = primary_parameter(Z)
+    print(io, "𝔼[", param," | ", Z,"]")
+end
+
 
 """
     PosteriorSecondMoment(Z::EBayesSample) <: AbstractPosteriorTarget

@@ -472,22 +472,29 @@ function Empirikos.flocalization_constraint!(
     prior::Empirikos.PriorVariable,
 )
 
+    @show
 
     C∞ = ctband.C∞
     _midpoints = ctband.midpoints
     _density_values = ctband.estimated_density
 
-    # TODO: perhaps move this evaluation below
-    _min, _max = extrema(Empirikos.MarginalDensity(_midpoints[1]))
-    for (index, Z) in enumerate(_midpoints)
-        _density_hat = _density_values[index]
-        marginal_pdf = pdf(prior, Z::EBayesSample)
+    if !isa(model, LinearFractional.LinearFractionalModel) && JuMP.solver_name(model) == "Hypatia"
+        marginal_pdfs = pdf.(Ref(prior), _midpoints)
+        ncone = 1 + length(_midpoints)
+        @constraint(model, [C∞; marginal_pdfs .- _density_values] in MathOptInterface.NormInfinityCone(ncone))
+    else
+        # TODO: perhaps move this evaluation below
+        _min, _max = extrema(Empirikos.MarginalDensity(_midpoints[1]))
+        for (index, Z) in enumerate(_midpoints)
+            _density_hat = _density_values[index]
+            marginal_pdf = pdf(prior, Z::EBayesSample)
 
-        if _density_hat + C∞ < _max
-            @constraint(model, marginal_pdf <= _density_hat + C∞)
-        end
-        if _density_hat - C∞ > _min
-            @constraint(model, marginal_pdf >= _density_hat - C∞)
+            if _density_hat + C∞ < _max
+                @constraint(model, marginal_pdf <= _density_hat + C∞)
+            end
+            if _density_hat - C∞ > _min
+                @constraint(model, marginal_pdf >= _density_hat - C∞)
+            end
         end
     end
     model

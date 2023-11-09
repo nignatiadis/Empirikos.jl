@@ -11,7 +11,7 @@ function load_table()
     CSV.File(DATA)
 end
 
-function ebayes_samples(; combine=true)
+function ebayes_samples(; combine=false)
     tbl = load_table()
     zs = tbl.z
     Ns = tbl.count
