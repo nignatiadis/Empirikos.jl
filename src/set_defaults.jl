@@ -1,12 +1,19 @@
 abstract type AbstractDefault end
 
-struct DataBasedDefault <: AbstractDefault end
+struct DataBasedDefault{S} <: AbstractDefault
+    kwargs::S
+end 
+
+function DataBasedDefault(; kwargs...)
+    DataBasedDefault(values(kwargs))
+end
+
 
 function _set_defaults end
 
 requires_defaults(::AbstractDefault) = true
 requires_defaults(::Type) = false
-requires_defaults(::Hypatia.Optimizer) = false
+requires_defaults(::MathOptInterface.AbstractOptimizer) = false
 
 function requires_defaults(obj)
     if nfields(obj) == 0

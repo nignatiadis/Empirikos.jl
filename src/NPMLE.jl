@@ -18,7 +18,7 @@ struct NPMLE{C, S} <: ConvexMinimumDistanceMethod
 end
 
 NPMLE(convexclass, solver; kwargs...) = NPMLE(convexclass, solver, kwargs)
-NPMLE(;convexclass, solver = Hypatia.Optimizer, kwargs...) = NPMLE(convexclass, solver; kwargs)
+NPMLE(;convexclass, solver, kwargs...) = NPMLE(convexclass, solver; kwargs)
 
 function Base.show(io::IO, npmle::NPMLE)
     print(io, "NPMLE with ")
@@ -82,6 +82,7 @@ function _fit(npmle::NPMLE, Zs)
     @constraint(model, vcat(u, f, _mult) in MathOptInterface.RelativeEntropyCone(2n + 1))
     @objective(model, Min, u)
     optimize!(model)
+    check_moi_optimal(model)
     estimated_prior = π()
     FittedConvexMinimumDistance(estimated_prior, npmle, model)
 end
@@ -135,6 +136,7 @@ function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
 
     @objective(model, Min, u)
     optimize!(model)
+    check_moi_optimal(model)
     estimated_prior = π()
     FittedConvexMinimumDistance(estimated_prior, method, model)
 end

@@ -305,11 +305,20 @@ end
 
 
 
-struct MultinomialSummary{T,D<:AbstractDict{T,Int}}
+struct MultinomialSummary{T,S,D<:AbstractDict{T,S}}
     store::D #TODO, use other container
+    effective_nobs::Int 
 end
 
-MultinomialSummary(vals, cnts) = MultinomialSummary(SortedDict(Dict(vals .=> cnts)))
+function MultinomialSummary(store::AbstractDict; effective_nobs = sum(values(store)))
+    MultinomialSummary(store, effective_nobs)
+end
+
+# Is the below needed?
+#function MultinomialSummary(vals, cnts)
+#     MultinomialSummary(SortedDict(Dict(vals .=> cnts)))
+#end
+
 
 const VectorOrSummary{T} = Union{AbstractVector{T},MultinomialSummary{T}}
 
@@ -350,7 +359,12 @@ end
 summarize(Zs::AbstractVector) = MultinomialSummary(SortedDict(countmap(Zs)))
 summarize(Zs::AbstractVector, ws::StatsBase.AbstractWeights) = MultinomialSummary(SortedDict(countmap(Zs, ws)))
 
+function summarize(Zs::AbstractVector, ws::AbstractVector{Int}) 
+    summarize(Zs, fweights(ws))
+end
+
 summarize(Zs::MultinomialSummary) = Zs
+
 
 function skedasticity(Zs_summary::MultinomialSummary)
     all_unique_samples = collect(keys(Zs_summary.store))
@@ -362,7 +376,7 @@ function loglikelihood(mult::MultinomialSummary, prior)
 end
 
 
-nobs(Zs_summary::MultinomialSummary) = sum(values(Zs_summary.store))
+nobs(Zs_summary::MultinomialSummary) = Zs_summary.effective_nobs
 nobs(Zs::AbstractVector{<:EBayesSample}) = length(Zs)
 
 

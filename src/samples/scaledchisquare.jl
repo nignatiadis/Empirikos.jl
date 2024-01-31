@@ -46,6 +46,15 @@ function Distributions.InverseGamma(d::InverseScaledChiSquare)
     InverseGamma(_shape, _scale)
 end
 
+function InverseScaledChiSquare(d::Distributions.InverseGamma)
+    _shape = shape(d)
+    _scale = scale(d)
+    ν = 2*_shape
+    σ² = _scale / _shape
+    InverseScaledChiSquare(σ², ν)
+end
+
+# Move all of the below to a macro?
 function Distributions.pdf(d::InverseScaledChiSquare, x::Real)
    pdf(InverseGamma(d), x)
 end
@@ -60,6 +69,9 @@ function Distributions.cdf(d::InverseScaledChiSquare, x::Real)
     cdf(InverseGamma(d), x)
 end
 
+function Distributions.logcdf(d::InverseScaledChiSquare, x::Real)
+    Distributions.logcdf(InverseGamma(d), x)
+end
 
 function Distributions.mean(d::InverseScaledChiSquare)
     Distributions.mean(InverseGamma(d))

@@ -1,9 +1,3 @@
-function check_moi_optimal(model)
-    JuMP.termination_status(model) == MathOptInterface.OPTIMAL ||
-    JuMP.termination_status(model) == MathOptInterface.ALMOST_OPTIMAL ||
-        throw("status_not_optimal") # TODO: perhaps add warning.
-end
-
 """
     FLocalizationInterval(flocalization::Empirikos.FLocalization,
                           convexclass::Empirikos.ConvexPriorClass,

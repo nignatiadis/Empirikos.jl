@@ -38,7 +38,7 @@ Zs_collapse = begin
 	n1 = pop!(Zs_collapse.store, BinomialSample(1, 20))
 	updated_keys =  [BinomialSample(Interval(0,1), 20); collect(keys(Zs_collapse))]
 	updated_values = [n0+n1; collect(values(Zs_collapse))]
-	Empirikos.MultinomialSummary(updated_keys, updated_values)
+	Empirikos.summarize(updated_keys, updated_values)
 end
 
 discr = integer_discretizer(1:20)

@@ -22,6 +22,10 @@ struct NormalChiSquareSample{T, S} <: EBayesSample{T}
     ν::S
 end
 
+function NormalChiSquareSample(Z, S²::ScaledChiSquareSample)
+    NormalChiSquareSample(Z, response(S²), S².ν)
+end 
+
 function response(Z::NormalChiSquareSample)
     [Z.Z, Z.S²]
  end
