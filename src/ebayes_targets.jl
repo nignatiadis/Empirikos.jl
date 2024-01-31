@@ -21,6 +21,8 @@ abstract type LinearEBayesTarget <: EBayesTarget end
 
 Base.extrema(::EBayesTarget) = (-Inf, +Inf) # allow distribution-dependent choice?
 _support(::LinearEBayesTarget) = Interval(nothing, nothing)
+location(::LinearEBayesTarget) = nothing
+
 
 abstract type AbstractTargetComputation end
 
@@ -434,7 +436,7 @@ struct PriorSecondMoment <: LinearEBayesTarget end
 (target::PriorSecondMoment)(μ::Number) = abs2(μ)
 (target::PriorSecondMoment)(prior::Distribution) = abs2(mean(prior)) + var(prior)
 
-
+# Add some targets that are useful for studying RCTs and predictive power.
 
 
 

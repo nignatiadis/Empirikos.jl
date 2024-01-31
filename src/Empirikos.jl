@@ -8,7 +8,6 @@ using DataStructures
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
 
-using Hypatia
 import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded,
     RightEndpoint
 export Interval, Closed, Open, Unbounded # instead of @reexport
@@ -23,6 +22,7 @@ using LinearAlgebra
 using LinearFractional
 using LogExpFunctions
 using MathOptInterface
+using MultipleTesting
 using ParameterJuMP
 using QuadGK
 using Random
@@ -38,6 +38,7 @@ import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 
 using UnPack
 
+include("utils.jl")
 include("set_defaults.jl")
 include("ebayes_samples.jl")
 include("compound.jl")
@@ -59,6 +60,7 @@ include("samples/scaledchisquare.jl")
 include("samples/normalchisquare.jl")
 include("samples/foldednormal.jl")
 include("samples/truncated.jl")
+include("samples/replicated_sample.jl")
 
 include("autoconvexclass.jl")
 
@@ -68,6 +70,8 @@ include("confidence_interval_tools.jl")
 include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
+include("empirical_partially_bayes_multiple_testing.jl")
+
 
 include("datasets/LordCressie/LordCressie.jl")
 include("datasets/Prostate/Prostate.jl")

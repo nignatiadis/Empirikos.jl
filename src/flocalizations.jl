@@ -83,7 +83,7 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
         multiplier = exp(1)
         Zs_summary = compound(Zs_summary)
     elseif skedasticity(Zs_summary) === Homoskedastic()
-        if T<:CompoundSample
+        if T<:CompoundSample || n != sum(values(Zs_summary))
             homoskedastic = false
             multiplier = exp(1)
         else

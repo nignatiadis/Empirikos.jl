@@ -3,7 +3,7 @@ export LordCressie
 module LordCressie
 
 using CSV
-using ..Empirikos: MultinomialSummary, BinomialSample
+using ..Empirikos: summarize, BinomialSample
 
 const DATA = joinpath(@__DIR__, "lord_cressie_1975.csv")
 
@@ -13,7 +13,7 @@ end
 
 function ebayes_samples()
     tbl = load_table()
-    Zs = MultinomialSummary(BinomialSample.(tbl.x, 20), tbl.N1)
+    Zs = summarize(BinomialSample.(tbl.x, 20), tbl.N1)
 end
 
 end

@@ -28,11 +28,12 @@ pmf_at_1 = MarginalDensity(BinomialSample(1,1))
 
 floc_dkw_interval = FLocalizationInterval(; flocalization = floc_dkw,
                                             solver = Hypatia.Optimizer,
-                                            convexclass = DiscretePriorClass(0:0.001:1) )
+                                            convexclass = DiscretePriorClass(0:0.001:1)
+                                        )
 
 floc_chisq_interval = FLocalizationInterval(; flocalization = floc_chisq,
                                             solver = Hypatia.Optimizer,
-                                            convexclass = DiscretePriorClass(0:0.001:1) )
+                                            convexclass = DiscretePriorClass(0:0.001:1))
 
 
 ci_at_1_dkw = confint(floc_dkw_interval, pmf_at_1, Zs_summary)
@@ -63,7 +64,8 @@ ci_postmean_at_1_dkw = confint(floc_dkw_interval, postmean_at_1, Zs_summary)
 ci_postmean_at_1_chisq = confint(floc_chisq_interval, postmean_at_1, Zs_summary)
 
 @test ci_postmean_at_1_chisq.upper ≈ 1.0 atol = 1e-6
-@test ci_postmean_at_1_chisq.lower ≈ chisq_f_center -  chisq_error atol = 1e-6
+# the following works even with atol=1e-6 with Mosek, but need lower tolerance for Hypatia
+@test ci_postmean_at_1_chisq.lower ≈ chisq_f_center -  chisq_error rtol = 0.01
 @test !(ci_postmean_at_1_chisq.lower ≈ ci_postmean_at_1_dkw.lower)
 
 

@@ -8,6 +8,8 @@ function FoldedNormal(μ::T, σ::T) where {T <: Real}
     return FoldedNormal{T}(μ, σ)
 end
 
+FoldedNormal(d::Normal) = FoldedNormal(d.μ, d.σ)
+Distributions.Normal(d::FoldedNormal) = Normal(d.μ, d.σ)
 
 function Distributions.pdf(d::FoldedNormal, x::Real)
     d_normal = Normal(d.μ, d.σ)
@@ -99,6 +101,10 @@ function marginalize(Z::FoldedNormalSample, prior::Normal)
     Z_unfolded = NormalSample(Z)
     marginal_dbn = marginalize(Z_unfolded, prior)
     FoldedNormal(marginal_dbn.μ, marginal_dbn.σ)
+end
+
+function marginalize(Z::FoldedNormalSample, prior::FoldedNormal)
+    marginalize(Z, Normal(prior))
 end
 
 
