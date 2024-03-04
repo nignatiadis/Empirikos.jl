@@ -29,7 +29,7 @@ using Random
 using RangeHelpers
 using RecipesBase
 using Setfield
-import SpecialFunctions: trigamma, digamma, polygamma
+import SpecialFunctions: trigamma, digamma, polygamma, erfinv
 using Statistics
 import Statistics: std, var
 
