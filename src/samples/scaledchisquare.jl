@@ -95,8 +95,9 @@ function default_target_computation(::BasicPosteriorTarget, ::ScaledChiSquareSam
     Conjugate()
 end
 
-function marginalize(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
-    Distributions.AffineDistribution(0, prior.σ², FDist(Z.ν, prior.ν))
+ function marginalize(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
+    σ² = prior.σ²
+    Distributions.AffineDistribution{typeof(σ²)}(zero(σ²), σ², FDist(Z.ν, prior.ν))
 end
 
 function posterior(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
@@ -106,7 +107,7 @@ function posterior(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
 end
 
 
-function limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::Dirac)
+function limma_pvalue(β_hat, ::ScaledChiSquareSample, prior::Dirac)
     σ = prior.value
     2*ccdf(Normal(0, σ), abs(β_hat))
 end
