@@ -7,7 +7,7 @@ An observed sample ``Z`` drawn from a scaled chi-square distribution with unknow
 Z \\sim \\frac{\\sigma^2}{\\nu}}\\chi^2_{\\nu}
 ```
 
-``\\sigma^2`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
+``\\sigma^2`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\sigma^2``.
 """
 struct ScaledChiSquareSample{T, S} <: ContinuousEBayesSample{T}
     Z::T
@@ -95,8 +95,9 @@ function default_target_computation(::BasicPosteriorTarget, ::ScaledChiSquareSam
     Conjugate()
 end
 
-function marginalize(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
-    Distributions.AffineDistribution(0, prior.σ², FDist(Z.ν, prior.ν))
+ function marginalize(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
+    σ² = prior.σ²
+    Distributions.AffineDistribution{typeof(σ²)}(zero(σ²), σ², FDist(Z.ν, prior.ν))
 end
 
 function posterior(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
@@ -106,7 +107,7 @@ function posterior(Z::ScaledChiSquareSample, prior::InverseScaledChiSquare)
 end
 
 
-function limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::Dirac)
+function limma_pvalue(β_hat, ::ScaledChiSquareSample, prior::Dirac)
     σ = prior.value
     2*ccdf(Normal(0, σ), abs(β_hat))
 end

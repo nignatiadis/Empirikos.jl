@@ -161,6 +161,39 @@ function _set_defaults(
     GaussianScaleMixtureClass(σ_grid)
 end
 
+
+# Uniform-Normal
+
+struct UniformNormal{T} <: Distributions.ContinuousUnivariateDistribution
+    a::T 
+    b::T
+    σ::T
+end
+
+Distributions.@distr_support UniformNormal -Inf Inf
+
+function Distributions.pdf(d::UniformNormal, x::Real)
+    base_normal = Normal(0.0, d.σ)
+    a = d.a 
+    b = d.b 
+    (cdf(base_normal, b-x) - cdf(base_normal, a-x)) / (b-a)
+end
+
+function Distributions.cdf(d::UniformNormal, x::Real)
+    σ = d.σ
+    a = d.a 
+    b = d.b 
+    right_limit = (x-a)/σ
+    left_limit = (x-b)/σ
+    improper_integral(u) = u*cdf(Normal(), u) + pdf(Normal(), u)
+    σ*(improper_integral(right_limit) - improper_integral(left_limit))/(b-a)
+end
+
+
+function marginalize(Z::AbstractNormalSample, prior::Uniform)
+    UniformNormal(prior.a, prior.b, std(Z))
+end
+
 # Target specifics
 function Base.extrema(density::MarginalDensity{<:AbstractNormalSample{<:Real}})
     (0.0, 1 / sqrt(2π * var(location(density))))

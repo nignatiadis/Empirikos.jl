@@ -47,6 +47,13 @@ function pdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
     @expression(model, dot(finite_param, pdf_combination))
 end
 
+function rescaled_pdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
+    @unpack convexclass, finite_param, model = prior
+    logpdf_combination = logpdf.(components(convexclass), Z)
+    pdf_combination = exp.(logpdf_combination .- maximum(logpdf_combination))
+    @expression(model, dot(finite_param, pdf_combination))
+end
+
 function cdf(prior::PriorVariable{<:AbstractMixturePriorClass}, Z::EBayesSample)
     @unpack convexclass, finite_param, model = prior
     cdf_combination = cdf.(components(convexclass), Z)

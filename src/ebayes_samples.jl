@@ -341,9 +341,9 @@ function Base.broadcasted(::typeof(response), Zs_summary::MultinomialSummary)
     response.(keys(Zs_summary))
 end
 
-function Base.broadcasted(::typeof(pdf), prior, Zs_summary::MultinomialSummary)
+function Base.broadcasted(f, prior, Zs_summary::MultinomialSummary)
     # Should this also return keys?
-    pdf.(prior, collect(keys(Zs_summary.store)))
+    f.(prior, collect(keys(Zs_summary.store)))
 end
 
 function Base.broadcasted(f, Zs_summary::MultinomialSummary)

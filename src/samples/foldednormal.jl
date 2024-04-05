@@ -1,44 +1,51 @@
-struct FoldedNormal{T<:Real} <: ContinuousUnivariateDistribution
-    μ::T
-    σ::T
-    FoldedNormal{T}(µ::T, σ::T) where {T<:Real} = new{T}(µ, σ)
+struct Folded{D<:ContinuousUnivariateDistribution} <: ContinuousUnivariateDistribution
+    dist::D
 end
 
-function FoldedNormal(μ::T, σ::T) where {T <: Real}
-    return FoldedNormal{T}(μ, σ)
+fold(dist::ContinuousUnivariateDistribution) = Folded(dist)
+unfold(dist::Folded) = dist.dist
+
+Base.minimum(::Folded) = zero(Float64)
+
+function Distributions.maximum(d::Folded)
+    orig_max = maximum(unfold(d))
+    if isinf(orig_max)
+        return Inf
+    else
+        return Float64(max(orig_max, -minimum(unfold(d))))
+    end
 end
 
 FoldedNormal(d::Normal) = FoldedNormal(d.μ, d.σ)
 Distributions.Normal(d::FoldedNormal) = Normal(d.μ, d.σ)
 
-function Distributions.pdf(d::FoldedNormal, x::Real)
-    d_normal = Normal(d.μ, d.σ)
-    d_pdf = pdf(d_normal, x) + pdf(d_normal, -x)
+
+function Distributions.pdf(d::Folded, x::Real)
+    d_pdf = pdf(unfold(d), x) + pdf(unfold(d), -x)
     return x >= 0 ? d_pdf : zero(d_pdf)
 end
 
-
-function Distributions.logpdf(d::FoldedNormal, x::T) where {T<:Real}
-    d_normal = Normal(d.μ, d.σ)
-    d_logpdf_left = logpdf(d_normal, -x)
-    d_logpdf_right = logpdf(d_normal, x)
+function Distributions.logpdf(d::Folded, x::Real)
+    d_logpdf_left = logpdf(unfold(d), -x)
+    d_logpdf_right = logpdf(unfold(d), x)
     d_logpdf = LogExpFunctions.logaddexp(d_logpdf_left, d_logpdf_right)
-    return x >= 0 ? d_logpdf :  oftype(d_logpdf, -Inf)
+    return x >= 0 ? d_logpdf : oftype(d_logpdf, -Inf)
 end
 
-
-function Distributions.cdf(d::FoldedNormal, x::Real)
-    d_normal = Normal(d.μ, d.σ)
-    d_cdf = cdf(d_normal, x) - cdf(d_normal, -x)
+function Distributions.cdf(d::Folded, x::Real)
+    d_cdf = cdf(unfold(d), x) - cdf(unfold(d), -x)
     return x > 0 ? d_cdf : zero(d_cdf)
 end
 
-function Distributions.ccdf(d::FoldedNormal, x::Real)
-    d_normal = Normal(d.μ, d.σ)
-    d_cdf = ccdf(d_normal, x) + cdf(d_normal, -x)
-    return x > 0 ? d_cdf : one(d_cdf)
+function Distributions.ccdf(d::Folded, x::Real)
+    d_ccdf = ccdf(unfold(d), x) + cdf(unfold(d), -x)
+    return x > 0 ? d_ccdf : one(d_ccdf)
 end
 
+
+function Distributions.quantile(d::Folded, q::Real)
+    Distributions.quantile(unfold(d), (1+q)/2)
+end
 
 
 """
@@ -85,7 +92,7 @@ function _symmetrize(Zs::AbstractVector{<:FoldedNormalSample})
 end
 
 function likelihood_distribution(Z::FoldedNormalSample, μ)
-    FoldedNormal(μ, nuisance_parameter(Z))
+    fold(Normal(μ, nuisance_parameter(Z)))
 end
 
 
@@ -97,10 +104,14 @@ function default_target_computation(::BasicPosteriorTarget,
     Conjugate()
 end
 
+# perhaps this can apply to more general folded samples.
 function marginalize(Z::FoldedNormalSample, prior::Normal)
     Z_unfolded = NormalSample(Z)
-    marginal_dbn = marginalize(Z_unfolded, prior)
-    FoldedNormal(marginal_dbn.μ, marginal_dbn.σ)
+    fold(marginalize(Z_unfolded, prior)) 
+end
+
+function marginalize(Z::FoldedNormalSample, prior::Folded{Normal})
+    marginalize(Z, unfold(prior))
 end
 
 function marginalize(Z::FoldedNormalSample, prior::FoldedNormal)
@@ -127,4 +138,18 @@ function posterior(Z::FoldedNormalSample, prior::Normal)
         [prob_positive, prob_negative]
     )
     posterior_dbn
+end
+
+
+
+
+
+
+
+
+function marginalize(Z::FoldedNormalSample, prior::Uniform)
+    Z_unfolded = NormalSample(Z)
+    -prior.a != prior.b && throw(DomainError(prior, "Code currently requires symmetric uniform distribution"))
+    unif_normal = marginalize(Z_unfolded, prior)
+    fold(unif_normal)
 end

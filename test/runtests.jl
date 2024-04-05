@@ -76,3 +76,7 @@ end
 @testset "Noncentral hypergeometric" begin
     include("test_noncentralhypergeometric.jl")
 end
+
+@testset "Empirical partially Bayes" begin
+    include("test_empirical_partially_bayes.jl")
+end
