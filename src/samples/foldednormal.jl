@@ -16,9 +16,6 @@ function Distributions.maximum(d::Folded)
     end
 end
 
-FoldedNormal(d::Normal) = FoldedNormal(d.μ, d.σ)
-Distributions.Normal(d::FoldedNormal) = Normal(d.μ, d.σ)
-
 
 function Distributions.pdf(d::Folded, x::Real)
     d_pdf = pdf(unfold(d), x) + pdf(unfold(d), -x)
@@ -112,10 +109,6 @@ end
 
 function marginalize(Z::FoldedNormalSample, prior::Folded{Normal})
     marginalize(Z, unfold(prior))
-end
-
-function marginalize(Z::FoldedNormalSample, prior::FoldedNormal)
-    marginalize(Z, Normal(prior))
 end
 
 
