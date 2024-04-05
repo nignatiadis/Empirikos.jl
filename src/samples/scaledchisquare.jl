@@ -7,7 +7,7 @@ An observed sample ``Z`` drawn from a scaled chi-square distribution with unknow
 Z \\sim \\frac{\\sigma^2}{\\nu}}\\chi^2_{\\nu}
 ```
 
-``\\sigma^2`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\mu``.
+``\\sigma^2`` is assumed unknown. The type above is used when the sample ``Z`` is to be used for estimation or inference of ``\\sigma^2``.
 """
 struct ScaledChiSquareSample{T, S} <: ContinuousEBayesSample{T}
     Z::T

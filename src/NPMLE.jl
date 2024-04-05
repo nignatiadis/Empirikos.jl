@@ -72,7 +72,9 @@ function _fit(npmle::NPMLE, Zs)
     model = Model(solver)
 
     π = Empirikos.prior_variable!(model, convexclass)
-    f = pdf.(π, Zs)
+    # the output is equal to the marginal density (for each Z_i) up to a multiplicative constant
+    # such an approach is more stable numerically
+    f = rescaled_pdf.(π, Zs)
 
     _mult = multiplicity(Zs) ./ nobs(Zs)
     n = length(_mult)

@@ -4,7 +4,6 @@ using QuadGK
 using Setfield
 using Test 
 using Random
-Empirikos.limma_pvalue(β_hat, Z::ScaledChiSquareSample, prior::MixtureModel)
 
 
 function _limma_pvalue_tweedie(β_hat, Z::ScaledChiSquareSample, prior)
@@ -43,7 +42,32 @@ for β in βs_hat, Z in Zs, G in Gs
     @test (@show _limma_pvalue_tweedie(β, Z, G)) ≈ (@show Empirikos.limma_pvalue(β, Z, G)) 
 end
 
-# also add some more tests, also e.g. on Limma.
+# Check chi square likelihood 
+
+s²s = [0.001; 1.0; 3.0; 10.0; 100.0]
+σ²s = [0.001; 2.0; 4.0; 10.0; 500.0]
+νs = [2; 3; 5.5; 10; 100]
+
+function scaled_chisq_lik(s², σ², ν)
+    (ν/2)^(ν/2) / gamma(ν/2) / σ²^(ν/2) * s²^(ν/2-1) * exp(-ν*s²/(2*σ²))
+end
+
+for s² in s²s, σ² in σ²s, ν in νs
+    @test scaled_chisq_lik(s², σ², ν) ≈ likelihood(ScaledChiSquareSample(s², ν), σ²)
+end
+
+# Test NPMLE 
+
+## Note that the below was the reason to use rescaled likelihoods in NPMLE.jl
+Ss = ScaledChiSquareSample.([0.074; 0.5; 2.0; 2.0; 2.0], 64)
+priorclass = DiscretePriorClass(0.53:0.01:2.0)
+_hyp_fit = fit(NPMLE(priorclass, Hypatia.Optimizer), Ss)
+
+# test against mosek
+@test Empirikos.loglikelihood(Ss, _hyp_fit.prior) ≈ -33.614 atol=1e-3
+
+
+# TODO: also add some more tests, also e.g. on Limma.
 
 
 

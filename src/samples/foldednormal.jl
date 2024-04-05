@@ -40,12 +40,9 @@ function Distributions.ccdf(d::Folded, x::Real)
     return x > 0 ? d_ccdf : one(d_ccdf)
 end
 
-function Distributions.quantile(d::Folded{Normal}, q::Real)
-    μ, σ = params(unfold(d))
-    if μ != 0
-        throw(ArgumentError("Quantile function for Folded{Normal} currently implemented only for μ = 0"))
-    end
-    return sqrt(2) * σ * erfinv(q)
+
+function Distributions.quantile(d::Folded, q::Real)
+    Distributions.quantile(unfold(d), (1+q)/2)
 end
 
 
