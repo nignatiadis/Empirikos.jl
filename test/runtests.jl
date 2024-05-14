@@ -15,9 +15,7 @@ doctest(Empirikos)
 
 # Other tests
 
-@testset "Test set default" begin
-    include("test_set_defaults.jl")
-end
+
 
 @testset "Test ci tools" begin
     include("test_ci_tools.jl")
@@ -71,7 +69,6 @@ end
 @testset "Compound and DKW F localization" begin
     include("test_compound.jl")
 end
-
 
 @testset "Noncentral hypergeometric" begin
     include("test_noncentralhypergeometric.jl")

@@ -107,16 +107,15 @@ function summarize(Zs::AbstractVector, ws, discr::Discretizer)
     summarize(discr.(Zs), ws)
 end
 
-function _set_defaults(
-    ::Discretizer,
-    Zs::AbstractVector;
-    hints,
-)
-    eps = get(hints, :eps, 1e-6)
-    nbins = get(hints, :nbins, 300)
-
-    default_discretizer(Zs; eps=eps, nbins=nbins)
-end
+##function _set_defaults(
+#    ::Discretizer,
+#    Zs::AbstractVector;
+#    hints,
+#)
+#    eps = get(hints, :eps, 1e-6)
+#    nbins = get(hints, :nbins, 300)
+#    default_discretizer(Zs; eps=eps, nbins=nbins)
+#end
 
 
 function integer_discretizer(grid::AbstractVector{Int}; unbounded = :both)

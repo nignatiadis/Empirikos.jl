@@ -70,18 +70,5 @@ end
 
 
 
-# DiscretePriorClass
 
 
-function _set_defaults(
-    convexclass::DiscretePriorClass,
-    Zs::VectorOrSummary{<:PoissonSample};
-    hints,
-)
-    eps = get(hints, :eps, 1e-4)
-    prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
-    _sample_min, _sample_max = extrema(response.(Zs) ./ nuisance_parameter.(Zs))
-    _grid_min = max(2 * eps, _sample_min - eps)
-    _grid_max = _sample_max + eps
-    DiscretePriorClass(range(_grid_min; stop = _grid_max, length = prior_grid_length))
-end

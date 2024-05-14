@@ -108,7 +108,7 @@ end
 
 
 function limma_pvalue(β_hat, ::ScaledChiSquareSample, prior::Dirac)
-    σ = prior.value
+    σ = sqrt(prior.value)
     2*ccdf(Normal(0, σ), abs(β_hat))
 end
 

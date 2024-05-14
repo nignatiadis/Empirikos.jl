@@ -99,7 +99,7 @@ struct DiscretePriorClass{S} <: AbstractMixturePriorClass
     support::S
 end
 
-DiscretePriorClass(; support=DataBasedDefault()) = DiscretePriorClass(support)
+DiscretePriorClass(; support=nothing) = DiscretePriorClass(support)
 
 support(convexclass::DiscretePriorClass) = convexclass.support
 
@@ -131,7 +131,7 @@ of `support`∩`-support`, i.e., it represents all `DiscreteNonParametric` distr
 `support` should include the nonnegative support points only.
 """
 Base.@kwdef struct SymmetricDiscretePriorClass{S} <: AbstractMixturePriorClass
-    support::S = DataBasedDefault()
+    support::S = nothing
     includes_zero::Bool = iszero(support[1])
 end
 
@@ -243,7 +243,7 @@ struct GaussianScaleMixtureClass{S} <: AbstractMixturePriorClass
     σs::S
 end
 
-GaussianScaleMixtureClass() = GaussianScaleMixtureClass(DataBasedDefault())
+GaussianScaleMixtureClass() = GaussianScaleMixtureClass(nothing)
 
 function Base.show(io::IO, gcal::GaussianScaleMixtureClass)
     print(io, "GaussianScaleMixtureClass | σs = ")
@@ -258,12 +258,8 @@ struct BetaMixtureClass{S} <: AbstractMixturePriorClass
     βs::S
 end
 
-BetaMixtureClass() = BetaMixtureClass(DataBasedDefault(), DataBasedDefault())
+BetaMixtureClass() = BetaMixtureClass(nothing, nothing)
 
 components(convexclass::BetaMixtureClass) = Beta.(convexclass.αs, convexclass.βs)
 
-function autoconvexclass(class::BetaMixtureClass; bandwidth, grid)
-    αs = 1 .+ (grid ./bandwidth)
-    βs = 1 .+ ((1 .- grid) ./bandwidth)
-    BetaMixtureClass(αs, βs)
-end
+

@@ -74,7 +74,6 @@ end
 
 function StatsBase.fit(method::FLocalizationInterval, target, Zs, args...; kwargs...)
     Zs = Empirikos.summarize_by_default(Zs) ? summarize(Zs) : Zs
-    method = Empirikos.set_defaults(method, Zs; kwargs...)
 
     fitted_floc = StatsBase.fit(method.flocalization, Zs)
     method = @set method.flocalization = fitted_floc

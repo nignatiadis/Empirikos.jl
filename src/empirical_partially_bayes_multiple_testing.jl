@@ -113,20 +113,6 @@ function fit_prior(test::EmpiricalPartiallyBayesTTest, prior::DiscretePriorClass
     clean(npmle_prior.prior)
 end
 
-function autoconvexclass(
-    ::DiscretePriorClass,
-    Ss::AbstractVector{<:ScaledChiSquareSample};
-    prior_grid_size = 300,
-    lower_quantile = 0.01,
-)
-
-    a_min = quantile(response.(Ss), lower_quantile)
-    a_max = maximum(response.(Ss))
-
-    grid = exp.(range(start = log(a_min), stop = log(a_max), length = prior_grid_size))
-    _prior = DiscretePriorClass(grid)
-    _prior
-end
 
 function fit_prior(::EmpiricalPartiallyBayesTTest, prior::Limma, Ss)
     Empirikos.fit_limma(Ss)

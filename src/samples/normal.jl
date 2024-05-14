@@ -123,45 +123,6 @@ end
 
 
 
-
-function _set_defaults(
-    convexclass::DiscretePriorClass,
-    Zs::VectorOrSummary{<:AbstractNormalSample};  #TODO for MultinomialSummary
-    hints,
-)
-    eps = get(hints, :eps, 1e-4)
-    prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
-    _sample_min, _sample_max = extrema(response.(Zs))
-    # This won't handle infinity correctly. TODOO
-    # Also TODO once switch from Intervals.jl to IntervalSets.jl
-    _sample_min = isa(_sample_min, Interval) ? first(_sample_min) : _sample_min
-    _sample_max = isa(_sample_max, Interval) ? last(_sample_max) : _sample_max
-    _grid = range(_sample_min - eps; stop = _sample_max + eps, length = prior_grid_length)
-    DiscretePriorClass(_grid)
-end
-
-
-function _set_defaults(
-    convexclass::GaussianScaleMixtureClass,
-    Zs::AbstractVector{<:AbstractNormalSample};  #TODO for MultinomialSummary
-    hints,
-)
-    grid_scaling = get(hints, :grid_scaling, sqrt(2))
-
-    _σ_min =  minimum(std.(Zs))./ 10
-    σ_min = get(hints, :σ_min, _σ_min)
-
-    _max = maximum(response.(Zs).^2 .-  var.(Zs))
-    _σ_max = _max > 0.0 ? 2*sqrt(_max) : 8*σ_min
-    σ_max = get(hints, :σ_max, _σ_max) #somewhat redundant computations above.
-
-    npoint = ceil(Int, log2(σ_max/σ_min)/log2(grid_scaling))
-    σ_grid = σ_min*grid_scaling.^(0:npoint)
-
-    GaussianScaleMixtureClass(σ_grid)
-end
-
-
 # Uniform-Normal
 
 struct UniformNormal{T} <: Distributions.ContinuousUnivariateDistribution

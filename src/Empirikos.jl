@@ -39,7 +39,6 @@ import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 using UnPack
 
 include("utils.jl")
-include("set_defaults.jl")
 include("ebayes_samples.jl")
 include("compound.jl")
 include("interval_discretizer.jl")
@@ -140,9 +139,6 @@ export DvoretzkyKieferWolfowitz,
 # utilities
 export DictFunction
 
-# default
-
-export DataBasedDefault
 
 export FLocalizationInterval,
        AMARI

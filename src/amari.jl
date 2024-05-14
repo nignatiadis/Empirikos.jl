@@ -108,12 +108,10 @@ struct RMSE{N} <: BiasVarAggregate
     n::N
 end
 
-RMSE() = RMSE(DataBasedDefault())
+RMSE() = RMSE(nothing)
 (rmse::RMSE)(bias, unit_var_proxy) =  sqrt(bias^2 + unit_var_proxy/rmse.n)
 
-function Empirikos._set_defaults(rmse::RMSE, Zs; hints)
-    RMSE(nobs(Zs))
-end
+
 
 
 """
@@ -124,12 +122,8 @@ the worst-case confidence interval width.  Here `n` is the sample
 size used for estimation.
 """
 Base.@kwdef struct HalfCIWidth{N} <: BiasVarAggregate
-    n::N = DataBasedDefault()
+    n::N = nothing
     α::Float64 = 0.05
-end
-
-function Empirikos._set_defaults(halfci::HalfCIWidth, Zs; hints)
-    @set halfci.n = nobs(Zs)
 end
 
 
@@ -158,7 +152,7 @@ Base.@kwdef struct AMARI{N, G, M, EB}
     convexclass::G
     flocalization::N
     solver
-    discretizer = nothing#DataBasedDefault()
+    discretizer = nothing
     plugin_G = NPMLE(convexclass, solver)
     data_split = :none
     delta_grid = 0.2:0.5:6.7
@@ -304,7 +298,6 @@ end
 
 function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
 
-    method = Empirikos.set_defaults(method, Zs; kwargs...)
     fitted_floc = StatsBase.fit(method.flocalization, Zs; kwargs...)
     if isa(method.plugin_G, Distribution) #TODO SPECIAL CASE this elsewhere?
         fitted_plugin_G = method.plugin_G
@@ -316,6 +309,11 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
         discr = default_support_discretizer(Zs)
         method = @set method.discretizer = discr
     end
+
+    if isnothing(method.delta_objective.n)
+        method = @set method.delta_objective.n = nobs(Zs)
+    end 
+
     modulus_model = method.modulus_model
 
     method = @set method.representative_eb_samples = heteroskedastic(Zs)

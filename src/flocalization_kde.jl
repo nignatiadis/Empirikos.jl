@@ -24,34 +24,20 @@ K^*_{\\text{sinc}}(t) = \\mathbf 1( t \\in [-1,1])
 struct SincKernel{H} <: InfiniteOrderKernel
     h::H
 end
-SincKernel() = SincKernel(DataBasedDefault())
 
-function Empirikos._set_defaults(
-    kernel::InfiniteOrderKernel,
-    Zs::AbstractVector{<:Empirikos.AbstractNormalSample};
-    kwargs...,
-)
-    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+SincKernel() = SincKernel(nothing)
+
+bandwidth(kernel::InfiniteOrderKernel) = kernel.h 
+
+function default_bandwidth(::InfiniteOrderKernel, 
+    Zs::Union{AbstractVector{<:Empirikos.AbstractNormalSample}, AbstractVector{<:Empirikos.FoldedNormalSample}})
+    skedasticity(Zs) == Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
     σ = std(Zs[1])
     n = length(Zs)
     h = σ / sqrt(log(n))
-    @set kernel.h = h
-end
-
-function Empirikos._set_defaults(
-    kernel::InfiniteOrderKernel,
-    Zs::AbstractVector{<:Empirikos.FoldedNormalSample};
-    kwargs...,
-)
-    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
-        throw("Only implemented for Homoskedastic Gaussian data.")
-    σ = std(Zs[1])
-    n = length(Zs)
-    h = σ / sqrt(log(n))
-    @set kernel.h = h
-end
-
+    h
+end 
 
 Distributions.cf(a::SincKernel, t) = one(Float64) * (-1 / a.h <= t <= 1 / a.h)
 
@@ -86,7 +72,7 @@ struct DeLaValleePoussinKernel{H} <: InfiniteOrderKernel
     h::H
 end
 
-DeLaValleePoussinKernel() = DeLaValleePoussinKernel(DataBasedDefault())
+DeLaValleePoussinKernel() = DeLaValleePoussinKernel(nothing)
 
 function Distributions.cf(a::DeLaValleePoussinKernel, t)
     if abs(t * a.h) <= 1
@@ -135,7 +121,7 @@ struct FlatTopKernel{H} <: InfiniteOrderKernel
     h::H
 end
 
-FlatTopKernel() = FlatTopKernel(DataBasedDefault())
+FlatTopKernel() = FlatTopKernel(nothing)
 
 function Distributions.cf(a::FlatTopKernel, t)
     if abs(t * a.h) <= 1
@@ -183,8 +169,8 @@ Note that the bound is valid from `a_min` to `a_max`. `α` is the nominal level 
 `rng` sets the seed for the bootstrap samples.
 """
 Base.@kwdef struct InfinityNormDensityBand <: FLocalization
-    a_min = DataBasedDefault()
-    a_max = DataBasedDefault()
+    a_min = nothing
+    a_max = nothing
     npoints::Integer = 1024
     kernel = FlatTopKernel()
     bootstrap = :Multinomial
@@ -201,43 +187,21 @@ end
 
 Empirikos.vexity(::InfinityNormDensityBand) = Empirikos.LinearVexity()
 
-function Empirikos._set_defaults(
-    method::InfinityNormDensityBand,
-    Zs::AbstractVector{<:Empirikos.AbstractNormalSample{<:Number}};
-    hints...,
-)
-    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
-        throw("Only implemented for Homoskedastic Gaussian data.")
 
-    q = get(hints, :quantile, 0.005)
-    a_min, a_max = quantile(response.(Zs), (q, 1 - q))
-    if isa(method.a_min, DataBasedDefault)
-        method = @set method.a_min = a_min
-    end
-    if isa(method.a_max, DataBasedDefault)
-        method = @set method.a_max = a_max
-    end
-    method
+function flocalization_default_data_range(Zs::AbstractVector{<:Empirikos.AbstractNormalSample{<:Number}})
+    skedasticity(Zs) == Homoskedastic() ||
+        throw("Only implemented for Homoskedastic Gaussian data.")
+    q = 0.005
+    quantile(response.(Zs), (q, 1 - q))
 end
 
-function Empirikos._set_defaults(
-    method::InfinityNormDensityBand,
-    Zs::AbstractVector{<:Empirikos.FoldedNormalSample{<:Number}};
-    hints...,
-)
-    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+function flocalization_default_data_range(Zs::AbstractVector{<:Empirikos.FoldedNormalSample{<:Number}})
+    skedasticity(Zs) == Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
-
-    q = get(hints, :quantile, 0.005)
-    a_max = quantile(response.(Zs), 1-q)
+    q = 0.005
+    a_max = quantile(abs.(response.(Zs)), 1-q/2)
     a_min = -a_max
-    if isa(method.a_min, DataBasedDefault)
-        method = @set method.a_min = a_min
-    end
-    if isa(method.a_max, DataBasedDefault)
-        method = @set method.a_max = a_max
-    end
-    method
+    a_min, a_max
 end
 
 """
@@ -267,10 +231,10 @@ Base.@kwdef struct FittedInfinityNormDensityBand{T<:Real,S,K} <: FittedFLocaliza
     method = nothing
 end
 
-Empirikos.vexity(method::FittedInfinityNormDensityBand) = Empirikos.LinearVexity()
+Empirikos.vexity(::FittedInfinityNormDensityBand) = Empirikos.LinearVexity()
 
-function Empirikos.nominal_alpha(inftyband::FittedInfinityNormDensityBand)
-    Empirikos.nominal_alpha(inftyband.method)
+function nominal_alpha(inftyband::FittedInfinityNormDensityBand)
+    nominal_alpha(inftyband.method)
 end
 
 function StatsBase.fit(
@@ -278,9 +242,18 @@ function StatsBase.fit(
     Zs::AbstractVector{<:Empirikos.AbstractNormalSample{<:Number}};
     kwargs...,
 )
-    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+    skedasticity(Zs) == Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
-    opt = Empirikos.set_defaults(opt, Zs; kwargs...)
+
+    if isnothing(opt.a_min) && isnothing(opt.a_max)
+        a_min, a_max = flocalization_default_data_range(Zs)
+        opt = @set opt.a_min = a_min
+        opt = @set opt.a_max = a_max
+    end 
+
+    if isnothing(bandwidth(opt.kernel))
+        opt = @set opt.kernel.h = default_bandwidth(opt.kernel, Zs)
+    end
 
     @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
 
@@ -305,15 +278,25 @@ function StatsBase.fit(
     res
 end
 
+
+# TODO: handle this at same time as the StandardNormalSample case.
 function StatsBase.fit(
     opt::InfinityNormDensityBand,
     Zs::AbstractVector{<:Empirikos.FoldedNormalSample{<:Number}};
     kwargs...,
 )
-    Empirikos.skedasticity(Zs) == Empirikos.Homoskedastic() ||
+    skedasticity(Zs) == Homoskedastic() ||
         throw("Only implemented for Homoskedastic Gaussian data.")
-    opt = Empirikos.set_defaults(opt, Zs; kwargs...)
 
+    if isnothing(opt.a_min) && isnothing(opt.a_max)
+        a_min, a_max = flocalization_default_data_range(Zs)
+        opt = @set opt.a_min = a_min
+        opt = @set opt.a_max = a_max
+    end 
+
+    if isnothing(bandwidth(opt.kernel))
+        opt = @set opt.kernel.h = default_bandwidth(opt.kernel, Zs)
+    end
     @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
 
     # deepcopying below to make sure RNG status for sampling here remains the same.

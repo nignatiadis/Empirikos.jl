@@ -103,18 +103,6 @@ end
 
 
 
-# DiscretePriorClass
-
-
-function _set_defaults(
-    convexclass::DiscretePriorClass,
-    Zs::VectorOrSummary{<:BinomialSample};
-    hints,
-)
-    eps = get(hints, :eps, 1e-4)
-    prior_grid_length = get(hints, :prior_grid_length, 300)::Integer
-    DiscretePriorClass(range(eps; stop = 1 - eps, length = prior_grid_length))
-end
 
 
 """

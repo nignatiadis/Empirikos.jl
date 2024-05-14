@@ -62,8 +62,8 @@ Distributions.logpdf(fitted_method::FittedConvexMinimumDistance, Z) =
 
 # seems like template that could be useful more generally..
 function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs; kwargs...)
+    method = @set method.convexclass = autoconvexclass(method.convexclass, Zs; kwargs...)
     Zs = summarize_by_default(Zs) ? summarize(Zs) : Zs
-    method = set_defaults(method, Zs; kwargs...)
     _fit(method, Zs)
 end
 
