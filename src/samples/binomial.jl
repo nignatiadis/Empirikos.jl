@@ -40,20 +40,6 @@ nuisance_parameter(Z::BinomialSample) = ntrials(Z)
 likelihood_distribution(Z::BinomialSample, p) = Binomial(ntrials(Z), p)
 
 
-function fill_levels(Zs::AbstractVector{<:DiscreteEBayesSample})
-    skedasticity(Zs) == Homoskedastic() ||
-        error("Heteroskedastic likelihood not implemented.")
-    #_min, _max = extrema(response.(Zs))
-    #n = ntrials(Zs[1])
-    #BinomialSample.(_min:_max, n)
-    #BinomialSample.(0:n, n) #TODO!  Is it responsibility of whatever passes stuff in here
-    # to e.g. include 0 counts?
-    sort(unique(Zs))
-end
-
-function fill_levels(Zs::MultinomialSummary{<:DiscreteEBayesSample})
-    fill_levels(collect(keys(Zs)))
-end
 
 function dictfun(::Nothing, Zs_summary::VectorOrSummary{<:DiscreteEBayesSample}, f)
     skedasticity(Zs_summary) == Homoskedastic() ||
@@ -118,14 +104,15 @@ distribution with ``N`` degrees of freedom, ``n`` is the sample size,
 ``\\hat{f}_n(x)`` is the proportion of samples equal to ``x`` and ``f(x)`` is then
 population pmf.
 """
-Base.@kwdef struct ChiSquaredFLocalization{T} <: FLocalization
+Base.@kwdef struct ChiSquaredFLocalization{T,S} <: FLocalization
     α::T = 0.05
+    discretizer::S = nothing
 end
 
 vexity(::ChiSquaredFLocalization) = ConvexVexity()
 
 
-struct FittedChiSquaredFLocalization{T,S,D<:AbstractDict{T,S},C} <: FittedFLocalization
+struct FittedChiSquaredFLocalization{T,S,D<:StatsDiscretizations.Dictionary{T,S},C} <: FittedFLocalization
     summary::D
     band::S
     chisq::C
@@ -145,11 +132,18 @@ function StatsBase.fit(chisq::ChiSquaredFLocalization, Zs::AbstractVector{<:Bino
 end
 
 function StatsBase.fit(chisq::ChiSquaredFLocalization, Zs_summary::MultinomialSummary)
+    skedasticity(Zs_summary) == Homoskedastic() ||
+    error("Heteroskedastic likelihood not implemented.")
+
     n = nobs(Zs_summary)
-    _levels = fill_levels(Zs_summary)
-    _dof = length(_levels) - 1        #ntrials(_levels[1]) #again maybe Homoskedastic() should return what type of homoskedastic
-    empirical_probs = Zs_summary.(_levels) ./ n
-    _dict = SortedDict(keys(Zs_summary.store) .=> empirical_probs)
+    first_sample = Zs_summary[1]
+    if isnothing(chisq.discretizer)
+        chisq = @set chisq.discretizer = FiniteGridDiscretizer(0:ntrials(first_sample))
+    end
+    _discr = set_response.(first_sample, chisq.discretizer)
+    _dof = length(_discr) - 1  #again maybe Homoskedastic() should return what type of homoskedastic
+    empirical_probs = Zs_summary.(_discr) ./ n
+    _dict = StatsDiscretizations.Dictionary(_discr, empirical_probs)
     α = nominal_alpha(chisq)
     band =  quantile(Chisq(_dof), 1-α)
     FittedChiSquaredFLocalization(_dict, band, chisq, _dof, n)
@@ -167,7 +161,7 @@ function flocalization_constraint!(
     ts = @variable(model, [1:(chisq.dof+1)])
     @constraint(model, ts .>= 0)
     band = chisq.band
-    for (i, (Z, pdf_value)) in enumerate(chisq.summary)
+    for (i, (Z, pdf_value)) in enumerate(zip(keys(chisq.summary), values(chisq.summary)))
         _pdf = pdf(prior, Z::EBayesSample)
         @constraint(model, [ts[i]; n * _pdf; n * _pdf - n * pdf_value] in RotatedSecondOrderCone())
     end

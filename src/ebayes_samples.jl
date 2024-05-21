@@ -43,9 +43,13 @@ function response(Z::EBayesSample)
    Z.Z
 end
 
+StatsDiscretizations.unwrap(Z::EBayesSample) = response(Z)
+
 function set_response(Z::EBayesSample, znew=missing)
     Z = @set Z.Z = znew
 end
+
+StatsDiscretizations.wrap(Z::EBayesSample, val) = set_response(Z, val)
 
 
 function nuisance_parameter end
@@ -57,14 +61,6 @@ end
 Base.isnan(Z::EBayesSample) = Base.isnan(response(Z))
 Base.isfinite(Z::EBayesSample) = Base.isfinite(response(Z))
 
-
-function Base.isless(a::EBayesSample, b::EBayesSample)
-    Base.isless( (response(a), nuisance_parameter(a)),
-                 (response(b), nuisance_parameter(b)) )
-end
-
-Base.isless(a::EBayesSample, b::Number) = Base.isless(response(a),b)
-Base.isless(a::Number, b::EBayesSample) = Base.isless(a, response(b))
 
 
 """
@@ -108,11 +104,11 @@ function skedasticity(Zs::AbstractVector{EB}) where {EB<:EBayesSample}
 end
 
 # avoid piracy
-likelihood(Z::EBayesSample, param) = _pdf(likelihood_distribution(Z, param), response(Z))
+likelihood(Z::EBayesSample, param) = StatsDiscretizations.pdf(likelihood_distribution(Z, param), response(Z))
 loglikelihood(Z::EBayesSample, param) =
-    _logpdf(likelihood_distribution(Z, param), response(Z))
+    StatsDiscretizations.logpdf(likelihood_distribution(Z, param), response(Z))
 loglikelihood(Z::EBayesSample, prior::Distribution) =
-    _logpdf(marginalize(Z, prior), response(Z))
+    StatsDiscretizations.logpdf(marginalize(Z, prior), response(Z))
 
 
 function loglikelihood(Zs::AbstractVector{<:EBayesSample}, prior)
@@ -136,7 +132,7 @@ julia> pdf(Normal(2.0, 2.0), 1.0)
 0.17603266338214976
 ```
 """
-pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response(Z))
+pdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.pdf(marginalize(Z, prior), response(Z))
 
 """
     cdf(prior::Distribution, Z::EBayesSample)
@@ -144,153 +140,16 @@ pdf(prior::Distribution, Z::EBayesSample) = _pdf(marginalize(Z, prior), response
 Given a `prior` ``G`` and `EBayesSample` ``Z``, evaluate the CDF of the marginal
 distribution of ``Z`` at `response(Z)`.
 """
-cdf(prior::Distribution, Z::EBayesSample) = _cdf(marginalize(Z, prior), response(Z))
+cdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.cdf(marginalize(Z, prior), response(Z))
 """
     ccdf(prior::Distribution, Z::EBayesSample)
 
 Given a `prior` ``G`` and `EBayesSample` ``Z``, evaluate the complementary CDF of the marginal
 distribution of ``Z`` at `response(Z)`.
 """
-ccdf(prior::Distribution, Z::EBayesSample) = _ccdf(marginalize(Z, prior), response(Z))
+ccdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.ccdf(marginalize(Z, prior), response(Z))
 
-logpdf(prior::Distribution, Z::EBayesSample) = _logpdf(marginalize(Z, prior), response(Z))
-
-
-
-
-_pdf(dbn, z) = pdf(dbn, z)
-_logpdf(dbn, z) = logpdf(dbn, z)
-
-_cdf(dbn, z) = cdf(dbn, z)
-_ccdf(dbn, z) = ccdf(dbn, z)
-#const EBInterval{T} = Union{[Interval{T, S, R} for S in [Open, Closed, Unbounded], R in [Open, Closed, Unbounded]]...} where T
-
-const EBInterval{T} = Union{
-    Interval{T,Unbounded,Closed},
-    Interval{T,Open,Unbounded},
-    Interval{T,Open,Closed},
-} where {T}
-
-const EBIntervalFlipped{T} = Union{
-    Interval{T,Closed,Open},
-    Interval{T,Unbounded,Open},
-    Interval{T,Closed,Unbounded},
-} where {T}
-
-function _cdf(dbn, interval::Interval{T,S,Unbounded}) where {T,S}
-    one(eltype(dbn))
-end
-
-function _cdf(
-    dbn::ContinuousUnivariateDistribution,
-    interval::Interval{T,S,B},
-) where {T,S,B<:Bounded}
-    _cdf(dbn, last(interval))
-end
-
-#-- Unbounded - Unbounded
-function _pdf(dbn, interval::Interval{T,Unbounded,Unbounded}) where {T}
-    one(eltype(dbn))
-end
-function _logpdf(dbn, interval::Interval{T,Unbounded,Unbounded}) where {T}
-    zero(eltype(dbn))
-end
-
-#-- Unbounded - Closed
-function _pdf(dbn, interval::Interval{T,Unbounded,Closed}) where {T}
-    cdf(dbn, last(interval))
-end
-function _logpdf(dbn, interval::Interval{T,Unbounded,Closed}) where {T}
-    logcdf(dbn, last(interval))
-end
-
-#-- Open - Unbounded
-function _pdf(dbn, interval::Interval{T,Open,Unbounded}) where {T}
-    ccdf(dbn, first(interval))
-end
-function _logpdf(dbn, interval::Interval{T,Open,Unbounded}) where {T}
-    logccdf(dbn, first(interval))
-end
-
-#-- Open - Closed
-function _pdf(dbn, interval::Interval{T,Open,Closed}) where {T}
-    cdf(dbn, last(interval)) - cdf(dbn, first(interval))
-end
-function _logpdf(dbn, interval::Interval{T,Open,Closed}) where {T}
-    logdiffcdf(dbn, last(interval), first(interval))
-end
-
-# In the case of continuous distributions, we can delegate most results to  (Open, Closed)
-for f in [:_pdf, :_logpdf]
-    @eval begin
-        # Closed - Closed and Closed - Open and Open - Open
-        function $f(
-            dbn::ContinuousUnivariateDistribution,
-            interval::Union{
-                Interval{T,Closed,Closed},
-                Interval{T,Closed,Open},
-                Interval{T,Open,Open},
-            },
-        ) where {T}
-            _interval = Interval{T,Open,Closed}(first(interval), last(interval))
-            $f(dbn, _interval)
-        end
-        # Unbounded - Open
-        function $f(
-            dbn::ContinuousUnivariateDistribution,
-            interval::Interval{T,Unbounded,Open},
-        ) where {T}
-            _interval = Interval{T,Unbounded,Closed}(first(interval), last(interval))
-            $f(dbn, _interval)
-        end
-        # Closed - Unbounded
-        function $f(
-            dbn::ContinuousUnivariateDistribution,
-            interval::Interval{T,Closed,Unbounded},
-        ) where {T}
-            _interval = Interval{T,Open,Unbounded}(first(interval), last(interval))
-            $f(dbn, _interval)
-        end
-    end
-end
-
-#TODO: Handle discrete distributions (less important)
-function _pdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Closed}) where {T}
-    cdf(dbn, last(interval)) - cdf(dbn, first(interval)) + pdf(dbn, first(interval))
-end
-
-function _cdf(
-    dbn::DiscreteDistribution,
-    interval::Interval{T,S,Closed},
-) where {T,S}
-    _cdf(dbn, last(interval))
-end
-
-function _pdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
-    ccdf(dbn, first(interval)) + pdf(dbn, first(interval))
-end
-
-function _pdf(dbn::Normal, interval::Interval{T,Closed,Unbounded}) where {T}
-    if iszero(var(dbn))
-        return _pdf(Dirac(mean(dbn)), interval)
-    else
-        return ccdf(dbn, first(interval))
-    end
-end
-
-function _pdf(dbn::Normal, interval::Interval{T,Closed,Closed}) where {T}
-    if iszero(var(dbn))
-        return _pdf(Dirac(mean(dbn)), interval)
-    else
-        return  cdf(dbn, last(interval)) - cdf(dbn, first(interval))
-    end
-end
-
-
-
-function _logpdf(dbn::DiscreteDistribution, interval::Interval{T,Closed,Unbounded}) where {T}
-    log(_pdf(dbn, interval))
-end
+logpdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.logpdf(marginalize(Z, prior), response(Z))
 
 
 function _support(d::Distribution)
@@ -298,27 +157,27 @@ function _support(d::Distribution)
 end
 
 function distributions_interval_to_interval(interval::Distributions.RealInterval)
-    _lb = isinf(interval.lb) ? nothing : interval.lb
-    _ub = isinf(interval.ub) ? nothing : interval.ub
+    _lb = interval.lb
+    _ub = interval.ub
     Interval(_lb, _ub)
 end
 
 
 
-struct MultinomialSummary{T,S,D<:AbstractDict{T,S}}
-    store::D #TODO, use other container
+
+
+struct MultinomialSummary{T,D}
+    store::D
     effective_nobs::Int 
 end
 
-function MultinomialSummary(store::AbstractDict; effective_nobs = sum(values(store)))
-    MultinomialSummary(store, effective_nobs)
+function MultinomialSummary(store, effective_nobs)
+    MultinomialSummary{keytype(store), typeof(store)}(store, effective_nobs)
 end
 
-# Is the below needed?
-#function MultinomialSummary(vals, cnts)
-#     MultinomialSummary(SortedDict(Dict(vals .=> cnts)))
-#end
-
+function Base.show(io::IO, Z::MultinomialSummary)
+    Base.show(io, Z.store)
+end
 
 const VectorOrSummary{T} = Union{AbstractVector{T},MultinomialSummary{T}}
 
@@ -328,7 +187,7 @@ function (Zs_summary::MultinomialSummary)(Z)
 end
 
 function Base.getindex(Zs_summary::MultinomialSummary, i)
-    Base.getindex(Zs_summary.store, i)
+    Base.getindex(collect(Base.keys(Zs_summary.store)), i)
 end
 
 Base.keys(Zs_summary::MultinomialSummary) = Base.keys(Zs_summary.store)
@@ -356,15 +215,15 @@ function StatsBase.weights(Zs_summary::MultinomialSummary)
     fweights(collect(values(Zs_summary.store)))
 end
 
-summarize(Zs::AbstractVector) = MultinomialSummary(SortedDict(countmap(Zs)))
-summarize(Zs::AbstractVector, ws::StatsBase.AbstractWeights) = MultinomialSummary(SortedDict(countmap(Zs, ws)))
-
-function summarize(Zs::AbstractVector, ws::AbstractVector{Int}) 
-    summarize(Zs, fweights(ws))
+function summarize(args...; effective_nobs=nothing)
+    _dict = StatsDiscretizations.sorted_countmap(args...)
+    if isnothing(effective_nobs)
+        effective_nobs = sum(values(_dict))
+    end
+    MultinomialSummary(_dict, effective_nobs)
 end
 
 summarize(Zs::MultinomialSummary) = Zs
-
 
 function skedasticity(Zs_summary::MultinomialSummary)
     all_unique_samples = collect(keys(Zs_summary.store))
@@ -372,7 +231,7 @@ function skedasticity(Zs_summary::MultinomialSummary)
 end
 
 function loglikelihood(mult::MultinomialSummary, prior)
-    sum([n * loglikelihood(Z, prior) for (Z, n) in mult.store])
+    sum(mult.store .* loglikelihood.(keys(mult.store), prior))
 end
 
 

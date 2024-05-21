@@ -1,16 +1,12 @@
 module Empirikos
 
-using Reexport
 
 import Base: broadcast, broadcast!, broadcasted, eltype, zero, <=
 using DataStructures
-@reexport using Distributions
+using Distributions
 import Distributions:
     ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
 
-import Intervals: Interval, Closed, Open, Unbounded, Bounded, AbstractInterval, isbounded,
-    RightEndpoint
-export Interval, Closed, Open, Unbounded # instead of @reexport
 
 import JuMP
 import JuMP: @constraint, @variable, set_lower_bound, @expression,
@@ -36,13 +32,12 @@ import Statistics: std, var
 using StatsBase
 import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 
+using StatsDiscretizations
 using UnPack
 
 include("utils.jl")
 include("ebayes_samples.jl")
 include("compound.jl")
-include("interval_discretizer.jl")
-include("dict_function.jl")
 include("ebayes_methods.jl")
 include("ebayes_targets.jl")
 include("mixtures.jl")
@@ -120,9 +115,7 @@ export EBayesSample,
     MixturePriorClass,
     GaussianScaleMixtureClass,
     NPMLE,
-    nominal_alpha,
-    integer_discretizer,
-    interval_discretizer
+    nominal_alpha
 
 export loglikelihood,
     response,
@@ -136,8 +129,6 @@ export DvoretzkyKieferWolfowitz,
     ChiSquaredFLocalization,
     InfinityNormDensityBand
 
-# utilities
-export DictFunction
 
 
 export FLocalizationInterval,

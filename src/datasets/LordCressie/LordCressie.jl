@@ -13,7 +13,7 @@ end
 
 function ebayes_samples()
     tbl = load_table()
-    Zs = summarize(BinomialSample.(tbl.x, 20), tbl.N1)
+    summarize(BinomialSample.(tbl.x, 20), tbl.N1)
 end
 
 end

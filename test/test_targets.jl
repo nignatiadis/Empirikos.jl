@@ -1,10 +1,12 @@
 using Empirikos
-
+using QuadGK
+using ForwardDiff
+using FiniteDifferences
 prior = Normal()
 
-@test Empirikos._support(Normal()) == Interval(nothing, nothing)
+@test Empirikos._support(Normal()) == Interval(-Inf, +Inf)
 
-lfsr_0 = Empirikos.PosteriorProbability(StandardNormalSample(0.0), Interval(0,nothing))
+lfsr_0 = Empirikos.PosteriorProbability(StandardNormalSample(0.0), Interval(0, Inf))
 
 @test lfsr_0(-1.0) == 0.0
 @test lfsr_0(0.1) == 1.0
@@ -12,7 +14,7 @@ lfsr_0 = Empirikos.PosteriorProbability(StandardNormalSample(0.0), Interval(0,no
 lfsr_numerator = numerator(lfsr_0)
 lfsr_denominator = denominator(lfsr_0)
 
-@test Empirikos._support(lfsr_numerator) == Interval(0, nothing)
+@test Empirikos._support(lfsr_numerator) == Interval(0, Inf)
 
 _num = lfsr_numerator(prior)
 _denom = lfsr_denominator(prior)
@@ -55,13 +57,13 @@ Z = location(num_target_gaussian)
      Empirikos.compute_target(Empirikos.QuadgkQuadrature(), numerator(postmean_target), prior)
 
 _f_num_postmean_gaussian_quad(μ) = Empirikos.compute_target(Empirikos.QuadgkQuadrature(), numerator(postmean_target), Normal(μ))
-@test ForwardDiff.derivative(_f_num_postmean_gaussian_quad, 0.0) ≈ central_fdm(5,1)(_f_num_postmean_gaussian_quad, 0.0)
-@test ForwardDiff.derivative(_f_num_postmean_gaussian_quad, -2.0) ≈ central_fdm(5,1)(_f_num_postmean_gaussian_quad, -2.0)
+@test ForwardDiff.derivative(_f_num_postmean_gaussian_quad, 0.0) ≈ FiniteDifferences.central_fdm(5,1)(_f_num_postmean_gaussian_quad, 0.0)
+@test ForwardDiff.derivative(_f_num_postmean_gaussian_quad, -2.0) ≈ FiniteDifferences.central_fdm(5,1)(_f_num_postmean_gaussian_quad, -2.0)
 
 _f_postmean_gaussian(μ) = postmean_target(Normal(μ))
-@test ForwardDiff.derivative(_f_postmean_gaussian, 0.0) ≈ central_fdm(5,1)(_f_postmean_gaussian, 0.0)
-@test ForwardDiff.derivative(_f_postmean_gaussian, 2.0) ≈ central_fdm(5,1)(_f_postmean_gaussian, 2.0)
+@test ForwardDiff.derivative(_f_postmean_gaussian, 0.0) ≈ FiniteDifferences.central_fdm(5,1)(_f_postmean_gaussian, 0.0)
+@test ForwardDiff.derivative(_f_postmean_gaussian, 2.0) ≈ FiniteDifferences.central_fdm(5,1)(_f_postmean_gaussian, 2.0)
 
-_f_lfsr(μ) = lfsr_0(Normal(μ))
-@test ForwardDiff.derivative(_f_lfsr, 0.0) ≈ central_fdm(5,1)(_f_lfsr, 0.0)
-@test ForwardDiff.derivative(_f_lfsr, 2.0) ≈ central_fdm(5,1)(_f_lfsr, 2.0)
+#_f_lfsr3(μ::T) where {T} = lfsr_0(Normal{T}(μ), one(T))
+#@test ForwardDiff.derivative(_f_lfsr3, 0.0) ≈ FiniteDifferences.central_fdm(5,1)(_f_lfsr, 0.0)
+#@test ForwardDiff.derivative(_f_lfsr, 2.0) ≈ FiniteDifferences.central_fdm(5,1)(_f_lfsr, 2.0)

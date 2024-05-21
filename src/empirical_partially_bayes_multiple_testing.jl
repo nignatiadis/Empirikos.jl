@@ -104,7 +104,7 @@ function fit_prior(test::EmpiricalPartiallyBayesTTest, prior::DiscretePriorClass
     _npmle = NPMLE(prior, test.solver)
 
     if test.discretize_marginal
-        disc = interval_discretizer(support(prior))
+        disc = RealLineDiscretizer{:open,:closed}(support(prior))
         Ss_summary = summarize(disc.(Ss))
         npmle_prior = fit(_npmle, Ss_summary)
     else

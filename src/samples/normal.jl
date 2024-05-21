@@ -22,10 +22,6 @@ struct NormalSample{T,S} <: AbstractNormalSample{T}
     σ::S
 end
 
-# TODO: Should not need this eventually.
-function NormalSample(Z::P, σ::S) where {T,P<:EBInterval{T},S}
-    NormalSample{EBInterval{T},S}(Z, σ)
-end
 
 function NormalSample(σ::S) where {S}
     NormalSample(missing, σ)

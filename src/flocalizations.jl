@@ -52,7 +52,7 @@ DvoretzkyKieferWolfowitz(α) = DvoretzkyKieferWolfowitz(;α=α)
 
 vexity(::DvoretzkyKieferWolfowitz) = LinearVexity()
 
-struct FittedDvoretzkyKieferWolfowitz{T,S,D<:AbstractDict{T,S},DKW} <:
+struct FittedDvoretzkyKieferWolfowitz{T,S,D<:StatsDiscretizations.Dictionary{T,S},DKW} <:
         FittedFLocalization
     summary::D
     band::S
@@ -97,11 +97,11 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
     n_constraints = length(Zs_summary)
 
 
-    cdf_probs = cumsum([v for (k, v) in Zs_summary.store]) #SORTED important here
+    cdf_probs = cumsum(Zs_summary.store) #SORTED important here
     cdf_probs /= cdf_probs[end]
     _Zs = collect(keys(Zs_summary.store))
 
-    issorted(_Zs) || error("MultinomialSummary not sorted.")
+    issorted(_Zs, by=response, lt=StatsDiscretizations._isless) || error("MultinomialSummary not sorted.")
 
     max_constraints = dkw.max_constraints
 
@@ -112,7 +112,7 @@ function StatsBase.fit(dkw::DvoretzkyKieferWolfowitz, Zs_summary::MultinomialSum
         cdf_probs = cdf_probs[idxs]
     end
     # TODO: report issue with SortedDict upstream
-    _dict = SortedDict(Dict(_Zs .=> cdf_probs))
+    _dict = StatsDiscretizations.Dictionary(_Zs, cdf_probs)
 
     FittedDvoretzkyKieferWolfowitz(_dict, band, side, dkw, homoskedastic)
 end
@@ -130,7 +130,7 @@ function flocalization_constraint!(
     bound_upper = (side == :both) || (side == :upper)
     bound_lower = (side == :both) || (side == :lower)
 
-    for (Z, cdf_value) in dkw.summary
+    for (Z, cdf_value) in zip(keys(dkw.summary), values(dkw.summary))
         marginal_cdf = cdf(prior, Z::EBayesSample)
         if bound_upper
             if cdf_value + band < 1

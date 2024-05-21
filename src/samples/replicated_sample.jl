@@ -17,7 +17,7 @@ function flatten_and_weight(samples::Vector{<:DependentReplicatedSample})
     return flattened, weights(weights_vec)
 end
 
-function summarize(Zs::AbstractVector{<:DependentReplicatedSample}; flatten::Bool=true)
+function summarize(Zs::AbstractVector{<:DependentReplicatedSample})
     flattened_Zs, flattened_weights = flatten_and_weight(Zs)
-    Empirikos.MultinomialSummary(SortedDict(countmap(flattened_Zs, flattened_weights)); effective_nobs = length(Zs))
+   summarize(flattened_Zs,  flattened_weights; effective_nobs = length(Zs))
 end

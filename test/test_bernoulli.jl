@@ -7,7 +7,7 @@ using StableRNGs
 using Empirikos
 using Hypatia
 using Setfield
-
+using StatsDiscretizations
 
 n = 200
 
@@ -15,7 +15,7 @@ Zs = BinomialSample.(Int.(rand(StableRNG(1), Bernoulli(0.7), 200)), 1)
 Zs_summary = summarize(Zs)
 
 @test Zs_summary(BinomialSample(1,1)) == sum( ==(1), response.(Zs))
-@test Zs_summary[BinomialSample(1,1)] == Zs_summary(BinomialSample(1,1))
+@test Zs_summary.store[BinomialSample(1,1)] == Zs_summary(BinomialSample(1,1))
 
 @test length(Zs_summary) == 2
 @test nobs(Zs_summary) == n
@@ -94,13 +94,13 @@ amari_with_F = AMARI(;flocalization = (@set floc_dkw.α = 0.01),
                       solver = Hypatia.Optimizer,
                       convexclass = DiscretePriorClass(0:0.1:1),
                       modulus_model = Empirikos.ModulusModelWithF,
-                      discretizer = Empirikos.integer_discretizer(0:1))
+                      discretizer = FiniteGridDiscretizer(0:1))
 
 amari_without_F = AMARI(;flocalization = (@set floc_dkw.α = 0.01),
                       solver = Hypatia.Optimizer,
                       convexclass = DiscretePriorClass(0:0.1:1),
                       modulus_model = Empirikos.ModulusModelWithoutF,
-                      discretizer = Empirikos.integer_discretizer(0:1))
+                      discretizer = FiniteGridDiscretizer(0:1))
 
 #amari_ = amari_with_F
 for amari_ in (amari_with_F, amari_without_F)

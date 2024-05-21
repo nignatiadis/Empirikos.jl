@@ -20,7 +20,7 @@ prior `G`.
 abstract type LinearEBayesTarget <: EBayesTarget end
 
 Base.extrema(::EBayesTarget) = (-Inf, +Inf) # allow distribution-dependent choice?
-_support(::LinearEBayesTarget) = Interval(nothing, nothing)
+_support(::LinearEBayesTarget) = Interval(-Inf, +Inf)
 location(::LinearEBayesTarget) = nothing
 
 
@@ -70,19 +70,8 @@ end
 # TODO: Allow setting tolerances.
 function compute_target(lin::QuadgkQuadrature, target::LinearEBayesTarget, sample, prior::ContinuousUnivariateDistribution)
    _interval = intersect(_support(target), _support(prior))
-   if isbounded(_interval)
-        _lower = first(_interval)
-        _upper = last(_interval)
-   elseif isa(_interval, Interval{T, Unbounded, Unbounded} where {T})
-        _lower = -Inf
-        _upper = +Inf
-   elseif isa(_interval, Interval{T, Unbounded} where {T})
-        _lower = -Inf
-        _upper = last(_interval)
-   else
-        _lower = first(_interval)
-        _upper = +Inf
-   end
+   _lower = leftendpoint(_interval)
+   _upper = rightendpoint(_interval)
    quadgk( μ -> target(μ)*pdf(prior,μ), _lower, _upper)[1]
 end
 
@@ -155,7 +144,7 @@ function (target::PriorDensity{<:Interval})(μ::Number)
 end
 
 function (target::PriorDensity)(prior::Distribution)
-    _pdf(prior, location(target))
+    StatsDiscretizations.pdf(prior, location(target))
 end
 
 Base.extrema(target::PriorDensity) = (0, Inf)
@@ -404,7 +393,7 @@ end
 
 
 function compute_target(::Conjugate, postprob::PosteriorProbability, Z::EBayesSample, prior)
-    _pdf(posterior(Z, prior), postprob.s)
+    StatsDiscretizations.pdf(posterior(Z, prior), postprob.s)
 end
 
 function (postprob::PosteriorProbability{T, <:Interval})(μ::Number) where {T}

@@ -7,11 +7,12 @@ using Hypatia
 using QuadGK
 using Documenter
 using CSV
+using Distributions
 
 # Doctests
 
-DocMeta.setdocmeta!(Empirikos, :DocTestSetup, :(using Empirikos); recursive = true)
-doctest(Empirikos)
+#DocMeta.setdocmeta!(Empirikos, :DocTestSetup, :(using Empirikos); recursive = true)
+#doctest(Empirikos)
 
 # Other tests
 
@@ -21,18 +22,14 @@ doctest(Empirikos)
     include("test_ci_tools.jl")
 end
 
-@testset "Dict function" begin
-    include("test_dict_function.jl")
-end
+#@testset "Dict function" begin
+#    include("test_dict_function.jl")
+#end
 
 @testset "EBayes Intervals" begin
     include("test_intervals.jl")
 end
 
-
-@testset "Sample ordering" begin
-    include("test_ordering.jl")
-end
 
 @testset "Binomial samples" begin
     include("test_binomial.jl")

@@ -12,13 +12,14 @@ function Base.show(io::IO, Z::TruncatedSample)
     print(io, "Trunc{", Z.Z," to ", string(Z.truncation_set),"}")
 end
 
-function Distributions.truncated(d::Distribution, interval::Interval{<:Any, Closed, Unbounded})
+function _truncated(d::Distribution, interval::AbstractInterval)
+    (isleftclosed(interval) && isinf(rightendpoint(d))) || throw("Only [a, ∞) {left-closed, right-unbounded} intervals allowed currently.")
     Distributions.truncated(d, first(interval), nothing)
 end
 
-function likelihood_distribution(Z::TruncatedSample{<:Any,<:Any,<:Interval{<:Any, Closed, Unbounded}}, μ)
+function likelihood_distribution(Z::TruncatedSample{<:Any,<:Any,<:AbstractInterval}, μ)
     untruncated_d = likelihood_distribution(Z.Z, μ)
-    truncated(untruncated_d, Z.truncation_set) # TODO: introduce truncated subject to more general constraints
+    _truncated(untruncated_d, Z.truncation_set) # TODO: introduce truncated subject to more general constraints
 end
 
 Base.@kwdef struct SelectionTilted{D<:Distributions.ContinuousUnivariateDistribution, F1,  T, EB, S} <: Distributions.ContinuousUnivariateDistribution

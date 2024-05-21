@@ -21,7 +21,7 @@ ghat = StatsBase.fit( NPMLE(;convexclass=gcal, solver=Hypatia.Optimizer),  Zs)
 floc = StatsBase.fit(DvoretzkyKieferWolfowitz(;α=0.01), Zs)
 
 
-discr = interval_discretizer(-3:0.2:3)
+discr = RealLineDiscretizer{:open, :closed}(-3:0.2:3)
 
 amari_withF  = AMARI(;convexclass=gcal, flocalization=floc,solver=Hypatia.Optimizer, discretizer=discr,
               plugin_G = ghat.prior, modulus_model=Empirikos.ModulusModelWithF)
@@ -68,7 +68,7 @@ Zs = NormalSample.(zs, σs)
 
 gcal_mix = MixturePriorClass(Normal.(-4:0.2:4, 0.5))
 
-discr = interval_discretizer(-4:0.1:4)
+discr = RealLineDiscretizer{:open,:closed}(-4:0.1:4)
 
 amari  = AMARI(;convexclass=gcal, flocalization=DvoretzkyKieferWolfowitz(;α=0.01),
               solver=Hypatia.Optimizer, discretizer=discr,

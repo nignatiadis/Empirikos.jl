@@ -180,9 +180,9 @@ function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, targ
             throw(ArgumentError("ModulusModelWithF only works for Homoskedastic samples."))
     Z = first(representative_eb_samples.vec)
     if isa(method.plugin_G, Distribution) #TODO SPECIAL CASE this elsewhere?
-        estimated_marginal_density = Empirikos.dictfun(discretizer, Z, z-> pdf(method.plugin_G, z))
+        estimated_marginal_density = StatsDiscretizations.dictfun(discretizer, z-> pdf(method.plugin_G, z), x->set_response(Z,x))
     else
-        estimated_marginal_density = Empirikos.dictfun(discretizer, Z, z-> pdf(method.plugin_G.prior, z))
+        estimated_marginal_density = StatsDiscretizations.dictfun(discretizer, z-> pdf(method.plugin_G.prior, z), x->set_response(Z,x))
     end
 
     model = Model(solver)
@@ -223,7 +223,7 @@ function modulus_cholesky_factor(convexclass::AbstractMixturePriorClass, plugin_
     cache_vec = zeros(K)
     fill!(chr.factors, 0)
     cache_vec  = zeros(K)
-    for _interval in discr.sorted_intervals
+    for _interval in discr
         for (z, pr) in zip(eb_samples.vec, eb_samples.probs)
             z = set_response(z, _interval)
             cache_vec .= sqrt(pr) .* exp.(logpdf.(components(convexclass), z) .- logpdf(plugin_G, z)/2)
@@ -281,19 +281,19 @@ function set_target!(modulus_model::AbstractModulusModel, target::Empirikos.Line
     modulus_model
 end
 
-function default_support_discretizer(Zs::AbstractVector{<:AbstractNormalSample})
-    _low,_up = quantile(response.(Zs), (0.005, 0.995))
-    _step = mean( std.(Zs))/100
-    interval_discretizer(RangeHelpers.range(_low; stop=above(_up), step=_step))
-end
+#function default_support_discretizer(Zs::AbstractVector{<:AbstractNormalSample})
+#    _low,_up = quantile(response.(Zs), (0.005, 0.995))
+#    _step = mean( std.(Zs))/100
+#    interval_discretizer(RangeHelpers.range(_low; stop=above(_up), step=_step))
+#end
 
-function default_support_discretizer(Zs::AbstractVector{<:FoldedNormalSample})
-    _up = quantile(response.(Zs), 0.995)
-    _low = zero(_up)
-    _step = mean( std.(Zs) )/100
-    interval_discretizer(RangeHelpers.range(start=_low, stop=above(_up), step=_step);
-        closed=:left, unbounded=:right)
-end
+#function default_support_discretizer(Zs::AbstractVector{<:FoldedNormalSample})
+#    _up = quantile(response.(Zs), 0.995)
+#    _low = zero(_up)
+#    _step = mean( std.(Zs) )/100
+#    interval_discretizer(RangeHelpers.range(start=_low, stop=above(_up), step=_step);
+#        closed=:left, unbounded=:right)
+#end
 
 
 function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, Zs; kwargs...)
@@ -385,7 +385,7 @@ function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
     L1 = target(g1)
     L2 = target(g2)
 
-    offset_sum = sum(discretizer.sorted_intervals) do _int
+    offset_sum = sum(discretizer) do _int
         sum(zip(representative_eb_samples.vec, representative_eb_samples.probs)) do (z,pr)
             z = set_response(z, _int)
             f2_z = pdf(g2, z)
@@ -422,8 +422,9 @@ end
 
 function SteinMinimaxEstimator(modulus_model::ModulusModelWithF)
     @unpack model, method, target, estimated_marginal_density = modulus_model
-    @unpack convexclass = method
-
+    @unpack convexclass, representative_eb_samples = method
+    Z = first(representative_eb_samples.vec)
+   
     δ = get_δ(modulus_model)
     ω_δ = objective_value(model)
     ω_δ_prime = -JuMP.dual(modulus_model.bound_delta)
@@ -445,7 +446,7 @@ function SteinMinimaxEstimator(modulus_model::ModulusModelWithF)
     Q_0  = (L1+L2)/2 -
         ω_δ_prime/(2*δ)*sum( (f2 .- f1).* (f2 .+ f1) ./ f̄s)
 
-    Q = Empirikos.dictfun(method.discretizer, Zs, Q .+ Q_0)
+    Q = StatsDiscretizations.dictfun(method.discretizer, Q .+ Q_0, x->set_response(Z,x))
 
     max_bias = (ω_δ - δ*ω_δ_prime)/2
     unit_var_proxy = ω_δ_prime^2
@@ -497,7 +498,7 @@ function confint(Q::SteinMinimaxEstimator, target, Zs; level=0.95, tail=:both)
            error("Target has changed")
     α = 1- level
     _bias = Q.max_bias
-    _Qs = Q.Q.(Zs)
+    _Qs = collect(Q.Q.(Zs))
     _wts = StatsBase.weights(Zs)
     _se = std(_Qs, _wts; corrected=true)/sqrt(nobs(Zs))
     point_estimate = mean(_Qs, _wts)
@@ -596,14 +597,14 @@ function confint(method::AMARI, target::Empirikos.AbstractPosteriorTarget, Zs;
 
 
     fit_lower = fit_initialized!(method, target_lower, Zs) #SteinMinimax
-    Q_lower = fit_lower.Q.(Zs)
+    Q_lower = collect(fit_lower.Q.(Zs))
     confint_lower = confint(fit_lower, target_lower, Zs; level=level)
     max_bias_lower = confint_lower.maxbias
     var_Q_lower = abs2(confint_lower.se)
     estimate_lower = confint_lower.estimate
 
     fit_upper = fit_initialized!(method, target_upper, Zs)
-    Q_upper = fit_upper.Q.(Zs)
+    Q_upper = collect(fit_upper.Q.(Zs))
     confint_upper = confint(fit_upper, target_upper, Zs; level=level)
     max_bias_upper = confint_upper.maxbias
     var_Q_upper = abs2(confint_upper.se)
@@ -650,7 +651,7 @@ end
 function worst_case_bias_lp(fitted_amari::AMARI, Q::QDonoho, target; max=true)
     @unpack convexclass, solver, discretizer, flocalization, representative_eb_samples = fitted_amari
 
-    transposed_intervals = reshape(discretizer.sorted_intervals, 1, length(discretizer.sorted_intervals))
+    transposed_intervals = reshape(discretizer, 1, length(discretizer))
     Zs = set_response.(representative_eb_samples.vec, transposed_intervals)
     model = Model(solver)
 

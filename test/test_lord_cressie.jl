@@ -1,8 +1,8 @@
 using Hypatia
 using Empirikos
 using Test
-
-
+using StatsDiscretizations
+using Distributions
 # We compare the chi^2 F-localization intervals against the intervals reported
 # by Lord and Cressie.
 
@@ -17,7 +17,7 @@ upper_test = lord_cressie.Upper1[idx_test]
 gcal = DiscretePriorClass(range(0.0,stop=1.0,length=300));
 
 postmean_targets = Empirikos.PosteriorMean.(BinomialSample.(z_cressie,20));
-chisq_floc = Empirikos.ChiSquaredFLocalization(0.05)
+chisq_floc = Empirikos.ChiSquaredFLocalization(α=0.05)
 
 floc_method_chisq = FLocalizationInterval(flocalization = chisq_floc,
                                        convexclass= gcal, solver=Hypatia.Optimizer)
@@ -31,21 +31,12 @@ upper_chisq_ci = getproperty.(chisq_cis, :upper)
 @test upper_chisq_ci ≈ upper_test atol=0.005
 
 
+discr = ExtendedFiniteGridDiscretizer(1:20)
 
-Zs_collapse = begin
-	Zs_collapse = deepcopy(Zs)
-	n0 = pop!(Zs_collapse.store, BinomialSample(0, 20))
-	n1 = pop!(Zs_collapse.store, BinomialSample(1, 20))
-	updated_keys =  [BinomialSample(Interval(0,1), 20); collect(keys(Zs_collapse))]
-	updated_values = [n0+n1; collect(values(Zs_collapse))]
-	Empirikos.summarize(updated_keys, updated_values)
-end
+Zs_discr = discr.(Zs)
+Zs_collapse = summarize(collect(Zs_discr), collect(values(Zs)))
 
-discr = integer_discretizer(1:20)
-Zs_collapse2 = discr(Zs)
-discr(Zs_collapse) == Zs_collapse2
-
-@test nobs(Zs_collapse) == nobs(Zs_collapse2)
+@test nobs(Zs_collapse)  == nobs(Zs)
 
 
 
@@ -54,31 +45,32 @@ floc_method_dkw = FLocalizationInterval(
                             convexclass= gcal, solver=Hypatia.Optimizer)
 
 fitted_dkw = fit(DvoretzkyKieferWolfowitz(;α=0.05), Zs_collapse)
-fitted_dkw2 = fit(DvoretzkyKieferWolfowitz(;α=0.05), Zs_collapse2)
 
 postmean_target = postmean_targets[2]
-dkw_ci = confint(floc_method_dkw, postmean_target, Zs_collapse);
-dkw_ci2 = confint(floc_method_dkw, postmean_target, Zs_collapse2);
-
-@test dkw_ci == dkw_ci2
+dkw_ci = confint(floc_method_dkw, postmean_target, Zs_collapse)
 
 lam_chisq_withF = Empirikos.AMARI(
 							convexclass=gcal,
-                            flocalization = Empirikos.ChiSquaredFLocalization(0.01),
+                            flocalization = Empirikos.ChiSquaredFLocalization(α=0.01, discretizer=discr),
                             solver=Hypatia.Optimizer, discretizer=discr,
                             modulus_model = Empirikos.ModulusModelWithF
                            )
 
-postmean_ci_lam_withF = confint(lam_chisq_withF, postmean_target, Zs_collapse2)
+postmean_ci_lam_withF = confint(lam_chisq_withF, postmean_target, Zs_collapse)
 
 lam_chisq_withoutF = Empirikos.AMARI(
 							convexclass=gcal,
-                            flocalization = Empirikos.ChiSquaredFLocalization(0.01),
+                            flocalization = Empirikos.ChiSquaredFLocalization(α=0.01, discretizer=discr),
                             solver=Hypatia.Optimizer, discretizer=discr,
                             modulus_model = Empirikos.ModulusModelWithoutF
                            )
 
-postmean_ci_lam_withoutF = confint(lam_chisq_withoutF, postmean_target, Zs_collapse2)
+postmean_ci_lam_withoutF = confint(lam_chisq_withoutF, postmean_target, Zs_collapse)
 
 @test postmean_ci_lam_withoutF.lower ≈ postmean_ci_lam_withF.lower
 @test postmean_ci_lam_withoutF.upper ≈ postmean_ci_lam_withF.upper
+
+
+
+
+
