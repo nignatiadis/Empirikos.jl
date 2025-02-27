@@ -128,7 +128,7 @@ function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
 
     dkw = fit(DvoretzkyKieferWolfowitz(;max_constraints=Inf), Zs)
 
-    F = cdf.(π, keys(dkw.summary))
+    F = cdf.(π, collect(keys(dkw.summary)))
     Fhat = collect(values(dkw.summary))
 
     @variable(model, u)

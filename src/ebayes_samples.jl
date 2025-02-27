@@ -151,6 +151,8 @@ ccdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.ccdf(marginali
 
 logpdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.logpdf(marginalize(Z, prior), response(Z))
 
+logcdf(prior::Distribution, Z::EBayesSample) = StatsDiscretizations.logcdf(marginalize(Z, prior), response(Z))
+
 
 function _support(d::Distribution)
     distributions_interval_to_interval(support(d))

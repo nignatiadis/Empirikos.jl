@@ -11,6 +11,14 @@ function response(Z::BivariateBinomialSample)
     [nuisance_parameter(Z.Z1), nuisance_parameter(Z.Z2)]
  end
 
+ function set_response(Z::BivariateBinomialSample, znew=missing)
+    znew1 = ismissing(znew) ? missing : znew[1]
+    znew2 = ismissing(znew) ? missing : znew[2]
+
+    new_Z1 = set_response(Z.Z1, znew1)
+    new_Z2 = set_response(Z.Z2, znew2)
+    BivariateBinomialSample(new_Z1, new_Z2)
+end
 
 function Base.show(io::IO, Z::BivariateBinomialSample)
     resp_Z1 = response(Z.Z1)

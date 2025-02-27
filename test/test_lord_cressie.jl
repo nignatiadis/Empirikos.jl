@@ -3,6 +3,7 @@ using Empirikos
 using Test
 using StatsDiscretizations
 using Distributions
+using JuMP
 # We compare the chi^2 F-localization intervals against the intervals reported
 # by Lord and Cressie.
 
@@ -20,7 +21,7 @@ postmean_targets = Empirikos.PosteriorMean.(BinomialSample.(z_cressie,20));
 chisq_floc = Empirikos.ChiSquaredFLocalization(α=0.05)
 
 floc_method_chisq = FLocalizationInterval(flocalization = chisq_floc,
-                                       convexclass= gcal, solver=Hypatia.Optimizer)
+                                       convexclass = gcal, solver = Hypatia.Optimizer)
 
 chisq_cis = confint.(floc_method_chisq, postmean_targets, Zs)
 

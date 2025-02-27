@@ -5,7 +5,7 @@ import Base: broadcast, broadcast!, broadcasted, eltype, zero, <=
 using DataStructures
 using Distributions
 import Distributions:
-    ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logccdf, components
+    ntrials, pdf, support, location, cf, cdf, ccdf, logpdf, logdiffcdf, logcdf, logccdf, components
 
 
 import JuMP
