@@ -22,15 +22,16 @@ module Prostate
 using CSV
 using ..Empirikos: MultinomialSummary, StandardNormalSample
 
-const URL = "https://web.stanford.edu/~hastie/CASI_files/DATA/prostz.txt"
+
+const DATA = joinpath(@__DIR__, "prostz.txt")
 
 function load_table()
-    CSV.File(download(URL), header=false)
+    CSV.File(DATA)
 end
 
 function ebayes_samples()
     tbl = load_table()
-    Zs = StandardNormalSample.(tbl.Column1)
+    StandardNormalSample.(tbl.Z)
 end
 
 end

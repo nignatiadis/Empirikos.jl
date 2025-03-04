@@ -12,18 +12,13 @@ using Distributions
 using Empirikos
 using Hypatia
 using Plots
-using PGFPlotsX
 using LaTeXStrings
 using IntervalSets
 using JuMP
 using Random
 
 # Set up pgfplotsx and custom preamble
-pgfplotsx()
-empty!(PGFPlotsX.CUSTOM_PREAMBLE)
-push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\usepackage{amssymb}")
-push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\PP}[2][]{\mathbb{P}_{#1}\left[#2\right]}")
-push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\EE}[2][]{\mathbb{E}_{#1}\left[#2\right]}")
+gr()
 
 # Set plot theme
 theme(:default;
@@ -129,7 +124,7 @@ postmean_ci_kde_scalemix = confint.(floc_method_kde_scalemix, postmean_targets, 
 ```{julia}
 postmean_scalemix_plot = plot(ts, postmean_ci_kde_scalemix,
     label="Gauss-F-Loc", fillcolor=:darkorange, fillalpha=0.5, ylim=(-2.55,2.55),
-    xguide = L"z", yguide=L"\EE{\mu \mid Z=z}",
+    xguide = L"z", yguide=L"E[\mu \mid Z=z]",
     size=(380,280))
 
 plot!(postmean_scalemix_plot, ts, postmean_ci_dkw_scalemix,

@@ -24,7 +24,7 @@ using Random
 ```
 
 ```{julia}
-pgfplotsx()
+gr()
 ```
 
 ## Gaussian Mixture models

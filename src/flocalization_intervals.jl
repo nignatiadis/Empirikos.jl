@@ -21,6 +21,10 @@ a [`Empirikos.ConvexPriorClass`](@ref), `solver` is a JuMP.jl compatible solver.
     If `CharnesCooper`, the Charnes-Cooper transformation is used.
     If `QuasiConvexBisection`, a quasi-convex optimization problem is solved
     by bisection.
+
+## References
+
+@ignatiadis2022confidence
 """
 Base.@kwdef struct FLocalizationInterval{N,G,C}
     flocalization::N
