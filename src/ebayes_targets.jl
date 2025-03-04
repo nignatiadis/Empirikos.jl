@@ -165,7 +165,7 @@ In the example above the sample is drawn from the hierarchical model
 ```
 In other words, letting ``\\varphi`` the Standard Normal pdf
 ```math
-L(G) = \\varhi \\star dG(z)
+L(G) = \\varphi \\star dG(z)
 ```
 Note that `2.0` has to be wrapped inside `StandardNormalSample(2.0)` since this target
 depends not only on `G` and the location, but also on the likelihood.

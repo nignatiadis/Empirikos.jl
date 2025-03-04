@@ -1,0 +1,43 @@
+# Convex prior classes
+
+The starting point for many empirical Bayes tasks, such as inference or estimation, is to posit
+that the true prior $G$ lies in a convex class of priors $\mathcal{G}$. Such classes of priors 
+are represented in this package through the abstract type,
+
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using Empirikos
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :ConvexPriorClass)
+```
+
+
+Currently, the following choices for $\mathcal{G}$ are available:
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :DiscretePriorClass)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :MixturePriorClass)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :GaussianScaleMixtureClass)
+```
+
+
+

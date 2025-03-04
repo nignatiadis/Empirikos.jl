@@ -1,0 +1,56 @@
+---
+title: Overview
+---
+
+> ἐμπειρικός: “experienced” in ancient Greek, etymology of empirical
+
+
+**Empirical Bayes estimation and inference in Julia.**
+
+Consider $n$ independent samples $Z_i$ drawn from the following hierarchical model
+$$
+\mu_i \sim G, \ \ Z_i \sim p_i(\cdot \mid \mu_i).
+$$
+Here $G$ is the unknown prior (effect size distribution) and $p_i(\cdot \mid \mu_i),i=1,\dotsc,n$ are known likelihood functions.
+
+This package provides a unified framework for estimation and inference under the above setting, which is known as the empirical Bayes problem [@robbins1956empirical].
+
+
+## Installation
+
+The package is available from the Julia registry. It may be installed on Julia version 1.10 as follows:
+```julia
+using Pkg
+Pkg.add("Empirikos")
+```
+
+For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is [supported by JuMP.jl](https://jump.dev/JuMP.jl/dev/installation/#Supported-solvers). We recommend using the [MOSEK](https://www.mosek.com/) solver through the [MosekTools.jl](https://github.com/jump-dev/MosekTools.jl) package. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is [Hypatia.jl](https://github.com/chriscoey/Hypatia.jl).
+
+
+::: {.callout-note}
+
+### Modularity
+
+This package has been designed with the goal of modularity. 
+Specialized code (using Julia's multiple dispatch) can be easily added to more efficiently handle different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently or is slow).
+
+:::
+      
+## Related packages
+
+### In R:
+
+* [REBayes](https://cran.r-project.org/web/packages/REBayes/index.html)  [@koenker2017rebayes]
+* [Ashr](https://cran.r-project.org/web/packages/ashr/index.html)  [@stephens2016false]
+* [DeconvolveR](https://cran.r-project.org/web/packages/deconvolveR/index.html)  [@narasimhan2020deconvolver]
+* [EbayesThresh](https://cran.r-project.org/web/packages/EbayesThresh/index.html)  [@johnstone2005ebayesthresh]
+
+### In Julia:
+
+* [Aurora.jl](https://github.com/nignatiadis/Aurora.jl)
+
+## References
+
+```@bibliography
+```
+

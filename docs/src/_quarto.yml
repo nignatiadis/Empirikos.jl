@@ -1,0 +1,61 @@
+project:
+    type: book
+    output-dir: "../build"
+
+book:
+    title: "Empirikos"
+    chapters:
+        - index.qmd
+        - part: "Manual"
+          chapters:
+          - manual/samples.qmd
+          - manual/estimation.qmd 
+          - manual/intervals.qmd
+          - manual/estimands.qmd
+          - manual/convexpriors.qmd 
+          - manual/flocalizations.qmd 
+        - part: "Vignettes"
+          chapters:
+          - vignettes/REBayes.qmd
+          - vignettes/prostate.qmd
+
+    navbar: 
+        background: primary
+
+        
+    search: 
+        location: sidebar
+        type: textbox
+
+    twitter-card: true
+    open-graph: true
+    repo-url: https://git@github.com:nignatiadis/Empirikos.jl
+    repo-actions: [issue]
+
+toc-title: "Table of Contents"
+
+execute:
+    keep-md: true
+    echo: true
+    output: true
+    cache: false
+    freeze: false
+
+bibliography: references.bib
+
+format:
+    html:
+        code-link: true
+        number-sections: false
+        css: _static/style.css
+        resources: 
+            - _static/style.css
+            - _static/theme.scss
+        theme: 
+            light: 
+                - _static/theme.scss
+                - default
+            dark: 
+                - _static/theme.scss
+                - darkly
+    

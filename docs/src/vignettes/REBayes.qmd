@@ -1,0 +1,225 @@
+---
+title: "Empirikos.jl: Reproducing REBayes Examples"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    fig-dpi: 300
+---
+
+# Reproducing the REBayes R vignette
+
+The goal of this notebook is to showcase the functionality of the `Empirikos.jl` package by (partially) reproducing results shown in the [REBayes vignette](https://cran.r-project.org/web/packages/REBayes/vignettes/rebayes.pdf).
+
+```{julia}
+using DocumenterQuarto
+using Empirikos
+using Distributions
+using JuMP
+using LaTeXStrings
+using Plots
+using StatsPlots
+using Hypatia
+using Random
+```
+
+```{julia}
+pgfplotsx()
+```
+
+## Gaussian Mixture models
+
+### Needles and haystacks
+
+Here we demonstrate the classic "needles in a haystack" scenario from the REBayes vignette. This example simulates data where most observations come from a standard normal distribution ($\mathrm{N}(0,1)$), while a small fraction (10%) come from a shifted normal ($\mathrm{N}(2,1)$).
+
+```{julia}
+zs = rand(MersenneTwister(100), Normal(), 1000) .+ [fill(0,900); fill(2,100)]
+zs = sort(zs);
+```
+
+In Empirikos.jl, we represent each observation as a `StandardNormalSample` object. This differs from REBayes where you would directly use a vector of observations as input to the `GLmix` function.
+
+The `StandardNormalSample` type encapsulates the observation along with knowledge that it follows a standard normal likelihood (i.e., $Z_i \mid \mu_i \sim \mathrm{N}(\mu_i, 1)$). This type-based approach is a key design feature of Empirikos.jl:
+
+1. It allows the package to know the likelihood structure without additional arguments;
+2. It enables multiple dispatch to handle different likelihood models;
+3. It maintains a consistent interface across all empirical Bayes problems.
+
+```{julia}
+normal_Zs = StandardNormalSample.(zs)
+first(normal_Zs, 3)
+```
+
+We now fit the nonparametric maximum likelihood estimator (NPMLE) using the Mosek optimizer. In REBayes, this would be done with a single call to `GLmix(y)`, while in Empirikos we use the more general `fit` function with NPMLE specification:
+
+```{julia}
+normal_npmle = fit(NPMLE(DiscretePriorClass(), Hypatia.Optimizer), normal_Zs)
+```
+
+The NPMLE estimates the mixing distribution nonparametrically, which in this case should identify two mass points - one near 0 and another near 2.
+
+Next, we define our posterior targets - in this case, the posterior means:
+
+```{julia}
+normal_postmean_targets = PosteriorMean.(normal_Zs)
+```
+
+The following code creates a three-panel plot showing:
+1. The true mixture density
+2. The estimated prior distribution (mixing distribution)
+3. The posterior mean function (the shrinkage estimator)
+
+```{julia}
+#| fig-width: 10
+#| fig-height: 3.5
+#| label: fig-normal-mixture
+#| fig-cap: "Gaussian mixture model analysis. Left: True mixture density. Middle: NPMLE estimated prior. Right: Posterior mean function showing shrinkage effect."
+
+normal_pl_marginal = plot(marginalize(NormalSample(1.0),  		                  
+                 DiscreteNonParametric([0.0;2.0], [0.9;0.1])), 									  
+                 components=false, label=nothing, xguide="z",
+                 yguide = "f(z)",  						  
+                 title = "True mixture")
+
+normal_pl_npmle_prior = plot(support(normal_npmle.prior), 	 	  					 
+                 probs(normal_npmle.prior), seriestype=:sticks, 	                         
+                 xguide = L"\mu", yguide=L"g(\mu)", 		                     
+                 title = "NPMLE prior estimate", label=nothing)
+
+normal_pl_posterior_mean = plot(response.(location.(normal_postmean_targets)), 		                         
+                 normal_postmean_targets.(normal_npmle.prior), 	                             
+                 label=nothing, title="NPMLE posterior mean", 	                             
+                 xguide="z", yguide=L"E[\mu \mid Z=z]")
+
+plot(normal_pl_marginal, normal_pl_npmle_prior, normal_pl_posterior_mean, 	 
+                 size=(1000,350), layout=(1,3))
+```
+
+This plot is similar to what you would see in REBayes but is generated using Empirikos.jl's object-oriented approach. The posterior mean function (right panel) shows the shrinkage effect: observations are pulled toward the mass points of the estimated prior distribution. The shrinkage is stronger for values close to the mass points and weaker in regions between them.
+
+## Binomial NPMLE
+
+Now we'll analyze the Tacks dataset using a binomial mixture model. This classic dataset from Beckett and Diaconis involves outcomes from tossing thumbtacks.
+
+```{julia}
+tacks_tbl = Empirikos.Tacks.load_table()
+```
+
+We convert the table to a vector of `BinomialSample` objects, where each sample represents the number of successes out of a known number of trials:
+
+```{julia}
+tack_Zs = BinomialSample.(tacks_tbl.x, Int64.(tacks_tbl.k))
+```
+
+In REBayes, a similar analysis would use the `Bmix` function, but here we use our common `fit` interface with NPMLE. The information about the binomial likelihood is provided by the `BinomialSample` type instead, which makes the code more extensible and consistent across different likelihood models.
+
+```{julia}
+tacks_npmle = fit(NPMLE(DiscretePriorClass(), Hypatia.Optimizer), tack_Zs);
+```
+
+Let's visualize the estimated prior distribution of success probabilities:
+
+```{julia}
+#| fig-width: 6
+#| fig-height: 4
+#| label: fig-binomial
+#| fig-cap: "Estimated prior distribution for the Tacks dataset showing the probability of a tack landing point-up."
+
+plot(support(tacks_npmle.prior), 	 
+     probs(tacks_npmle.prior), 	 
+     seriestype=:sticks, 	 
+     xguide = "p",  	 
+     yguide = "g(p)",  	 
+     size=(500,400), 	 
+     label=nothing,
+     title="NPMLE prior for Tacks data")
+```
+
+The plot shows the estimated distribution of success probabilities for the tacks. The NPMLE identifies several mass points, indicating groups of tacks with different tendencies to land point-up.
+
+## Poisson NPMLE
+
+Finally, we'll analyze the Norberg insurance claims dataset, which consists of claim counts and exposure times for different occupational groups.
+
+```{julia}
+norberg_tbl = Empirikos.Norberg.load_table()
+```
+
+We convert the data to `PoissonSample` objects. Each sample captures both the count (death) and the exposure time:
+
+```{julia}
+norberg_Zs = Empirikos.PoissonSample.(norberg_tbl.Death, norberg_tbl.Exposure ./ 344);
+```
+
+Let's examine the range of claim rates:
+
+```{julia}
+extrema(response.(norberg_Zs) ./ nuisance_parameter.(norberg_Zs))
+```
+
+And check how many groups had zero claims:
+
+```{julia}
+sum(response.(norberg_Zs) .== 0) # how many zeros in the samples?
+```
+
+
+
+Now we fit the NPMLE with a finer grid of 1000 points:
+
+```{julia}
+norberg_npmle = fit(NPMLE(DiscretePriorClass(),  		                  
+                    Hypatia.Optimizer; 		                  
+                    prior_grid_length=1000),  					
+                    norberg_Zs);
+```
+
+In REBayes, this would be accomplished with the `Pmix` function with exposure arguments, but our approach provides a unified interface with the type system handling the exposure information.
+
+Let's visualize the results:
+
+```{julia}
+#| fig-width: 8
+#| fig-height: 3
+#| label: fig-poisson
+#| fig-cap: "Estimated risk distribution for insurance claims data. Left: Original scale. Right: Cube-root transformed to better visualize smaller masses."
+
+
+pl = plot(
+        plot(support(norberg_npmle.prior), 	 	  
+            probs(norberg_npmle.prior)./sum(probs(norberg_npmle.prior)), 	      
+            seriestype=:sticks, 	      
+            xguide = L"\theta",  	      
+            yguide = L"g(\theta)",  		  
+            legend=:topright,  		  
+            label="NPMLE",
+            title="Risk distribution"), 
+        plot(support(norberg_npmle.prior), 	 	  
+            (probs(norberg_npmle.prior) ./ sum(probs(norberg_npmle.prior))).^(1/3), 	      
+            seriestype=:sticks, 	      
+            xguide = L"\theta",  	      
+            yguide = L"g(\theta)^{1/3}", 		  
+            legend=:topright, 		  
+            label="NPMLE",
+            title="Cube-root transformed"), 	
+            size=(800,400)
+        )
+```
+
+The left panel shows the estimated risk distribution, while the right panel shows the cube-root transformation to better visualize smaller masses. Similar to the REBayes analysis, we can see evidence of groups with particularly high risk (around θ=8), which would be difficult to capture with a parametric approach.
+
+Finally, we compute the posterior means for each group:
+
+```{julia}
+norgberg_postmean_npmle = (PosteriorMean.(norberg_Zs)).(norberg_npmle.prior)
+```
+
+These values represent the empirical Bayes credibility estimates for each occupation group's risk factor. In insurance terminology, these would be used to set premiums that reflect both the overall portfolio patterns and each group's specific experience.
+
+```{julia}
+# Display the mean posterior estimate 
+mean(norgberg_postmean_npmle)
+```
+
+This mean value represents the overall risk level across all occupational groups after empirical Bayes adjustment.

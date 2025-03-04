@@ -1,0 +1,38 @@
+# Confidence intervals
+
+Here we describe two methods for forming confidence intervals for empirical Bayes estimands.
+
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using Empirikos
+```
+
+
+## F-Localization based intervals
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :FLocalizationInterval)
+```
+
+## AMARI intervals
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :AMARI)
+```
+
+## Interface
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :confint)
+```
+

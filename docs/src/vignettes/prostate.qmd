@@ -1,0 +1,140 @@
+---
+title: "Identifying genes associated with prostate cancer"
+subtitle: "F-localization interval analysis"
+format: html
+---
+
+## Setup and data loading
+
+```{julia}
+using DataFrames
+using Distributions
+using Empirikos
+using Hypatia
+using Plots
+using PGFPlotsX
+using LaTeXStrings
+using IntervalSets
+using JuMP
+using Random
+
+# Set up pgfplotsx and custom preamble
+pgfplotsx()
+empty!(PGFPlotsX.CUSTOM_PREAMBLE)
+push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\usepackage{amssymb}")
+push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\PP}[2][]{\mathbb{P}_{#1}\left[#2\right]}")
+push!(PGFPlotsX.CUSTOM_PREAMBLE, raw"\newcommand{\EE}[2][]{\mathbb{E}_{#1}\left[#2\right]}")
+
+# Set plot theme
+theme(:default;
+      background_color_legend = :transparent,
+      foreground_color_legend = :transparent,
+      grid=nothing,
+      frame=:box,
+      legendfonthalign = :left,
+      thickness_scaling=1.3)
+```
+
+```{julia}
+# Load the prostate data
+Zs = Prostate.ebayes_samples()
+```
+
+## Marginal distribution of z-scores
+
+### DKW-F-Localization
+
+```{julia}
+# Create and fit the DKW F-Localization
+dkw_floc = DvoretzkyKieferWolfowitz(0.05)
+fitted_dkw = fit(dkw_floc, Zs)
+
+# Plot the DKW band
+dkw_plot = plot(fitted_dkw, label="DKW band",
+     xlab=L"z", ylab=L"\widehat{F}_n(z)",  size=(380,280))
+```
+
+### KDE-F-Localization
+
+```{julia}
+# Create and fit the KDE-based F-Localization
+infty_floc = Empirikos.InfinityNormDensityBand(α=0.05)
+fitted_infty_floc = fit(infty_floc, Zs)
+
+# Plot the KDE band with histogram
+prostate_marginal_plot = histogram([response(Z) for Z in Zs],
+    bins=50, normalize=true,
+    label="Histogram", fillalpha=0.4, linealpha=0.4, fillcolor=:lightgray,
+    size=(380,280), xlims=(-4.5,4.5))
+
+plot!(prostate_marginal_plot, fitted_infty_floc,
+      label="KDE band", xlims=(-4.5,4.5),
+      yguide=L"\widehat{f}_n(z)", xguide=L"z")
+
+plot!(prostate_marginal_plot, [fitted_infty_floc.a_min; fitted_infty_floc.a_max], seriestype=:vline,
+      linestyle=:dot, label=nothing, color=:lightgrey)
+```
+
+## Confidence intervals
+
+```{julia}
+# Define prior classes
+gcal_scalemix = Empirikos.autoconvexclass(GaussianScaleMixtureClass(), Zs; :grid_scaling => 1.1)
+```
+
+### F-Localization methods setup
+
+```{julia}
+floc_method_dkw_scalemix = FLocalizationInterval(
+    flocalization = dkw_floc,
+    convexclass = gcal_scalemix, 
+    solver = Hypatia.Optimizer
+)
+
+floc_method_kde_scalemix = FLocalizationInterval(
+    flocalization = infty_floc,
+    convexclass = gcal_scalemix, 
+    solver = Hypatia.Optimizer
+)
+```
+
+### Compute confidence intervals
+
+```{julia}
+# Define values for which to compute confidence intervals
+ts = -3:0.25:3
+
+# Define posterior targets
+postmean_targets = Empirikos.PosteriorMean.(StandardNormalSample.(ts))
+```
+
+
+
+Compute confidence intervals for scale mixture priors
+
+```{julia}
+#| output: false
+postmean_ci_dkw_scalemix = confint.(floc_method_dkw_scalemix, postmean_targets, Zs)
+```
+
+```{julia}
+#| output: false
+postmean_ci_kde_scalemix = confint.(floc_method_kde_scalemix, postmean_targets, Zs)
+```
+
+
+
+### Visualize confidence intervals for scale mixture priors
+
+```{julia}
+postmean_scalemix_plot = plot(ts, postmean_ci_kde_scalemix,
+    label="Gauss-F-Loc", fillcolor=:darkorange, fillalpha=0.5, ylim=(-2.55,2.55),
+    xguide = L"z", yguide=L"\EE{\mu \mid Z=z}",
+    size=(380,280))
+
+plot!(postmean_scalemix_plot, ts, postmean_ci_dkw_scalemix,
+    label="DKW-F-Loc", show_ribbon=false, alpha=0.9, color=:black)
+
+plot!(postmean_scalemix_plot, [-3.0;3.0], [-3.0; 3.0], seriestype=:line,
+    linestyle=:dot, label=nothing, color=:lightgrey)
+```

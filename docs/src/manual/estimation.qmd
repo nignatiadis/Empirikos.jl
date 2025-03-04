@@ -1,8 +1,19 @@
 # Prior Estimation
 
-```@docs
-Empirikos.EBayesMethod
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using Empirikos
 ```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :EBayesMethod)
+```
+
+
 
 ## Nonparametric estimation
 
@@ -16,9 +27,13 @@ Above, `method` is a type that specifies both the assumptions made on $G$ (say, 
 ### Nonparametric Maximum Likelihood estimation (NPMLE)
 For example, let us consider the nonparametric maximum likelihood estimator:
 
-```@docs
-NPMLE
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :NPMLE)
 ```
+
+
 
 Suppose we have Poisson samples `Zs`, each with a different mean $\mu_i$ drawn from $G=U[1,5]$:
 ```julia
@@ -39,7 +54,12 @@ g_hat = fit(NPMLE(DiscretePriorClass(), Hypatia.Optimizer), Zs)
 ```
 
 ### Other available nonparametric methods
-```@docs
-Empirikos.KolmogorovSmirnovMinimumDistance
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :KolmogorovSmirnovMinimumDistance)
 ```
+
+
 

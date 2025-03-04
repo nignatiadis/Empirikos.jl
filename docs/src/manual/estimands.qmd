@@ -1,0 +1,104 @@
+# Estimands
+
+This package defines dedicated types to describe empirical Bayes estimands (that can be used for estimation or inference).
+
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using Empirikos
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :EBayesTarget)
+```
+
+
+## Example: PosteriorMean
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :PosteriorMean)
+```
+
+
+
+A `target::EBayesTarget`, such as `PosteriorMean`, may be used as a callable on distributions (priors).
+
+```julia-repl
+julia> G = Normal()
+Normal{Float64}(μ=0.0, σ=1.0)
+
+julia> postmean1 = PosteriorMean(StandardNormalSample(1.0))
+julia> postmean1(G)
+0.5
+
+julia> postmean2 = PosteriorMean(NormalSample(1.0, sqrt(3.0)))
+julia> postmean2(G)
+0.25000000000000006
+```
+
+
+## Posterior estimands 
+
+In addition to [`PosteriorMean`](@ref), other implemented posterior estimands are the following:
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :PosteriorProbability)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :PosteriorVariance)
+```
+
+
+## Linear functionals 
+
+A special case of empirical Bayes estimands are linear functionals:
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :LinearEBayesTarget)
+```
+
+
+
+Currently available linear functionals:
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :PriorDensity)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :MarginalDensity)
+```
+
+
+
+Posterior estimands such as [`PosteriorMean`](@ref) can be typically decomposed into two linear functionals, a `numerator` and a `denominator`:
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :numerator)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :denominator)
+```

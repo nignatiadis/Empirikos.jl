@@ -1,0 +1,54 @@
+# F-Localizations
+
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using Empirikos
+```
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :FLocalization)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :FittedFLocalization)
+```
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :DvoretzkyKieferWolfowitz)
+```  
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :ChiSquaredFLocalization)
+```
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :InfinityNormDensityBand)
+```
+This F-Localization currently only works for homoskedastic Normal samples with common noise variance $\sigma^2$. By default the above uses the following kernel, with bandwidth $h = \sigma/\sqrt{\log(n)}$, where $n$ is the sample size:
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :FlatTopKernel)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :SincKernel)
+```

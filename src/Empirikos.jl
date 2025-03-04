@@ -81,6 +81,7 @@ include("datasets/EfronMorrisBaseball/EfronMorrisBaseball.jl")
 include("datasets/Bichsel/Bichsel.jl")
 include("datasets/Thyrion/Thyrion.jl")
 include("datasets/Tacks/Tacks.jl")
+include("datasets/Norberg/Norberg.jl")
 include("datasets/Shakespeare/Shakespeare.jl")
 include("datasets/PsychologyReproducibility/PsychologyReproducibility.jl")
 

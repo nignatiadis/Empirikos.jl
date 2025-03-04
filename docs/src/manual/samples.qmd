@@ -1,0 +1,94 @@
+# Empirical Bayes samples
+
+```{julia}
+#| echo: false
+#| output: false
+using DocumenterQuarto
+using Empirikos
+```
+
+The design choice of this package, is that each sample is wrapped in a type that represents its likelihood. This works well, since in the empirical Bayes problem, we typically impose (simple) assumptions on the distribution of $Z_i \mid \mu_i$ and complexity emerges from making compound or nonparametric assumptions on the $\mu_i$ and sharing information across $i$. The main advantage is that it then makes it easy to add new likelihoods and have it automatically integrate with the rest of the package (say the nonparametric maximum likelihood estimator) through Julia's multiple dispatch. 
+
+The abstract type is 
+
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :EBayesSample)
+```
+
+## Example: StandardNormalSample
+We explain the interface in the most well-studied empirical Bayes setting, namely the Gaussian compound decision problem wherein $Z_i \mid \mu_i \sim \mathcal{N}(\mu_i,1)$.  Such a sample is represented through the `StandardNormalSample` type:
+
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :StandardNormalSample)
+```
+
+The type can be used in three ways. First, say we observe $Z_i=1.0$, then we reprent that as `Z = StandardNormalSample(1.0)`.  A more advanced functionality consists of `StandardNormalSample(missing)`, which represents the random variable $Z_i$ without having observed its realization yet. 
+
+## Interface 
+
+The main interface functions are the following:
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :likelihood_distribution)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :response)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :marginalize)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :pdf)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :cdf)
+```
+
+
+
+
+## Other implemented EBayesSample types
+
+Currently, the following samples have been implemented.
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :NormalSample)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :BinomialSample)
+```
+
+```{julia}
+#| echo: false
+#| output: asis
+DocumenterQuarto.doc(Empirikos, :PoissonSample)
+```
+
+
+
