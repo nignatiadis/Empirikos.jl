@@ -299,7 +299,7 @@ window.Quarto = {
 <section id="reproducing-the-rebayes-r-vignette" class="level1">
 <h1>Reproducing the REBayes R vignette</h1>
 <p>The goal of this notebook is to showcase the functionality of the <code>Empirikos.jl</code> package by (partially) reproducing results shown in the <a href="https://cran.r-project.org/web/packages/REBayes/vignettes/rebayes.pdf">REBayes vignette</a>.</p>
-<div id="973997ab" class="cell" data-execution_count="1">
+<div id="f15d3340" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DocumenterQuarto</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Empirikos</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
@@ -310,7 +310,7 @@ window.Quarto = {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Hypatia</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="0234abd8" class="cell" data-execution_count="2">
+<div id="a2dd1c4f" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pgfplotsx</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>Plots.PGFPlotsXBackend()</code></pre>
@@ -321,7 +321,7 @@ window.Quarto = {
 <section id="needles-and-haystacks" class="level3">
 <h3 class="anchored" data-anchor-id="needles-and-haystacks">Needles and haystacks</h3>
 <p>Here we demonstrate the classic “needles in a haystack” scenario from the REBayes vignette. This example simulates data where most observations come from a standard normal distribution (<span class="math inline">\(\mathrm{N}(0,1)\)</span>), while a small fraction (10%) come from a shifted normal (<span class="math inline">\(\mathrm{N}(2,1)\)</span>).</p>
-<div id="2e046892" class="cell" data-execution_count="3">
+<div id="f840100a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>zs <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">MersenneTwister</span>(<span class="fl">100</span>), <span class="fu">Normal</span>(), <span class="fl">1000</span>) <span class="op">.+</span> [<span class="fu">fill</span>(<span class="fl">0</span>,<span class="fl">900</span>); <span class="fu">fill</span>(<span class="fl">2</span>,<span class="fl">100</span>)]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>zs <span class="op">=</span> <span class="fu">sort</span>(zs);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -332,7 +332,7 @@ window.Quarto = {
 <li>It enables multiple dispatch to handle different likelihood models;</li>
 <li>It maintains a consistent interface across all empirical Bayes problems.</li>
 </ol>
-<div id="823a8a9a" class="cell" data-execution_count="4">
+<div id="c87acdc6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>normal_Zs <span class="op">=</span> <span class="fu">StandardNormalSample</span>.(zs)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">first</span>(normal_Zs, <span class="fl">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -343,7 +343,7 @@ window.Quarto = {
 </div>
 </div>
 <p>We now fit the nonparametric maximum likelihood estimator (NPMLE) using the Mosek optimizer. In REBayes, this would be done with a single call to <code>GLmix(y)</code>, while in Empirikos we use the more general <code>fit</code> function with NPMLE specification:</p>
-<div id="e3fa299e" class="cell" data-execution_count="5">
+<div id="486d7c6c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>normal_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), normal_Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -493,7 +493,7 @@ window.Quarto = {
   142  -6.2671e+00  -6.2671e+00 | 3.93e-08  9.55e-09  1.09e-10 | 3.79e-01  4.50e-11  1.71e-11 | 7.9e-12  5.2e-01  co-a  6.00e-01
 optimal solution found; terminating
 
-status is Optimal after 142 iterations and 20.995 seconds
+status is Optimal after 142 iterations and 21.981 seconds
 </code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -503,7 +503,7 @@ DiscretePriorClass | support = -3.1747277553967117:0.030043037229013896:5.808140
 </div>
 <p>The NPMLE estimates the mixing distribution nonparametrically, which in this case should identify two mass points - one near 0 and another near 2.</p>
 <p>Next, we define our posterior targets - in this case, the posterior means:</p>
-<div id="5a586867" class="cell" data-execution_count="6">
+<div id="6e92de8c" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>normal_postmean_targets <span class="op">=</span> <span class="fu">PosteriorMean</span>.(normal_Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>1000-element Vector{PosteriorMean{StandardNormalSample{Float64}}}:
@@ -574,7 +574,7 @@ Figure&nbsp;9.1
 <section id="binomial-npmle" class="level2">
 <h2 class="anchored" data-anchor-id="binomial-npmle">Binomial NPMLE</h2>
 <p>Now we’ll analyze the Tacks dataset using a binomial mixture model. This classic dataset from Beckett and Diaconis involves outcomes from tossing thumbtacks.</p>
-<div id="5f45a5dc" class="cell" data-execution_count="8">
+<div id="bffd5ebf" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tacks_tbl <span class="op">=</span> Empirikos.Tacks.<span class="fu">load_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>320-element CSV.File:
@@ -607,7 +607,7 @@ Figure&nbsp;9.1
 </div>
 </div>
 <p>We convert the table to a vector of <code>BinomialSample</code> objects, where each sample represents the number of successes out of a known number of trials:</p>
-<div id="73dc94a1" class="cell" data-execution_count="9">
+<div id="9103ec89" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tack_Zs <span class="op">=</span> <span class="fu">BinomialSample</span>.(tacks_tbl.x, <span class="fu">Int64</span>.(tacks_tbl.k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>320-element Vector{BinomialSample{Int64, Int64}}:
@@ -640,7 +640,7 @@ Figure&nbsp;9.1
 </div>
 </div>
 <p>In REBayes, a similar analysis would use the <code>Bmix</code> function, but here we use our common <code>fit</code> interface with NPMLE. The information about the binomial likelihood is provided by the <code>BinomialSample</code> type instead, which makes the code more extensible and consistent across different likelihood models.</p>
-<div id="32ccd50f" class="cell" data-execution_count="10">
+<div id="6b7b5f0f" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tacks_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), tack_Zs);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -684,7 +684,7 @@ Figure&nbsp;9.1
    36  -1.1406e+00  -1.1406e+00 | 4.14e-06  2.86e-09  1.98e-09 | 7.51e+00  1.73e-09  1.30e-08 | 3.0e-09  9.2e-03  co-a  3.00e-01
 optimal solution found; terminating
 
-status is Optimal after 36 iterations and 0.244 seconds
+status is Optimal after 36 iterations and 0.257 seconds
 </code></pre>
 </div>
 </div>
@@ -716,7 +716,7 @@ Figure&nbsp;9.2
 <section id="poisson-npmle" class="level2">
 <h2 class="anchored" data-anchor-id="poisson-npmle">Poisson NPMLE</h2>
 <p>Finally, we’ll analyze the Norberg insurance claims dataset, which consists of claim counts and exposure times for different occupational groups.</p>
-<div id="7f7275dc" class="cell" data-execution_count="12">
+<div id="72d4fb44" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>norberg_tbl <span class="op">=</span> Empirikos.Norberg.<span class="fu">load_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>72-element CSV.File:
@@ -749,25 +749,25 @@ Figure&nbsp;9.2
 </div>
 </div>
 <p>We convert the data to <code>PoissonSample</code> objects. Each sample captures both the count (death) and the exposure time:</p>
-<div id="31004a5e" class="cell" data-execution_count="13">
+<div id="f688d726" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>norberg_Zs <span class="op">=</span> Empirikos.<span class="fu">PoissonSample</span>.(norberg_tbl.Death, norberg_tbl.Exposure <span class="op">./</span> <span class="fl">344</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s examine the range of claim rates:</p>
-<div id="f41e0c2c" class="cell" data-execution_count="14">
+<div id="7571f682" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extrema</span>(<span class="fu">response</span>.(norberg_Zs) <span class="op">./</span> <span class="fu">nuisance_parameter</span>.(norberg_Zs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>(0.0, 8.888314708352173)</code></pre>
 </div>
 </div>
 <p>And check how many groups had zero claims:</p>
-<div id="47e4df8e" class="cell" data-execution_count="15">
+<div id="95d258b0" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">response</span>.(norberg_Zs) <span class="op">.==</span> <span class="fl">0</span>) <span class="co"># how many zeros in the samples?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="16">
 <pre><code>23</code></pre>
 </div>
 </div>
 <p>Now we fit the NPMLE with a finer grid of 1000 points:</p>
-<div id="321c490d" class="cell" data-execution_count="16">
+<div id="e04168c8" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>norberg_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(),                           </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                    Hypatia.Optimizer;                        </span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                    prior_grid_length<span class="op">=</span><span class="fl">1000</span>),                    </span>
@@ -831,7 +831,7 @@ Figure&nbsp;9.2
    53  -3.5670e+00  -3.5670e+00 | 3.45e-07  7.60e-09  3.68e-10 | 1.52e+00  5.09e-10  7.75e-10 | 3.7e-09  1.1e-01  co-a  7.00e-01
 optimal solution found; terminating
 
-status is Optimal after 53 iterations and 0.272 seconds
+status is Optimal after 53 iterations and 0.288 seconds
 </code></pre>
 </div>
 </div>
@@ -872,7 +872,7 @@ Figure&nbsp;9.3
 </div>
 <p>The left panel shows the estimated risk distribution, while the right panel shows the cube-root transformation to better visualize smaller masses. Similar to the REBayes analysis, we can see evidence of groups with particularly high risk (around θ=8), which would be difficult to capture with a parametric approach.</p>
 <p>Finally, we compute the posterior means for each group:</p>
-<div id="71f0797d" class="cell" data-execution_count="18">
+<div id="a8aa5b92" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>norgberg_postmean_npmle <span class="op">=</span> (<span class="fu">PosteriorMean</span>.(norberg_Zs)).(norberg_npmle.prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
 <pre><code>72-element Vector{Float64}:
@@ -905,7 +905,7 @@ Figure&nbsp;9.3
 </div>
 </div>
 <p>These values represent the empirical Bayes credibility estimates for each occupation group’s risk factor. In insurance terminology, these would be used to set premiums that reflect both the overall portfolio patterns and each group’s specific experience.</p>
-<div id="a554c95d" class="cell" data-execution_count="19">
+<div id="4adfbf90" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the mean posterior estimate </span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(norgberg_postmean_npmle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
