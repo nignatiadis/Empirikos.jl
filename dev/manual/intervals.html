@@ -299,6 +299,10 @@ window.Quarto = {
 <p>Method for computing frequentist confidence intervals for empirical Bayes estimands. Here <code>flocalization</code> is a <a href="#Empirikos.FLocalization"><code>Empirikos.FLocalization</code></a>, <code>convexclass</code> is a <a href="#Empirikos.ConvexPriorClass"><code>Empirikos.ConvexPriorClass</code></a>, <code>solver</code> is a JuMP.jl compatible solver.</p>
 <p><code>n_bisection</code> is relevant only for combinations of <code>target</code>, <code>flocalization</code> and <code>convexclass</code> for which the Charnes-Cooper transformation is not applicable/implemented. Instead, a quasi-convex optimization problem is solved by bisection and increasing <code>n_bisection</code> increases accuracy (at the cost of more computation).</p>
 <p><code>optimization_method</code> determines how the optimization problem is solved. If <code>nothing</code>, the default optimization method of the solver is used. If <code>CharnesCooper</code>, the Charnes-Cooper transformation is used. If <code>QuasiConvexBisection</code>, a quasi-convex optimization problem is solved by bisection.</p>
+<section id="references" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="references">References</h4>
+<p><span class="citation" data-cites="ignatiadis2022confidence">Ignatiadis and Wager (<a href="#ref-ignatiadis2022confidence" role="doc-biblioref">2022</a>)</span></p>
+</section>
 </div>
 </div>
 </div>
@@ -319,8 +323,8 @@ window.Quarto = {
       solver,
       plugin_G = KolmogorovSmirnovMinimumDistance(convexclass, solver))</code></pre>
 <p>Affine Minimax Anderson-Rubin intervals for empirical Bayes estimands. Here <code>flocalization</code> is a pilot <a href="#Empirikos.FLocalization"><code>Empirikos.FLocalization</code></a>, <code>convexclass</code> is a <a href="#Empirikos.ConvexPriorClass"><code>Empirikos.ConvexPriorClass</code></a>, <code>solver</code> is a JuMP.jl compatible solver. <code>plugin_G</code> is a <a href="#Empirikos.EBayesMethod"><code>Empirikos.EBayesMethod</code></a> used as an initial estimate of the marginal distribution of the i.i.d. samples <span class="math inline">\(Z\)</span>.</p>
-<section id="references" class="level4 unnumbered">
-<h4 class="unnumbered anchored" data-anchor-id="references">References</h4>
+<section id="references-1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="references-1">References</h4>
 <p><span class="citation" data-cites="ignatiadis2022confidence">Ignatiadis and Wager (<a href="#ref-ignatiadis2022confidence" role="doc-biblioref">2022</a>)</span></p>
 </section>
 </div>
