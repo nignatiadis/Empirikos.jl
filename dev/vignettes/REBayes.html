@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Empirikos.jl: Reproducing REBayes Examples – Empirikos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../vignettes/prostate.html" rel="next">
+<link href="../manual/flocalizations.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../_static/style.css">
+<meta property="og:title" content="Empirikos.jl: Reproducing REBayes Examples – Empirikos">
+<meta property="og:description" content="">
+<meta property="og:site_name" content="Empirikos">
+<meta name="twitter:title" content="Empirikos.jl: Reproducing REBayes Examples – Empirikos">
+<meta name="twitter:description" content="">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Empirikos</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+    <a href="https://git@github.com:nignatiadis/Empirikos.jl" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/REBayes.html">Vignettes</a></li><li class="breadcrumb-item"><a href="../vignettes/REBayes.html"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Manual</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Vignettes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/REBayes.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#reproducing-the-rebayes-r-vignette" id="toc-reproducing-the-rebayes-r-vignette" class="nav-link active" data-scroll-target="#reproducing-the-rebayes-r-vignette">Reproducing the REBayes R vignette</a>
+  <ul class="collapse">
+  <li><a href="#gaussian-mixture-models" id="toc-gaussian-mixture-models" class="nav-link" data-scroll-target="#gaussian-mixture-models">Gaussian Mixture models</a>
+  <ul class="collapse">
+  <li><a href="#needles-and-haystacks" id="toc-needles-and-haystacks" class="nav-link" data-scroll-target="#needles-and-haystacks">Needles and haystacks</a></li>
+  </ul></li>
+  <li><a href="#binomial-npmle" id="toc-binomial-npmle" class="nav-link" data-scroll-target="#binomial-npmle">Binomial NPMLE</a></li>
+  <li><a href="#poisson-npmle" id="toc-poisson-npmle" class="nav-link" data-scroll-target="#poisson-npmle">Poisson NPMLE</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/REBayes.html">Vignettes</a></li><li class="breadcrumb-item"><a href="../vignettes/REBayes.html"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="reproducing-the-rebayes-r-vignette" class="level1">
+<h1>Reproducing the REBayes R vignette</h1>
+<p>The goal of this notebook is to showcase the functionality of the <code>Empirikos.jl</code> package by (partially) reproducing results shown in the <a href="https://cran.r-project.org/web/packages/REBayes/vignettes/rebayes.pdf">REBayes vignette</a>.</p>
+<div id="973997ab" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DocumenterQuarto</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Empirikos</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">JuMP</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LaTeXStrings</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">StatsPlots</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Hypatia</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0234abd8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pgfplotsx</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>Plots.PGFPlotsXBackend()</code></pre>
+</div>
+</div>
+<section id="gaussian-mixture-models" class="level2">
+<h2 class="anchored" data-anchor-id="gaussian-mixture-models">Gaussian Mixture models</h2>
+<section id="needles-and-haystacks" class="level3">
+<h3 class="anchored" data-anchor-id="needles-and-haystacks">Needles and haystacks</h3>
+<p>Here we demonstrate the classic “needles in a haystack” scenario from the REBayes vignette. This example simulates data where most observations come from a standard normal distribution (<span class="math inline">\(\mathrm{N}(0,1)\)</span>), while a small fraction (10%) come from a shifted normal (<span class="math inline">\(\mathrm{N}(2,1)\)</span>).</p>
+<div id="2e046892" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>zs <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">MersenneTwister</span>(<span class="fl">100</span>), <span class="fu">Normal</span>(), <span class="fl">1000</span>) <span class="op">.+</span> [<span class="fu">fill</span>(<span class="fl">0</span>,<span class="fl">900</span>); <span class="fu">fill</span>(<span class="fl">2</span>,<span class="fl">100</span>)]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>zs <span class="op">=</span> <span class="fu">sort</span>(zs);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In Empirikos.jl, we represent each observation as a <code>StandardNormalSample</code> object. This differs from REBayes where you would directly use a vector of observations as input to the <code>GLmix</code> function.</p>
+<p>The <code>StandardNormalSample</code> type encapsulates the observation along with knowledge that it follows a standard normal likelihood (i.e., <span class="math inline">\(Z_i \mid \mu_i \sim \mathrm{N}(\mu_i, 1)\)</span>). This type-based approach is a key design feature of Empirikos.jl:</p>
+<ol type="1">
+<li>It allows the package to know the likelihood structure without additional arguments;</li>
+<li>It enables multiple dispatch to handle different likelihood models;</li>
+<li>It maintains a consistent interface across all empirical Bayes problems.</li>
+</ol>
+<div id="823a8a9a" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>normal_Zs <span class="op">=</span> <span class="fu">StandardNormalSample</span>.(zs)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">first</span>(normal_Zs, <span class="fl">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>3-element Vector{StandardNormalSample{Float64}}:
+ N(-3.1746277553967115; μ, σ=1.0)
+ N(-2.990089450782722; μ, σ=1.0)
+ N(-2.8559587291548225; μ, σ=1.0)</code></pre>
+</div>
+</div>
+<p>We now fit the nonparametric maximum likelihood estimator (NPMLE) using the Mosek optimizer. In REBayes, this would be done with a single call to <code>GLmix(y)</code>, while in Empirikos we use the more general <code>fit</code> function with NPMLE specification:</p>
+<div id="e3fa299e" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>normal_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), normal_Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter        p_obj        d_obj |  abs_gap    x_feas    z_feas |      tau       kap        mu | dir_res     prox  step     alpha
+    0   3.2373e-02  -2.8080e+02 | 2.30e+03  2.05e+02  2.33e+00 | 1.00e+00  1.00e+00  1.00e+00 |
+    1  -3.9922e-01  -2.8538e+02 | 2.19e+03  2.08e+02  2.37e+00 | 9.36e-01  1.02e+00  9.50e-01 | 2.9e-12  8.7e-02  co-a  5.00e-02
+    2  -9.4365e-01  -2.8751e+02 | 2.08e+03  2.09e+02  2.38e+00 | 8.84e-01  1.02e+00  9.03e-01 | 1.3e-12  1.6e-01  co-a  5.00e-02
+    3  -2.4184e+00  -2.8975e+02 | 1.87e+03  2.10e+02  2.39e+00 | 7.93e-01  1.02e+00  8.12e-01 | 4.0e-13  4.5e-01  co-a  1.00e-01
+    4  -4.6345e+00  -2.9294e+02 | 1.68e+03  2.10e+02  2.40e+00 | 7.11e-01  1.03e+00  7.31e-01 | 3.9e-12  8.2e-02  co-a  1.00e-01
+    5  -7.7639e+00  -2.9620e+02 | 1.51e+03  2.11e+02  2.40e+00 | 6.39e-01  1.03e+00  6.58e-01 | 5.4e-12  3.3e-02  co-a  1.00e-01
+    6  -1.2275e+01  -3.0066e+02 | 1.36e+03  2.11e+02  2.40e+00 | 5.75e-01  1.03e+00  5.92e-01 | 1.6e-12  3.8e-02  co-a  1.00e-01
+    7  -1.8987e+01  -3.0723e+02 | 1.23e+03  2.11e+02  2.40e+00 | 5.17e-01  1.03e+00  5.33e-01 | 1.2e-12  5.1e-02  co-a  1.00e-01
+    8  -2.9477e+01  -3.1752e+02 | 1.10e+03  2.11e+02  2.40e+00 | 4.66e-01  1.03e+00  4.80e-01 | 2.8e-12  5.2e-02  co-a  1.00e-01
+    9  -4.5655e+01  -3.3343e+02 | 9.94e+02  2.11e+02  2.40e+00 | 4.19e-01  1.03e+00  4.32e-01 | 1.4e-11  4.8e-02  co-a  1.00e-01
+   10  -6.8694e+01  -3.5614e+02 | 8.94e+02  2.11e+02  2.40e+00 | 3.77e-01  1.03e+00  3.89e-01 | 2.8e-12  2.9e-02  co-a  1.00e-01
+   11  -9.9142e+01  -3.8621e+02 | 8.05e+02  2.11e+02  2.40e+00 | 3.40e-01  1.03e+00  3.50e-01 | 1.3e-11  2.6e-02  co-a  1.00e-01
+   12  -1.3729e+02  -4.2390e+02 | 7.24e+02  2.11e+02  2.40e+00 | 3.06e-01  1.03e+00  3.15e-01 | 1.2e-12  2.1e-02  co-a  1.00e-01
+   13  -3.2935e+02  -6.1386e+02 | 5.07e+02  2.10e+02  2.39e+00 | 2.15e-01  1.03e+00  2.20e-01 | 2.5e-12  9.5e-01  co-a  3.00e-01
+   14  -6.3843e+02  -9.1902e+02 | 3.55e+02  2.09e+02  2.38e+00 | 1.51e-01  1.02e+00  1.54e-01 | 3.2e-12  2.4e-01  co-a  3.00e-01
+   15  -7.5222e+02  -1.0296e+03 | 3.19e+02  2.07e+02  2.36e+00 | 1.37e-01  1.01e+00  1.39e-01 | 2.1e-11  4.5e-02  co-a  1.00e-01
+   16  -8.7220e+02  -1.1447e+03 | 2.88e+02  2.04e+02  2.32e+00 | 1.26e-01  9.96e-01  1.25e-01 | 2.7e-11  7.5e-02  co-a  1.00e-01
+   17  -9.6568e+02  -1.2242e+03 | 2.59e+02  1.93e+02  2.20e+00 | 1.19e-01  9.47e-01  1.12e-01 | 2.1e-11  2.9e-01  co-a  1.00e-01
+   18  -7.8195e+02  -9.7089e+02 | 2.33e+02  1.40e+02  1.60e+00 | 1.48e-01  6.35e-01  1.01e-01 | 4.8e-11  1.2e-01  co-a  1.00e-01
+   19  -6.0313e+02  -7.3789e+02 | 2.10e+02  9.97e+01  1.14e+00 | 1.87e-01  4.87e-01  9.11e-02 | 4.2e-11  7.9e-01  co-a  1.00e-01
+   20  -4.9603e+02  -5.9886e+02 | 1.89e+02  7.59e+01  8.64e-01 | 2.21e-01  3.73e-01  8.20e-02 | 3.1e-11  4.2e-01  co-a  1.00e-01
+   21  -4.2283e+02  -5.0496e+02 | 1.70e+02  6.05e+01  6.89e-01 | 2.49e-01  2.99e-01  7.38e-02 | 4.1e-11  1.3e-01  co-a  1.00e-01
+   22  -2.7948e+02  -3.2455e+02 | 1.19e+02  3.31e+01  3.77e-01 | 3.19e-01  1.81e-01  5.17e-02 | 2.4e-11  1.2e-01  co-a  3.00e-01
+   23  -2.0630e+02  -2.3488e+02 | 8.33e+01  2.10e+01  2.39e-01 | 3.53e-01  1.05e-01  3.62e-02 | 2.2e-11  6.6e-01  co-a  3.00e-01
+   24  -2.0088e+02  -2.2838e+02 | 7.91e+01  2.02e+01  2.30e-01 | 3.48e-01  9.87e-02  3.44e-02 | 6.2e-11  5.7e-01  co-a  5.00e-02
+   25  -1.8483e+02  -2.0908e+02 | 7.12e+01  1.78e+01  2.03e-01 | 3.56e-01  8.69e-02  3.09e-02 | 1.4e-11  3.8e-01  co-a  1.00e-01
+   26  -1.7155e+02  -1.9323e+02 | 6.40e+01  1.59e+01  1.81e-01 | 3.58e-01  7.77e-02  2.78e-02 | 1.5e-11  3.5e-01  co-a  1.00e-01
+   27  -1.5902e+02  -1.7835e+02 | 5.76e+01  1.42e+01  1.61e-01 | 3.61e-01  6.93e-02  2.50e-02 | 1.0e-11  2.5e-01  co-a  1.00e-01
+   28  -1.4812e+02  -1.6550e+02 | 5.18e+01  1.27e+01  1.45e-01 | 3.62e-01  6.23e-02  2.25e-02 | 8.2e-12  2.2e-01  co-a  1.00e-01
+   29  -1.3792e+02  -1.5353e+02 | 4.66e+01  1.14e+01  1.30e-01 | 3.62e-01  5.59e-02  2.03e-02 | 1.3e-11  1.7e-01  co-a  1.00e-01
+   30  -1.2878e+02  -1.4288e+02 | 4.20e+01  1.03e+01  1.18e-01 | 3.61e-01  5.05e-02  1.82e-02 | 1.0e-11  1.5e-01  co-a  1.00e-01
+   31  -1.2024e+02  -1.3297e+02 | 3.78e+01  9.33e+00  1.06e-01 | 3.60e-01  4.56e-02  1.64e-02 | 9.2e-12  1.3e-01  co-a  1.00e-01
+   32  -1.1245e+02  -1.2397e+02 | 3.40e+01  8.45e+00  9.62e-02 | 3.58e-01  4.13e-02  1.48e-02 | 5.9e-12  1.2e-01  co-a  1.00e-01
+   33  -1.0516e+02  -1.1560e+02 | 3.06e+01  7.65e+00  8.72e-02 | 3.56e-01  3.74e-02  1.33e-02 | 6.0e-12  1.1e-01  co-a  1.00e-01
+   34  -9.8435e+01  -1.0790e+02 | 2.75e+01  6.94e+00  7.91e-02 | 3.53e-01  3.39e-02  1.20e-02 | 7.2e-12  1.0e-01  co-a  1.00e-01
+   35  -9.2138e+01  -1.0073e+02 | 2.48e+01  6.30e+00  7.18e-02 | 3.50e-01  3.08e-02  1.08e-02 | 9.4e-12  9.9e-02  co-a  1.00e-01
+   36  -8.6285e+01  -9.4088e+01 | 2.23e+01  5.72e+00  6.52e-02 | 3.47e-01  2.79e-02  9.68e-03 | 5.4e-12  9.8e-02  co-a  1.00e-01
+   37  -8.0800e+01  -8.7890e+01 | 2.01e+01  5.20e+00  5.92e-02 | 3.43e-01  2.54e-02  8.72e-03 | 6.4e-12  9.7e-02  co-a  1.00e-01
+   38  -7.5680e+01  -8.2125e+01 | 1.80e+01  4.73e+00  5.39e-02 | 3.40e-01  2.31e-02  7.84e-03 | 5.1e-12  9.7e-02  co-a  1.00e-01
+   39  -7.0878e+01  -7.6738e+01 | 1.62e+01  4.30e+00  4.90e-02 | 3.36e-01  2.10e-02  7.06e-03 | 5.8e-12  9.7e-02  co-a  1.00e-01
+   40  -6.6385e+01  -7.1714e+01 | 1.46e+01  3.91e+00  4.45e-02 | 3.33e-01  1.91e-02  6.35e-03 | 5.7e-12  9.7e-02  co-a  1.00e-01
+   41  -6.2169e+01  -6.7015e+01 | 1.32e+01  3.56e+00  4.05e-02 | 3.29e-01  1.74e-02  5.72e-03 | 5.4e-12  9.7e-02  co-a  1.00e-01
+   42  -5.8219e+01  -6.2626e+01 | 1.18e+01  3.23e+00  3.68e-02 | 3.26e-01  1.58e-02  5.14e-03 | 2.9e-12  9.8e-02  co-a  1.00e-01
+   43  -5.4513e+01  -5.8519e+01 | 1.07e+01  2.94e+00  3.35e-02 | 3.23e-01  1.43e-02  4.63e-03 | 3.1e-12  9.8e-02  co-a  1.00e-01
+   44  -5.1037e+01  -5.4679e+01 | 9.59e+00  2.67e+00  3.05e-02 | 3.19e-01  1.30e-02  4.17e-03 | 2.9e-12  9.9e-02  co-a  1.00e-01
+   45  -4.7777e+01  -5.1087e+01 | 8.63e+00  2.43e+00  2.77e-02 | 3.16e-01  1.19e-02  3.75e-03 | 2.6e-12  9.9e-02  co-a  1.00e-01
+   46  -4.4720e+01  -4.7727e+01 | 7.76e+00  2.21e+00  2.52e-02 | 3.13e-01  1.08e-02  3.37e-03 | 2.2e-12  1.0e-01  co-a  1.00e-01
+   47  -4.1854e+01  -4.4584e+01 | 6.99e+00  2.01e+00  2.28e-02 | 3.10e-01  9.78e-03  3.04e-03 | 3.3e-12  1.0e-01  co-a  1.00e-01
+   48  -3.9167e+01  -4.1646e+01 | 6.29e+00  1.82e+00  2.07e-02 | 3.08e-01  8.87e-03  2.73e-03 | 2.5e-12  1.0e-01  co-a  1.00e-01
+   49  -3.6650e+01  -3.8898e+01 | 5.66e+00  1.65e+00  1.88e-02 | 3.05e-01  8.05e-03  2.46e-03 | 1.6e-12  1.0e-01  co-a  1.00e-01
+   50  -3.4293e+01  -3.6331e+01 | 5.09e+00  1.50e+00  1.71e-02 | 3.03e-01  7.30e-03  2.21e-03 | 2.6e-12  1.0e-01  co-a  1.00e-01
+   51  -3.2087e+01  -3.3933e+01 | 4.58e+00  1.36e+00  1.54e-02 | 3.01e-01  6.61e-03  1.99e-03 | 1.4e-12  1.0e-01  co-a  1.00e-01
+   52  -3.0023e+01  -3.1694e+01 | 4.12e+00  1.23e+00  1.40e-02 | 2.99e-01  5.98e-03  1.79e-03 | 1.9e-12  1.0e-01  co-a  1.00e-01
+   53  -2.8094e+01  -2.9606e+01 | 3.71e+00  1.11e+00  1.26e-02 | 2.98e-01  5.41e-03  1.61e-03 | 1.3e-12  1.0e-01  co-a  1.00e-01
+   54  -2.6293e+01  -2.7658e+01 | 3.34e+00  1.00e+00  1.14e-02 | 2.97e-01  4.89e-03  1.45e-03 | 1.1e-12  1.0e-01  co-a  1.00e-01
+   55  -2.4612e+01  -2.5844e+01 | 3.00e+00  9.06e-01  1.03e-02 | 2.96e-01  4.41e-03  1.31e-03 | 1.2e-12  1.0e-01  co-a  1.00e-01
+   56  -2.3044e+01  -2.4155e+01 | 2.70e+00  8.17e-01  9.30e-03 | 2.95e-01  3.98e-03  1.18e-03 | 1.2e-12  1.0e-01  co-a  1.00e-01
+   57  -2.1583e+01  -2.2584e+01 | 2.43e+00  7.36e-01  8.38e-03 | 2.95e-01  3.58e-03  1.06e-03 | 9.9e-13  1.0e-01  co-a  1.00e-01
+   58  -2.0223e+01  -2.1123e+01 | 2.19e+00  6.62e-01  7.54e-03 | 2.95e-01  3.22e-03  9.52e-04 | 9.8e-13  1.1e-01  co-a  1.00e-01
+   59  -1.8957e+01  -1.9765e+01 | 1.97e+00  5.94e-01  6.77e-03 | 2.96e-01  2.89e-03  8.56e-04 | 1.1e-12  1.1e-01  co-a  1.00e-01
+   60  -1.7779e+01  -1.8503e+01 | 1.77e+00  5.33e-01  6.07e-03 | 2.97e-01  2.59e-03  7.71e-04 | 7.5e-13  1.1e-01  co-a  1.00e-01
+   61  -1.6684e+01  -1.7333e+01 | 1.60e+00  4.77e-01  5.43e-03 | 2.99e-01  2.32e-03  6.93e-04 | 7.7e-13  1.1e-01  co-a  1.00e-01
+   62  -1.5671e+01  -1.6251e+01 | 1.44e+00  4.26e-01  4.85e-03 | 3.01e-01  2.07e-03  6.24e-04 | 1.0e-12  1.0e-01  co-a  1.00e-01
+   63  -1.4738e+01  -1.5255e+01 | 1.29e+00  3.80e-01  4.33e-03 | 3.04e-01  1.85e-03  5.62e-04 | 2.0e-12  9.5e-02  co-a  1.00e-01
+   64  -1.3883e+01  -1.4344e+01 | 1.16e+00  3.38e-01  3.85e-03 | 3.07e-01  1.65e-03  5.05e-04 | 1.1e-12  8.7e-02  co-a  1.00e-01
+   65  -1.3103e+01  -1.3513e+01 | 1.05e+00  3.01e-01  3.43e-03 | 3.10e-01  1.47e-03  4.55e-04 | 3.1e-12  7.8e-02  co-a  1.00e-01
+   66  -1.2395e+01  -1.2759e+01 | 9.42e-01  2.68e-01  3.05e-03 | 3.14e-01  1.30e-03  4.09e-04 | 1.6e-12  6.9e-02  co-a  1.00e-01
+   67  -1.1753e+01  -1.2077e+01 | 8.48e-01  2.38e-01  2.71e-03 | 3.18e-01  1.16e-03  3.68e-04 | 9.5e-13  6.1e-02  co-a  1.00e-01
+   68  -1.0024e+01  -1.0242e+01 | 5.93e-01  1.60e-01  1.82e-03 | 3.31e-01  7.76e-04  2.58e-04 | 1.5e-12  9.4e-01  co-a  3.00e-01
+   69  -9.9984e+00  -1.0215e+01 | 5.87e-01  1.59e-01  1.81e-03 | 3.30e-01  7.73e-04  2.55e-04 | 2.9e-10  8.7e-01  co-a  1.00e-02
+   70  -9.9475e+00  -1.0161e+01 | 5.81e-01  1.57e-01  1.79e-03 | 3.31e-01  7.62e-04  2.52e-04 | 3.0e-11  5.6e-01  co-a  1.00e-02
+   71  -9.5661e+00  -9.7569e+00 | 5.23e-01  1.40e-01  1.60e-03 | 3.34e-01  6.81e-04  2.27e-04 | 6.4e-12  8.7e-01  co-a  1.00e-01
+   72  -8.5075e+00  -8.6359e+00 | 3.65e-01  9.42e-02  1.07e-03 | 3.47e-01  4.56e-04  1.59e-04 | 2.1e-12  9.1e-01  co-a  3.00e-01
+   73  -8.4833e+00  -8.6103e+00 | 3.61e-01  9.32e-02  1.06e-03 | 3.48e-01  4.52e-04  1.57e-04 | 1.5e-10  7.3e-01  co-a  1.00e-02
+   74  -8.3679e+00  -8.4882e+00 | 3.43e-01  8.83e-02  1.01e-03 | 3.49e-01  4.28e-04  1.49e-04 | 1.2e-11  7.4e-01  co-a  5.00e-02
+   75  -7.7036e+00  -7.7856e+00 | 2.40e-01  6.01e-02  6.85e-04 | 3.58e-01  2.91e-04  1.04e-04 | 3.6e-12  9.6e-01  co-a  3.00e-01
+   76  -7.6274e+00  -7.7050e+00 | 2.27e-01  5.69e-02  6.48e-04 | 3.60e-01  2.75e-04  9.88e-05 | 2.0e-11  7.4e-01  co-a  5.00e-02
+   77  -7.4831e+00  -7.5524e+00 | 2.05e-01  5.08e-02  5.79e-04 | 3.63e-01  2.45e-04  8.89e-05 | 1.8e-12  4.2e-01  co-a  1.00e-01
+   78  -7.1040e+00  -7.1517e+00 | 1.43e-01  3.49e-02  3.98e-04 | 3.69e-01  1.68e-04  6.22e-05 | 4.5e-12  6.4e-01  co-a  3.00e-01
+   79  -7.0185e+00  -7.0613e+00 | 1.29e-01  3.14e-02  3.57e-04 | 3.70e-01  1.51e-04  5.59e-05 | 7.2e-12  9.4e-01  co-a  1.00e-01
+   80  -6.7875e+00  -6.8171e+00 | 8.99e-02  2.17e-02  2.47e-04 | 3.74e-01  1.05e-04  3.91e-05 | 4.0e-12  9.2e-01  co-a  3.00e-01
+   81  -6.7823e+00  -6.8116e+00 | 8.90e-02  2.15e-02  2.45e-04 | 3.75e-01  1.03e-04  3.87e-05 | 1.8e-10  7.5e-01  co-a  1.00e-02
+   82  -6.7563e+00  -6.7841e+00 | 8.45e-02  2.04e-02  2.32e-04 | 3.75e-01  9.81e-05  3.67e-05 | 2.0e-11  6.5e-01  co-a  5.00e-02
+   83  -6.6072e+00  -6.6265e+00 | 5.91e-02  1.42e-02  1.61e-04 | 3.77e-01  6.81e-05  2.57e-05 | 5.9e-12  9.2e-01  co-a  3.00e-01
+   84  -6.5902e+00  -6.6085e+00 | 5.61e-02  1.35e-02  1.53e-04 | 3.77e-01  6.47e-05  2.44e-05 | 5.5e-11  9.5e-01  co-a  5.00e-02
+   85  -6.5575e+00  -6.5740e+00 | 5.05e-02  1.21e-02  1.38e-04 | 3.78e-01  5.80e-05  2.19e-05 | 1.9e-11  7.2e-01  co-a  1.00e-01
+   86  -6.5284e+00  -6.5432e+00 | 4.54e-02  1.09e-02  1.24e-04 | 3.79e-01  5.21e-05  1.97e-05 | 3.9e-12  3.6e-01  co-a  1.00e-01
+   87  -6.4494e+00  -6.4598e+00 | 3.18e-02  7.57e-03  8.62e-05 | 3.80e-01  3.63e-05  1.38e-05 | 3.8e-12  7.8e-01  co-a  3.00e-01
+   88  -6.4403e+00  -6.4501e+00 | 3.02e-02  7.19e-03  8.19e-05 | 3.80e-01  3.45e-05  1.31e-05 | 2.8e-11  6.9e-01  co-a  5.00e-02
+   89  -6.4229e+00  -6.4317e+00 | 2.72e-02  6.47e-03  7.37e-05 | 3.81e-01  3.10e-05  1.18e-05 | 4.8e-12  4.6e-01  co-a  1.00e-01
+   90  -6.3760e+00  -6.3822e+00 | 1.90e-02  4.52e-03  5.14e-05 | 3.82e-01  2.16e-05  8.26e-06 | 2.5e-12  8.8e-01  co-a  3.00e-01
+   91  -6.3705e+00  -6.3764e+00 | 1.80e-02  4.29e-03  4.89e-05 | 3.82e-01  2.06e-05  7.84e-06 | 1.5e-10  9.0e-01  co-a  5.00e-02
+   92  -6.3601e+00  -6.3654e+00 | 1.62e-02  3.86e-03  4.40e-05 | 3.82e-01  1.85e-05  7.05e-06 | 1.8e-11  7.8e-01  co-a  1.00e-01
+   93  -6.3509e+00  -6.3556e+00 | 1.46e-02  3.47e-03  3.95e-05 | 3.82e-01  1.66e-05  6.35e-06 | 5.3e-12  4.2e-01  co-a  1.00e-01
+   94  -6.3256e+00  -6.3290e+00 | 1.02e-02  2.43e-03  2.76e-05 | 3.83e-01  1.16e-05  4.44e-06 | 3.8e-12  8.2e-01  co-a  3.00e-01
+   95  -6.3197e+00  -6.3227e+00 | 9.19e-03  2.18e-03  2.49e-05 | 3.83e-01  1.04e-05  3.99e-06 | 2.5e-11  9.5e-01  co-a  1.00e-01
+   96  -6.3145e+00  -6.3172e+00 | 8.27e-03  1.96e-03  2.24e-05 | 3.83e-01  9.39e-06  3.59e-06 | 6.2e-12  5.6e-01  co-a  1.00e-01
+   97  -6.3002e+00  -6.3021e+00 | 5.78e-03  1.37e-03  1.57e-05 | 3.83e-01  6.57e-06  2.51e-06 | 5.2e-12  9.4e-01  co-a  3.00e-01
+   98  -6.2986e+00  -6.3003e+00 | 5.49e-03  1.31e-03  1.49e-05 | 3.83e-01  6.24e-06  2.39e-06 | 5.8e-11  8.5e-01  co-a  5.00e-02
+   99  -6.2954e+00  -6.2970e+00 | 4.94e-03  1.18e-03  1.34e-05 | 3.83e-01  5.61e-06  2.15e-06 | 9.9e-12  7.0e-01  co-a  1.00e-01
+  100  -6.2926e+00  -6.2940e+00 | 4.45e-03  1.06e-03  1.20e-05 | 3.83e-01  5.05e-06  1.93e-06 | 8.1e-12  4.0e-01  co-a  1.00e-01
+  101  -6.2849e+00  -6.2859e+00 | 3.11e-03  7.40e-04  8.43e-06 | 3.83e-01  3.53e-06  1.35e-06 | 5.2e-12  7.4e-01  co-a  3.00e-01
+  102  -6.2831e+00  -6.2840e+00 | 2.80e-03  6.66e-04  7.59e-06 | 3.83e-01  3.18e-06  1.22e-06 | 1.7e-11  6.9e-01  co-a  1.00e-01
+  103  -6.2783e+00  -6.2789e+00 | 1.96e-03  4.66e-04  5.31e-06 | 3.83e-01  2.22e-06  8.51e-07 | 4.8e-12  9.8e-01  co-a  3.00e-01
+  104  -6.2777e+00  -6.2783e+00 | 1.86e-03  4.43e-04  5.05e-06 | 3.83e-01  2.11e-06  8.08e-07 | 1.3e-10  9.2e-01  co-a  5.00e-02
+  105  -6.2766e+00  -6.2772e+00 | 1.67e-03  3.99e-04  4.54e-06 | 3.83e-01  1.90e-06  7.27e-07 | 9.7e-11  8.8e-01  co-a  1.00e-01
+  106  -6.2757e+00  -6.2762e+00 | 1.50e-03  3.59e-04  4.09e-06 | 3.83e-01  1.71e-06  6.54e-07 | 1.7e-11  5.2e-01  co-a  1.00e-01
+  107  -6.2731e+00  -6.2734e+00 | 1.05e-03  2.51e-04  2.86e-06 | 3.83e-01  1.20e-06  4.58e-07 | 7.9e-12  7.9e-01  co-a  3.00e-01
+  108  -6.2725e+00  -6.2728e+00 | 9.47e-04  2.26e-04  2.58e-06 | 3.83e-01  1.08e-06  4.12e-07 | 6.2e-11  6.9e-01  co-a  1.00e-01
+  109  -6.2708e+00  -6.2711e+00 | 6.63e-04  1.58e-04  1.80e-06 | 3.83e-01  7.53e-07  2.88e-07 | 2.5e-11  8.7e-01  co-a  3.00e-01
+  110  -6.2705e+00  -6.2707e+00 | 5.96e-04  1.43e-04  1.62e-06 | 3.83e-01  6.77e-07  2.59e-07 | 1.7e-10  8.6e-01  co-a  1.00e-01
+  111  -6.2701e+00  -6.2703e+00 | 5.36e-04  1.28e-04  1.46e-06 | 3.83e-01  6.10e-07  2.33e-07 | 6.1e-11  4.3e-01  co-a  1.00e-01
+  112  -6.2692e+00  -6.2693e+00 | 3.75e-04  8.99e-05  1.02e-06 | 3.82e-01  4.27e-07  1.63e-07 | 2.4e-11  6.0e-01  co-a  3.00e-01
+  113  -6.2690e+00  -6.2691e+00 | 3.38e-04  8.09e-05  9.22e-07 | 3.82e-01  3.84e-07  1.47e-07 | 4.1e-11  4.4e-01  co-a  1.00e-01
+  114  -6.2684e+00  -6.2685e+00 | 2.36e-04  5.66e-05  6.45e-07 | 3.82e-01  2.69e-07  1.03e-07 | 1.1e-11  5.5e-01  co-a  3.00e-01
+  115  -6.2683e+00  -6.2684e+00 | 2.13e-04  5.10e-05  5.81e-07 | 3.82e-01  2.42e-07  9.24e-08 | 1.2e-10  4.2e-01  co-a  1.00e-01
+  116  -6.2679e+00  -6.2680e+00 | 1.49e-04  3.57e-05  4.07e-07 | 3.82e-01  1.69e-07  6.47e-08 | 2.0e-11  5.1e-01  co-a  3.00e-01
+  117  -6.2677e+00  -6.2677e+00 | 1.04e-04  2.50e-05  2.85e-07 | 3.82e-01  1.19e-07  4.52e-08 | 2.0e-10  9.7e-01  co-a  3.00e-01
+  118  -6.2676e+00  -6.2677e+00 | 9.37e-05  2.25e-05  2.56e-07 | 3.82e-01  1.07e-07  4.07e-08 | 3.5e-10  5.0e-01  co-a  1.00e-01
+  119  -6.2675e+00  -6.2675e+00 | 6.55e-05  1.58e-05  1.80e-07 | 3.82e-01  7.47e-08  2.85e-08 | 7.2e-11  5.6e-01  co-a  3.00e-01
+  120  -6.2674e+00  -6.2674e+00 | 4.58e-05  1.10e-05  1.26e-07 | 3.81e-01  5.23e-08  1.99e-08 | 3.5e-10  8.6e-01  co-a  3.00e-01
+  121  -6.2673e+00  -6.2673e+00 | 3.21e-05  7.74e-06  8.81e-08 | 3.81e-01  3.66e-08  1.39e-08 | 6.7e-10  9.4e-01  co-a  3.00e-01
+  122  -6.2673e+00  -6.2673e+00 | 2.88e-05  6.97e-06  7.94e-08 | 3.81e-01  3.29e-08  1.25e-08 | 1.8e-09  5.4e-01  co-a  1.00e-01
+  123  -6.2672e+00  -6.2672e+00 | 2.02e-05  4.88e-06  5.56e-08 | 3.81e-01  2.30e-08  8.77e-09 | 3.8e-10  4.7e-01  co-a  3.00e-01
+  124  -6.2672e+00  -6.2672e+00 | 1.41e-05  3.42e-06  3.89e-08 | 3.81e-01  1.61e-08  6.14e-09 | 3.1e-10  5.0e-01  co-a  3.00e-01
+  125  -6.2672e+00  -6.2672e+00 | 9.88e-06  2.39e-06  2.72e-08 | 3.80e-01  1.13e-08  4.29e-09 | 2.8e-10  4.0e-01  co-a  3.00e-01
+  126  -6.2672e+00  -6.2672e+00 | 6.91e-06  1.67e-06  1.91e-08 | 3.80e-01  7.90e-09  3.00e-09 | 2.5e-10  3.3e-01  co-a  3.00e-01
+  127  -6.2672e+00  -6.2672e+00 | 4.84e-06  1.17e-06  1.34e-08 | 3.80e-01  5.53e-09  2.10e-09 | 2.5e-10  2.3e-01  co-a  3.00e-01
+  128  -6.2671e+00  -6.2671e+00 | 2.42e-06  5.86e-07  6.68e-09 | 3.80e-01  2.77e-09  1.05e-09 | 1.4e-10  8.9e-01  co-a  5.00e-01
+  129  -6.2671e+00  -6.2671e+00 | 2.18e-06  5.28e-07  6.01e-09 | 3.80e-01  2.49e-09  9.46e-10 | 2.1e-08  4.8e-01  co-a  1.00e-01
+  130  -6.2671e+00  -6.2671e+00 | 1.52e-06  3.70e-07  4.21e-09 | 3.80e-01  1.74e-09  6.62e-10 | 2.5e-10  3.3e-01  co-a  3.00e-01
+  131  -6.2671e+00  -6.2671e+00 | 1.37e-06  3.33e-07  3.79e-09 | 3.80e-01  1.57e-09  5.96e-10 | 3.3e-10  3.8e-02  co-a  1.00e-01
+  132  -6.2671e+00  -6.2671e+00 | 1.23e-06  2.99e-07  3.41e-09 | 3.80e-01  1.41e-09  5.36e-10 | 3.7e-10  6.3e-03  co-a  1.00e-01
+  133  -6.2671e+00  -6.2671e+00 | 6.17e-07  1.50e-07  1.71e-09 | 3.80e-01  7.07e-10  2.68e-10 | 1.6e-08  5.8e-01  co-a  5.00e-01
+  134  -6.2671e+00  -6.2671e+00 | 3.09e-07  7.50e-08  8.54e-10 | 3.80e-01  3.54e-10  1.34e-10 | 3.5e-10  5.9e-01  co-a  5.00e-01
+  135  -6.2671e+00  -6.2671e+00 | 2.78e-07  6.75e-08  7.68e-10 | 3.80e-01  3.18e-10  1.21e-10 | 3.4e-10  7.9e-02  co-a  1.00e-01
+  136  -6.2671e+00  -6.2671e+00 | 1.94e-07  4.72e-08  5.38e-10 | 3.79e-01  2.23e-10  8.45e-11 | 2.3e-09  1.9e-01  co-a  3.00e-01
+  137  -6.2671e+00  -6.2671e+00 | 1.75e-07  4.25e-08  4.84e-10 | 3.80e-01  2.00e-10  7.61e-11 | 9.5e-10  3.4e-02  co-a  1.00e-01
+  138  -6.2671e+00  -6.2671e+00 | 1.22e-07  2.98e-08  3.39e-10 | 3.79e-01  1.40e-10  5.32e-11 | 1.3e-09  1.6e-01  co-a  3.00e-01
+  139  -6.2671e+00  -6.2671e+00 | 1.21e-07  2.95e-08  3.36e-10 | 3.79e-01  1.39e-10  5.27e-11 | 7.8e-10  3.3e-03  co-a  1.00e-02
+  140  -6.2671e+00  -6.2671e+00 | 1.09e-07  2.65e-08  3.02e-10 | 3.79e-01  1.25e-10  4.74e-11 | 7.9e-11  5.0e-03  co-a  1.00e-01
+  141  -6.2671e+00  -6.2671e+00 | 9.82e-08  2.39e-08  2.72e-10 | 3.79e-01  1.12e-10  4.27e-11 | 2.3e-10  2.8e-03  co-a  1.00e-01
+  142  -6.2671e+00  -6.2671e+00 | 3.93e-08  9.55e-09  1.09e-10 | 3.79e-01  4.50e-11  1.71e-11 | 7.9e-12  5.2e-01  co-a  6.00e-01
+optimal solution found; terminating
+
+status is Optimal after 142 iterations and 20.995 seconds
+</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>Fitted NPMLE with Hypatia.Optimizer and 𝒢:
+DiscretePriorClass | support = -3.1747277553967117:0.030043037229013896:5.808140376078443</code></pre>
+</div>
+</div>
+<p>The NPMLE estimates the mixing distribution nonparametrically, which in this case should identify two mass points - one near 0 and another near 2.</p>
+<p>Next, we define our posterior targets - in this case, the posterior means:</p>
+<div id="5a586867" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>normal_postmean_targets <span class="op">=</span> <span class="fu">PosteriorMean</span>.(normal_Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>1000-element Vector{PosteriorMean{StandardNormalSample{Float64}}}:
+ 𝔼[μ | N(-3.1746277553967115; μ, σ=1.0)]
+ 𝔼[μ | N(-2.990089450782722; μ, σ=1.0)]
+ 𝔼[μ | N(-2.8559587291548225; μ, σ=1.0)]
+ 𝔼[μ | N(-2.7380023441265133; μ, σ=1.0)]
+ 𝔼[μ | N(-2.724951899176289; μ, σ=1.0)]
+ 𝔼[μ | N(-2.6950346914636967; μ, σ=1.0)]
+ 𝔼[μ | N(-2.5584323721075397; μ, σ=1.0)]
+ 𝔼[μ | N(-2.5305668218766053; μ, σ=1.0)]
+ 𝔼[μ | N(-2.3632683788658877; μ, σ=1.0)]
+ 𝔼[μ | N(-2.361941909453861; μ, σ=1.0)]
+ 𝔼[μ | N(-2.355281185624943; μ, σ=1.0)]
+ 𝔼[μ | N(-2.342143690964997; μ, σ=1.0)]
+ 𝔼[μ | N(-2.284751655993758; μ, σ=1.0)]
+ ⋮
+ 𝔼[μ | N(3.1330895294747294; μ, σ=1.0)]
+ 𝔼[μ | N(3.371564222667284; μ, σ=1.0)]
+ 𝔼[μ | N(3.3919915435058083; μ, σ=1.0)]
+ 𝔼[μ | N(3.4247099212446166; μ, σ=1.0)]
+ 𝔼[μ | N(3.42836573942505; μ, σ=1.0)]
+ 𝔼[μ | N(3.835965091861546; μ, σ=1.0)]
+ 𝔼[μ | N(4.011422275963797; μ, σ=1.0)]
+ 𝔼[μ | N(4.129379367933984; μ, σ=1.0)]
+ 𝔼[μ | N(4.1511807079199565; μ, σ=1.0)]
+ 𝔼[μ | N(4.46857344617616; μ, σ=1.0)]
+ 𝔼[μ | N(4.538449778609994; μ, σ=1.0)]
+ 𝔼[μ | N(5.808040376078443; μ, σ=1.0)]</code></pre>
+</div>
+</div>
+<p>The following code creates a three-panel plot showing: 1. The true mixture density 2. The estimated prior distribution (mixing distribution) 3. The posterior mean function (the shrinkage estimator)</p>
+<div id="cell-fig-normal-mixture" class="cell" data-fig-height="3.5" data-fig-width="10" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>normal_pl_marginal <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">marginalize</span>(<span class="fu">NormalSample</span>(<span class="fl">1.0</span>),                          </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">DiscreteNonParametric</span>([<span class="fl">0.0</span>;<span class="fl">2.0</span>], [<span class="fl">0.9</span>;<span class="fl">0.1</span>])),                                    </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                 components<span class="op">=</span><span class="cn">false</span>, label<span class="op">=</span><span class="cn">nothing</span>, xguide<span class="op">=</span><span class="st">"z"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                 yguide <span class="op">=</span> <span class="st">"f(z)"</span>,                         </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                 title <span class="op">=</span> <span class="st">"True mixture"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>normal_pl_npmle_prior <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">support</span>(normal_npmle.prior),                            </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">probs</span>(normal_npmle.prior), seriestype<span class="op">=:</span>sticks,                              </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                 xguide <span class="op">=</span> L<span class="st">"\mu"</span>, yguide<span class="op">=</span>L<span class="st">"g(\mu)"</span>,                              </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                 title <span class="op">=</span> <span class="st">"NPMLE prior estimate"</span>, label<span class="op">=</span><span class="cn">nothing</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>normal_pl_posterior_mean <span class="op">=</span> <span class="fu">plot</span>(<span class="fu">response</span>.(<span class="fu">location</span>.(normal_postmean_targets)),                               </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">normal_postmean_targets</span>.(normal_npmle.prior),                               </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>                 label<span class="op">=</span><span class="cn">nothing</span>, title<span class="op">=</span><span class="st">"NPMLE posterior mean"</span>,                                </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>                 xguide<span class="op">=</span><span class="st">"z"</span>, yguide<span class="op">=</span>L<span class="st">"E[\mu \mid Z=z]"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(normal_pl_marginal, normal_pl_npmle_prior, normal_pl_posterior_mean,    </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>                 size<span class="op">=</span>(<span class="fl">1000</span>,<span class="fl">350</span>), layout<span class="op">=</span>(<span class="fl">1</span>,<span class="fl">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-normal-mixture" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-normal-mixture-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-normal-mixture-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.1
+</figcaption>
+</figure>
+</div>
+</div>
+<p>This plot is similar to what you would see in REBayes but is generated using Empirikos.jl’s object-oriented approach. The posterior mean function (right panel) shows the shrinkage effect: observations are pulled toward the mass points of the estimated prior distribution. The shrinkage is stronger for values close to the mass points and weaker in regions between them.</p>
+</section>
+</section>
+<section id="binomial-npmle" class="level2">
+<h2 class="anchored" data-anchor-id="binomial-npmle">Binomial NPMLE</h2>
+<p>Now we’ll analyze the Tacks dataset using a binomial mixture model. This classic dataset from Beckett and Diaconis involves outcomes from tossing thumbtacks.</p>
+<div id="5f45a5dc" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tacks_tbl <span class="op">=</span> Empirikos.Tacks.<span class="fu">load_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>320-element CSV.File:
+ CSV.Row: (x = 7, k = 9)
+ CSV.Row: (x = 4, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 8, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 5, k = 9)
+ CSV.Row: (x = 8, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 3, k = 9)
+ CSV.Row: (x = 3, k = 9)
+ ⋮
+ CSV.Row: (x = 8, k = 9)
+ CSV.Row: (x = 7, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 8, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 9, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 7, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 6, k = 9)
+ CSV.Row: (x = 6, k = 9)</code></pre>
+</div>
+</div>
+<p>We convert the table to a vector of <code>BinomialSample</code> objects, where each sample represents the number of successes out of a known number of trials:</p>
+<div id="73dc94a1" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tack_Zs <span class="op">=</span> <span class="fu">BinomialSample</span>.(tacks_tbl.x, <span class="fu">Int64</span>.(tacks_tbl.k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>320-element Vector{BinomialSample{Int64, Int64}}:
+ ℬ𝒾𝓃(7; p, n=9)
+ ℬ𝒾𝓃(4; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(8; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(5; p, n=9)
+ ℬ𝒾𝓃(8; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(3; p, n=9)
+ ℬ𝒾𝓃(3; p, n=9)
+ ⋮
+ ℬ𝒾𝓃(8; p, n=9)
+ ℬ𝒾𝓃(7; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(8; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(9; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(7; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)
+ ℬ𝒾𝓃(6; p, n=9)</code></pre>
+</div>
+</div>
+<p>In REBayes, a similar analysis would use the <code>Bmix</code> function, but here we use our common <code>fit</code> interface with NPMLE. The information about the binomial likelihood is provided by the <code>BinomialSample</code> type instead, which makes the code more extensible and consistent across different likelihood models.</p>
+<div id="32ccd50f" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tacks_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), tack_Zs);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter        p_obj        d_obj |  abs_gap    x_feas    z_feas |      tau       kap        mu | dir_res     prox  step     alpha
+    0   3.8484e-01  -5.0613e+00 | 3.19e+02  1.46e+00  1.01e+00 | 1.00e+00  1.00e+00  1.00e+00 |
+    1  -4.4676e+00  -6.8414e+00 | 9.56e+01  8.72e-01  6.01e-01 | 5.03e-01  7.39e-01  3.00e-01 | 1.8e-15  6.2e-01  co-a  7.00e-01
+    2  -2.0140e+00  -2.8978e+00 | 4.81e+01  2.01e-01  1.39e-01 | 1.09e+00  4.21e-03  1.50e-01 | 3.7e-15  9.7e-01  co-a  5.00e-01
+    3  -1.6879e+00  -2.0839e+00 | 3.35e+01  9.87e-02  6.81e-02 | 1.56e+00  6.11e-02  1.05e-01 | 7.1e-15  3.0e-01  co-a  3.00e-01
+    4  -1.4505e+00  -1.6458e+00 | 2.34e+01  4.72e-02  3.26e-02 | 2.28e+00  2.92e-02  7.34e-02 | 8.2e-15  3.3e-01  co-a  3.00e-01
+    5  -1.2610e+00  -1.3175e+00 | 1.17e+01  1.33e-02  9.16e-03 | 4.05e+00  8.18e-03  3.66e-02 | 1.1e-13  9.2e-01  co-a  5.00e-01
+    6  -1.1868e+00  -1.2061e+00 | 5.84e+00  4.50e-03  3.11e-03 | 5.97e+00  3.38e-03  1.83e-02 | 9.5e-13  9.2e-01  co-a  5.00e-01
+    7  -1.1831e+00  -1.2004e+00 | 5.25e+00  4.03e-03  2.78e-03 | 6.00e+00  2.75e-03  1.64e-02 | 1.1e-11  5.5e-01  co-a  1.00e-01
+    8  -1.1697e+00  -1.1810e+00 | 3.67e+00  2.63e-03  1.81e-03 | 6.45e+00  1.78e-03  1.15e-02 | 2.5e-12  5.1e-01  co-a  3.00e-01
+    9  -1.1609e+00  -1.1685e+00 | 2.56e+00  1.76e-03  1.21e-03 | 6.73e+00  1.19e-03  8.03e-03 | 4.6e-12  4.1e-01  co-a  3.00e-01
+   10  -1.1547e+00  -1.1599e+00 | 1.79e+00  1.20e-03  8.28e-04 | 6.91e+00  8.11e-04  5.61e-03 | 3.6e-12  4.0e-01  co-a  3.00e-01
+   11  -1.1503e+00  -1.1539e+00 | 1.25e+00  8.22e-04  5.67e-04 | 7.07e+00  5.54e-04  3.92e-03 | 1.2e-12  3.1e-01  co-a  3.00e-01
+   12  -1.1451e+00  -1.1468e+00 | 6.24e-01  3.98e-04  2.75e-04 | 7.29e+00  2.66e-04  1.95e-03 | 1.7e-12  7.0e-01  co-a  5.00e-01
+   13  -1.1436e+00  -1.1448e+00 | 4.35e-01  2.74e-04  1.89e-04 | 7.42e+00  1.83e-04  1.36e-03 | 1.5e-11  8.2e-01  co-a  3.00e-01
+   14  -1.1426e+00  -1.1434e+00 | 3.03e-01  1.88e-04  1.30e-04 | 7.57e+00  1.26e-04  9.50e-04 | 8.8e-12  4.9e-01  co-a  3.00e-01
+   15  -1.1419e+00  -1.1425e+00 | 2.12e-01  1.29e-04  8.91e-05 | 7.71e+00  8.62e-05  6.63e-04 | 1.9e-11  4.8e-01  co-a  3.00e-01
+   16  -1.1415e+00  -1.1418e+00 | 1.48e-01  8.91e-05  6.15e-05 | 7.82e+00  5.93e-05  4.63e-04 | 2.1e-11  4.9e-01  co-a  3.00e-01
+   17  -1.1412e+00  -1.1414e+00 | 1.03e-01  6.15e-05  4.24e-05 | 7.93e+00  4.09e-05  3.23e-04 | 9.8e-11  5.8e-01  co-a  3.00e-01
+   18  -1.1410e+00  -1.1411e+00 | 7.20e-02  4.26e-05  2.94e-05 | 8.01e+00  2.83e-05  2.26e-04 | 1.3e-10  6.3e-01  co-a  3.00e-01
+   19  -1.1408e+00  -1.1410e+00 | 5.02e-02  2.96e-05  2.04e-05 | 8.07e+00  1.96e-05  1.58e-04 | 1.1e-10  7.1e-01  co-a  3.00e-01
+   20  -1.1407e+00  -1.1408e+00 | 3.50e-02  2.07e-05  1.43e-05 | 8.10e+00  1.36e-05  1.10e-04 | 1.1e-10  7.0e-01  co-a  3.00e-01
+   21  -1.1407e+00  -1.1408e+00 | 2.45e-02  1.44e-05  9.96e-06 | 8.12e+00  9.48e-06  7.67e-05 | 9.5e-11  6.5e-01  co-a  3.00e-01
+   22  -1.1406e+00  -1.1407e+00 | 1.22e-02  7.22e-06  4.98e-06 | 8.12e+00  4.73e-06  3.81e-05 | 1.8e-10  8.3e-01  co-a  5.00e-01
+   23  -1.1406e+00  -1.1407e+00 | 8.46e-03  5.08e-06  3.51e-06 | 8.07e+00  3.31e-06  2.65e-05 | 8.7e-10  7.9e-01  co-a  3.00e-01
+   24  -1.1406e+00  -1.1406e+00 | 3.35e-03  2.05e-06  1.41e-06 | 8.00e+00  1.33e-06  1.05e-05 | 5.1e-10  6.7e-01  co-a  6.00e-01
+   25  -1.1406e+00  -1.1406e+00 | 1.31e-03  8.41e-07  5.80e-07 | 7.80e+00  5.45e-07  4.10e-06 | 3.7e-09  8.5e-01  co-a  6.00e-01
+   26  -1.1406e+00  -1.1406e+00 | 6.42e-04  4.29e-07  2.96e-07 | 7.65e+00  2.69e-07  2.01e-06 | 2.5e-09  8.4e-01  co-a  5.00e-01
+   27  -1.1406e+00  -1.1406e+00 | 3.18e-04  2.16e-07  1.49e-07 | 7.58e+00  1.33e-07  9.97e-07 | 1.1e-09  7.2e-01  co-a  5.00e-01
+   28  -1.1406e+00  -1.1406e+00 | 1.27e-04  8.69e-08  6.00e-08 | 7.55e+00  5.29e-08  3.97e-07 | 7.9e-10  8.6e-01  co-a  6.00e-01
+   29  -1.1406e+00  -1.1406e+00 | 2.53e-05  1.74e-08  1.20e-08 | 7.54e+00  1.05e-08  7.93e-08 | 3.1e-10  8.2e-01  co-a  8.00e-01
+   30  -1.1406e+00  -1.1406e+00 | 1.01e-05  7.00e-09  4.82e-09 | 7.51e+00  4.23e-09  3.16e-08 | 8.2e-10  2.6e-01  co-a  6.00e-01
+   31  -1.1406e+00  -1.1406e+00 | 9.08e-06  6.29e-09  4.34e-09 | 7.51e+00  3.79e-09  2.85e-08 | 3.5e-09  9.3e-02  co-a  1.00e-01
+   32  -1.1406e+00  -1.1406e+00 | 8.62e-06  5.99e-09  4.12e-09 | 7.51e+00  3.60e-09  2.70e-08 | 1.9e-08  2.4e-02  co-a  5.00e-02
+   33  -1.1406e+00  -1.1406e+00 | 8.53e-06  5.93e-09  4.08e-09 | 7.51e+00  3.56e-09  2.68e-08 | 5.5e-10  1.0e-05  co-a  1.00e-02
+   34  -1.1406e+00  -1.1406e+00 | 5.97e-06  4.15e-09  2.86e-09 | 7.51e+00  2.49e-09  1.87e-08 | 3.3e-10  6.1e-04  co-a  3.00e-01
+   35  -1.1406e+00  -1.1406e+00 | 5.91e-06  4.11e-09  2.83e-09 | 7.51e+00  2.47e-09  1.85e-08 | 3.0e-10  2.2e-05  co-a  1.00e-02
+   36  -1.1406e+00  -1.1406e+00 | 4.14e-06  2.86e-09  1.98e-09 | 7.51e+00  1.73e-09  1.30e-08 | 3.0e-09  9.2e-03  co-a  3.00e-01
+optimal solution found; terminating
+
+status is Optimal after 36 iterations and 0.244 seconds
+</code></pre>
+</div>
+</div>
+<p>Let’s visualize the estimated prior distribution of success probabilities:</p>
+<div id="cell-fig-binomial" class="cell" data-fig-height="4" data-fig-width="6" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">support</span>(tacks_npmle.prior),     </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">probs</span>(tacks_npmle.prior),   </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>     seriestype<span class="op">=:</span>sticks,     </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>     xguide <span class="op">=</span> <span class="st">"p"</span>,       </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>     yguide <span class="op">=</span> <span class="st">"g(p)"</span>,    </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>     size<span class="op">=</span>(<span class="fl">500</span>,<span class="fl">400</span>),     </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>     label<span class="op">=</span><span class="cn">nothing</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>     title<span class="op">=</span><span class="st">"NPMLE prior for Tacks data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-binomial" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-binomial-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-binomial-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.2
+</figcaption>
+</figure>
+</div>
+</div>
+<p>The plot shows the estimated distribution of success probabilities for the tacks. The NPMLE identifies several mass points, indicating groups of tacks with different tendencies to land point-up.</p>
+</section>
+<section id="poisson-npmle" class="level2">
+<h2 class="anchored" data-anchor-id="poisson-npmle">Poisson NPMLE</h2>
+<p>Finally, we’ll analyze the Norberg insurance claims dataset, which consists of claim counts and exposure times for different occupational groups.</p>
+<div id="7f7275dc" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>norberg_tbl <span class="op">=</span> Empirikos.Norberg.<span class="fu">load_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>72-element CSV.File:
+ CSV.Row: (OccGroup = 1, Exposure = 3349.02, Death = 16)
+ CSV.Row: (OccGroup = 2, Exposure = 1394.0, Death = 5)
+ CSV.Row: (OccGroup = 3, Exposure = 479.81, Death = 0)
+ CSV.Row: (OccGroup = 4, Exposure = 23.98, Death = 0)
+ CSV.Row: (OccGroup = 5, Exposure = 11.3, Death = 0)
+ CSV.Row: (OccGroup = 6, Exposure = 2273.55, Death = 11)
+ CSV.Row: (OccGroup = 7, Exposure = 179.85, Death = 0)
+ CSV.Row: (OccGroup = 8, Exposure = 3947.44, Death = 24)
+ CSV.Row: (OccGroup = 9, Exposure = 4332.56, Death = 9)
+ CSV.Row: (OccGroup = 10, Exposure = 109.84, Death = 1)
+ CSV.Row: (OccGroup = 11, Exposure = 647.77, Death = 2)
+ CSV.Row: (OccGroup = 12, Exposure = 1308.36, Death = 1)
+ CSV.Row: (OccGroup = 13, Exposure = 154.81, Death = 4)
+ ⋮
+ CSV.Row: (OccGroup = 61, Exposure = 1551.3, Death = 3)
+ CSV.Row: (OccGroup = 62, Exposure = 113.49, Death = 0)
+ CSV.Row: (OccGroup = 63, Exposure = 147.44, Death = 0)
+ CSV.Row: (OccGroup = 64, Exposure = 826.4, Death = 2)
+ CSV.Row: (OccGroup = 65, Exposure = 775.19, Death = 1)
+ CSV.Row: (OccGroup = 66, Exposure = 634.16, Death = 2)
+ CSV.Row: (OccGroup = 67, Exposure = 2293.45, Death = 6)
+ CSV.Row: (OccGroup = 68, Exposure = 942.03, Death = 4)
+ CSV.Row: (OccGroup = 69, Exposure = 232.31, Death = 2)
+ CSV.Row: (OccGroup = 70, Exposure = 37.08, Death = 0)
+ CSV.Row: (OccGroup = 71, Exposure = 233.25, Death = 0)
+ CSV.Row: (OccGroup = 72, Exposure = 39.52, Death = 0)</code></pre>
+</div>
+</div>
+<p>We convert the data to <code>PoissonSample</code> objects. Each sample captures both the count (death) and the exposure time:</p>
+<div id="31004a5e" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>norberg_Zs <span class="op">=</span> Empirikos.<span class="fu">PoissonSample</span>.(norberg_tbl.Death, norberg_tbl.Exposure <span class="op">./</span> <span class="fl">344</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s examine the range of claim rates:</p>
+<div id="f41e0c2c" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extrema</span>(<span class="fu">response</span>.(norberg_Zs) <span class="op">./</span> <span class="fu">nuisance_parameter</span>.(norberg_Zs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>(0.0, 8.888314708352173)</code></pre>
+</div>
+</div>
+<p>And check how many groups had zero claims:</p>
+<div id="47e4df8e" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">response</span>.(norberg_Zs) <span class="op">.==</span> <span class="fl">0</span>) <span class="co"># how many zeros in the samples?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>23</code></pre>
+</div>
+</div>
+<p>Now we fit the NPMLE with a finer grid of 1000 points:</p>
+<div id="321c490d" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>norberg_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(),                           </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                    Hypatia.Optimizer;                        </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                    prior_grid_length<span class="op">=</span><span class="fl">1000</span>),                    </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                    norberg_Zs);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter        p_obj        d_obj |  abs_gap    x_feas    z_feas |      tau       kap        mu | dir_res     prox  step     alpha
+    0   1.2878e-01  -2.3832e+01 | 4.45e+02  1.29e+01  6.83e-01 | 1.00e+00  1.00e+00  1.00e+00 |
+    1  -4.8042e+00  -2.8956e+01 | 3.11e+02  1.32e+01  7.03e-01 | 6.80e-01  1.05e+00  7.00e-01 | 1.4e-14  2.9e-01  co-a  3.00e-01
+    2  -3.7142e+01  -5.6908e+01 | 1.25e+02  1.19e+01  6.30e-01 | 3.04e-01  9.84e-01  2.80e-01 | 1.4e-14  9.7e-01  co-a  6.00e-01
+    3  -3.9425e+01  -5.3262e+01 | 8.74e+01  8.14e+00  4.33e-01 | 3.10e-01  6.10e-01  1.96e-01 | 1.5e-14  6.6e-01  co-a  3.00e-01
+    4  -2.3077e+01  -2.8299e+01 | 4.36e+01  2.95e+00  1.57e-01 | 4.27e-01  2.15e-01  9.80e-02 | 5.0e-14  6.9e-01  co-a  5.00e-01
+    5  -1.7909e+01  -2.1253e+01 | 3.05e+01  1.88e+00  1.00e-01 | 4.69e-01  1.44e-01  6.84e-02 | 7.9e-14  6.1e-01  co-a  3.00e-01
+    6  -1.4033e+01  -1.6182e+01 | 2.13e+01  1.20e+00  6.36e-02 | 5.16e-01  9.08e-02  4.78e-02 | 3.3e-14  4.8e-01  co-a  3.00e-01
+    7  -1.1359e+01  -1.2814e+01 | 1.48e+01  8.09e-01  4.30e-02 | 5.34e-01  6.18e-02  3.33e-02 | 5.7e-14  6.0e-01  co-a  3.00e-01
+    8  -9.1893e+00  -1.0156e+01 | 1.03e+01  5.35e-01  2.84e-02 | 5.66e-01  4.04e-02  2.33e-02 | 4.3e-14  6.6e-01  co-a  3.00e-01
+    9  -7.5456e+00  -8.1914e+00 | 7.21e+00  3.56e-01  1.89e-02 | 5.95e-01  2.67e-02  1.62e-02 | 8.7e-14  9.6e-01  co-a  3.00e-01
+   10  -6.9671e+00  -7.5117e+00 | 6.48e+00  2.99e-01  1.59e-02 | 6.38e-01  2.26e-02  1.46e-02 | 1.9e-13  5.1e-01  co-a  1.00e-01
+   11  -5.7868e+00  -6.1320e+00 | 4.52e+00  1.88e-01  9.99e-03 | 7.10e-01  1.39e-02  1.02e-02 | 6.8e-14  6.1e-01  co-a  3.00e-01
+   12  -4.9867e+00  -5.2060e+00 | 3.15e+00  1.19e-01  6.31e-03 | 7.87e-01  8.82e-03  7.07e-03 | 1.1e-13  7.9e-01  co-a  3.00e-01
+   13  -4.4583e+00  -4.5972e+00 | 2.19e+00  7.48e-02  3.98e-03 | 8.74e-01  5.55e-03  4.93e-03 | 2.2e-13  6.3e-01  co-a  3.00e-01
+   14  -4.1229e+00  -4.2119e+00 | 1.53e+00  4.77e-02  2.54e-03 | 9.59e-01  3.55e-03  3.43e-03 | 2.4e-13  5.1e-01  co-a  3.00e-01
+   15  -3.9121e+00  -3.9696e+00 | 1.07e+00  3.08e-02  1.64e-03 | 1.04e+00  2.29e-03  2.40e-03 | 4.8e-13  3.6e-01  co-a  3.00e-01
+   16  -3.7835e+00  -3.8213e+00 | 7.45e-01  2.02e-02  1.07e-03 | 1.11e+00  1.50e-03  1.67e-03 | 4.5e-13  3.5e-01  co-a  3.00e-01
+   17  -3.7039e+00  -3.7291e+00 | 5.20e-01  1.34e-02  7.12e-04 | 1.17e+00  9.99e-04  1.17e-03 | 5.0e-13  4.1e-01  co-a  3.00e-01
+   18  -3.6540e+00  -3.6708e+00 | 3.63e-01  8.98e-03  4.77e-04 | 1.22e+00  6.68e-04  8.17e-04 | 1.4e-12  5.0e-01  co-a  3.00e-01
+   19  -3.6222e+00  -3.6336e+00 | 2.54e-01  6.06e-03  3.22e-04 | 1.27e+00  4.50e-04  5.70e-04 | 2.4e-12  6.2e-01  co-a  3.00e-01
+   20  -3.6019e+00  -3.6096e+00 | 1.77e-01  4.11e-03  2.18e-04 | 1.31e+00  3.05e-04  3.98e-04 | 4.5e-12  7.9e-01  co-a  3.00e-01
+   21  -3.5980e+00  -3.6049e+00 | 1.59e-01  3.67e-03  1.95e-04 | 1.32e+00  2.72e-04  3.58e-04 | 8.6e-12  4.5e-01  co-a  1.00e-01
+   22  -3.5867e+00  -3.5915e+00 | 1.11e-01  2.51e-03  1.33e-04 | 1.35e+00  1.85e-04  2.50e-04 | 5.9e-12  5.7e-01  co-a  3.00e-01
+   23  -3.5793e+00  -3.5825e+00 | 7.76e-02  1.71e-03  9.07e-05 | 1.39e+00  1.26e-04  1.74e-04 | 6.9e-12  8.5e-01  co-a  3.00e-01
+   24  -3.5780e+00  -3.5809e+00 | 6.98e-02  1.53e-03  8.14e-05 | 1.40e+00  1.13e-04  1.57e-04 | 1.1e-11  3.7e-01  co-a  1.00e-01
+   25  -3.5740e+00  -3.5760e+00 | 4.88e-02  1.05e-03  5.58e-05 | 1.43e+00  7.70e-05  1.10e-04 | 4.4e-12  5.6e-01  co-a  3.00e-01
+   26  -3.5715e+00  -3.5728e+00 | 3.41e-02  7.20e-04  3.83e-05 | 1.45e+00  5.28e-05  7.65e-05 | 1.5e-11  8.4e-01  co-a  3.00e-01
+   27  -3.5710e+00  -3.5723e+00 | 3.06e-02  6.46e-04  3.43e-05 | 1.46e+00  4.72e-05  6.88e-05 | 2.4e-11  3.6e-01  co-a  1.00e-01
+   28  -3.5697e+00  -3.5705e+00 | 2.14e-02  4.45e-04  2.37e-05 | 1.48e+00  3.25e-05  4.81e-05 | 1.3e-11  6.0e-01  co-a  3.00e-01
+   29  -3.5687e+00  -3.5693e+00 | 1.50e-02  3.07e-04  1.63e-05 | 1.51e+00  2.24e-05  3.36e-05 | 6.2e-11  9.5e-01  co-a  3.00e-01
+   30  -3.5686e+00  -3.5691e+00 | 1.34e-02  2.76e-04  1.46e-05 | 1.51e+00  2.01e-05  3.02e-05 | 3.9e-11  4.2e-01  co-a  1.00e-01
+   31  -3.5681e+00  -3.5684e+00 | 9.39e-03  1.91e-04  1.01e-05 | 1.53e+00  1.39e-05  2.11e-05 | 3.7e-11  7.3e-01  co-a  3.00e-01
+   32  -3.5680e+00  -3.5683e+00 | 8.44e-03  1.71e-04  9.09e-06 | 1.53e+00  1.24e-05  1.90e-05 | 1.0e-10  3.8e-01  co-a  1.00e-01
+   33  -3.5677e+00  -3.5679e+00 | 5.90e-03  1.19e-04  6.31e-06 | 1.54e+00  8.60e-06  1.33e-05 | 2.5e-11  7.0e-01  co-a  3.00e-01
+   34  -3.5676e+00  -3.5678e+00 | 5.31e-03  1.07e-04  5.66e-06 | 1.55e+00  7.70e-06  1.19e-05 | 9.6e-11  3.9e-01  co-a  1.00e-01
+   35  -3.5674e+00  -3.5675e+00 | 3.71e-03  7.40e-05  3.93e-06 | 1.56e+00  5.35e-06  8.33e-06 | 3.1e-11  7.3e-01  co-a  3.00e-01
+   36  -3.5674e+00  -3.5675e+00 | 3.34e-03  6.65e-05  3.53e-06 | 1.56e+00  4.80e-06  7.50e-06 | 1.3e-10  4.1e-01  co-a  1.00e-01
+   37  -3.5673e+00  -3.5673e+00 | 2.33e-03  4.63e-05  2.46e-06 | 1.57e+00  3.34e-06  5.24e-06 | 7.0e-11  7.5e-01  co-a  3.00e-01
+   38  -3.5672e+00  -3.5673e+00 | 2.10e-03  4.16e-05  2.21e-06 | 1.57e+00  2.99e-06  4.71e-06 | 1.9e-10  4.2e-01  co-a  1.00e-01
+   39  -3.5672e+00  -3.5672e+00 | 1.46e-03  2.90e-05  1.54e-06 | 1.58e+00  2.09e-06  3.29e-06 | 6.9e-11  7.4e-01  co-a  3.00e-01
+   40  -3.5671e+00  -3.5672e+00 | 1.32e-03  2.61e-05  1.39e-06 | 1.58e+00  1.87e-06  2.96e-06 | 3.9e-10  4.0e-01  co-a  1.00e-01
+   41  -3.5671e+00  -3.5671e+00 | 9.20e-04  1.82e-05  9.67e-07 | 1.59e+00  1.31e-06  2.07e-06 | 1.2e-10  6.6e-01  co-a  3.00e-01
+   42  -3.5671e+00  -3.5671e+00 | 6.43e-04  1.27e-05  6.76e-07 | 1.59e+00  9.11e-07  1.45e-06 | 3.9e-10  8.5e-01  co-a  3.00e-01
+   43  -3.5671e+00  -3.5671e+00 | 5.78e-04  1.15e-05  6.08e-07 | 1.59e+00  8.19e-07  1.30e-06 | 2.2e-10  3.6e-01  co-a  1.00e-01
+   44  -3.5670e+00  -3.5671e+00 | 4.04e-04  8.00e-06  4.25e-07 | 1.59e+00  5.72e-07  9.09e-07 | 1.5e-10  4.4e-01  co-a  3.00e-01
+   45  -3.5670e+00  -3.5670e+00 | 2.83e-04  5.60e-06  2.97e-07 | 1.59e+00  3.99e-07  6.36e-07 | 1.1e-10  4.7e-01  co-a  3.00e-01
+   46  -3.5670e+00  -3.5670e+00 | 1.41e-04  2.80e-06  1.49e-07 | 1.59e+00  2.00e-07  3.17e-07 | 1.4e-10  9.9e-01  co-a  5.00e-01
+   47  -3.5670e+00  -3.5670e+00 | 9.86e-05  1.96e-06  1.04e-07 | 1.59e+00  1.40e-07  2.22e-07 | 7.9e-10  7.4e-01  co-a  3.00e-01
+   48  -3.5670e+00  -3.5670e+00 | 4.92e-05  9.82e-07  5.22e-08 | 1.59e+00  6.98e-08  1.10e-07 | 3.7e-10  8.8e-01  co-a  5.00e-01
+   49  -3.5670e+00  -3.5670e+00 | 1.47e-05  2.96e-07  1.57e-08 | 1.58e+00  2.10e-08  3.30e-08 | 3.0e-10  9.0e-01  co-a  7.00e-01
+   50  -3.5670e+00  -3.5670e+00 | 7.28e-06  1.49e-07  7.93e-09 | 1.57e+00  1.05e-08  1.64e-08 | 2.2e-09  9.4e-01  co-a  5.00e-01
+   51  -3.5670e+00  -3.5670e+00 | 3.63e-06  7.49e-08  3.98e-09 | 1.56e+00  5.24e-09  8.15e-09 | 1.3e-09  7.6e-01  co-a  5.00e-01
+   52  -3.5670e+00  -3.5670e+00 | 1.14e-06  2.52e-08  1.23e-09 | 1.52e+00  1.69e-09  2.57e-09 | 3.7e-08  5.9e-01  co-a  7.00e-01
+   53  -3.5670e+00  -3.5670e+00 | 3.45e-07  7.60e-09  3.68e-10 | 1.52e+00  5.09e-10  7.75e-10 | 3.7e-09  1.1e-01  co-a  7.00e-01
+optimal solution found; terminating
+
+status is Optimal after 53 iterations and 0.272 seconds
+</code></pre>
+</div>
+</div>
+<p>In REBayes, this would be accomplished with the <code>Pmix</code> function with exposure arguments, but our approach provides a unified interface with the type system handling the exposure information.</p>
+<p>Let’s visualize the results:</p>
+<div id="cell-fig-poisson" class="cell" data-fig-height="3" data-fig-width="8" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>pl <span class="op">=</span> <span class="fu">plot</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plot</span>(<span class="fu">support</span>(norberg_npmle.prior),        </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">probs</span>(norberg_npmle.prior)<span class="op">./</span><span class="fu">sum</span>(<span class="fu">probs</span>(norberg_npmle.prior)),          </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>            seriestype<span class="op">=:</span>sticks,           </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>            xguide <span class="op">=</span> L<span class="st">"</span><span class="sc">\t</span><span class="st">heta"</span>,           </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>            yguide <span class="op">=</span> L<span class="st">"g(</span><span class="sc">\t</span><span class="st">heta)"</span>,            </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>            legend<span class="op">=:</span>topright,         </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="st">"NPMLE"</span>,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">"Risk distribution"</span>), </span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plot</span>(<span class="fu">support</span>(norberg_npmle.prior),        </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>            (<span class="fu">probs</span>(norberg_npmle.prior) <span class="op">./</span> <span class="fu">sum</span>(<span class="fu">probs</span>(norberg_npmle.prior)))<span class="op">.^</span>(<span class="fl">1</span><span class="op">/</span><span class="fl">3</span>),           </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>            seriestype<span class="op">=:</span>sticks,           </span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>            xguide <span class="op">=</span> L<span class="st">"</span><span class="sc">\t</span><span class="st">heta"</span>,           </span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>            yguide <span class="op">=</span> L<span class="st">"g(</span><span class="sc">\t</span><span class="st">heta)^{1/3}"</span>,          </span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>            legend<span class="op">=:</span>topright,         </span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="st">"NPMLE"</span>,</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">"Cube-root transformed"</span>),     </span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>            size<span class="op">=</span>(<span class="fl">800</span>,<span class="fl">400</span>)</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-poisson" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="18">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-poisson-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-poisson-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.3
+</figcaption>
+</figure>
+</div>
+</div>
+<p>The left panel shows the estimated risk distribution, while the right panel shows the cube-root transformation to better visualize smaller masses. Similar to the REBayes analysis, we can see evidence of groups with particularly high risk (around θ=8), which would be difficult to capture with a parametric approach.</p>
+<p>Finally, we compute the posterior means for each group:</p>
+<div id="71f0797d" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>norgberg_postmean_npmle <span class="op">=</span> (<span class="fu">PosteriorMean</span>.(norberg_Zs)).(norberg_npmle.prior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<pre><code>72-element Vector{Float64}:
+ 1.516497463019897
+ 1.1477304056884876
+ 0.8900678400349428
+ 1.1229084038155277
+ 1.1343002295969666
+ 1.4664836253077358
+ 1.0164762017419169
+ 1.6494798867585212
+ 0.7913509956260509
+ 1.2713016956237706
+ 1.0779960615909798
+ 0.7848319618996998
+ 2.4249473789626075
+ ⋮
+ 0.8706989730386656
+ 1.0562150646243584
+ 1.035113175842552
+ 0.9955905035611794
+ 0.8996424331413105
+ 1.085110916237371
+ 0.9348278530015118
+ 1.2292844609156781
+ 1.3854937394831124
+ 1.1117890803224781
+ 0.9884559917026545
+ 1.1097830775100936</code></pre>
+</div>
+</div>
+<p>These values represent the empirical Bayes credibility estimates for each occupation group’s risk factor. In insurance terminology, these would be used to set premiums that reflect both the overall portfolio patterns and each group’s specific experience.</p>
+<div id="a554c95d" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the mean posterior estimate </span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(norgberg_postmean_npmle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>1.14506213208152</code></pre>
+</div>
+</div>
+<p>This mean value represents the overall risk level across all occupational groups after empirical Bayes adjustment.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../manual/flocalizations.html" class="pagination-link" aria-label="F-Localizations">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">F-Localizations</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../vignettes/prostate.html" class="pagination-link" aria-label="Identifying genes associated with prostate cancer">
+        <span class="nav-page-text"><span class="chapter-title">Identifying genes associated with prostate cancer</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

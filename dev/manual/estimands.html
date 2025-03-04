@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Empirikos</title>
+<title>Estimands – Empirikos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,48 +54,29 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./manual/samples.html" rel="next">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../manual/convexpriors.html" rel="next">
+<link href="../manual/intervals.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -153,11 +134,11 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="_static/style.css">
-<meta property="og:title" content="Empirikos">
+<link rel="stylesheet" href="../_static/style.css">
+<meta property="og:title" content="Estimands – Empirikos">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Empirikos">
-<meta name="twitter:title" content="Empirikos">
+<meta name="twitter:title" content="Estimands – Empirikos">
 <meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
@@ -169,7 +150,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
   </div>
@@ -184,7 +165,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-title">Overview</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../manual/samples.html">Manual</a></li><li class="breadcrumb-item"><a href="../manual/estimands.html"><span class="chapter-title">Estimands</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -206,7 +187,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Overview</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -220,32 +201,32 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
+  <a href="../manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
+  <a href="../manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
+  <a href="../manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
+  <a href="../manual/estimands.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Estimands</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
+  <a href="../manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
+  <a href="../manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
   </div>
 </li>
       </ul>
@@ -261,12 +242,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
+  <a href="../vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
+  <a href="../vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
   </div>
 </li>
       </ul>
@@ -281,22 +262,27 @@ window.Quarto = {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a></li>
-  <li><a href="#related-packages" id="toc-related-packages" class="nav-link" data-scroll-target="#related-packages">Related packages</a>
-  <ul class="collapse">
-  <li><a href="#in-r" id="toc-in-r" class="nav-link" data-scroll-target="#in-r">In R:</a></li>
-  <li><a href="#in-julia" id="toc-in-julia" class="nav-link" data-scroll-target="#in-julia">In Julia:</a></li>
-  </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#ebayestarget" id="toc-ebayestarget" class="nav-link active" data-scroll-target="#ebayestarget"><code>EBayesTarget</code></a></li>
+  <li><a href="#example-posteriormean" id="toc-example-posteriormean" class="nav-link" data-scroll-target="#example-posteriormean">Example: PosteriorMean</a></li>
+  <li><a href="#posteriormean" id="toc-posteriormean" class="nav-link" data-scroll-target="#posteriormean"><code>PosteriorMean</code></a></li>
+  <li><a href="#posterior-estimands" id="toc-posterior-estimands" class="nav-link" data-scroll-target="#posterior-estimands">Posterior estimands</a></li>
+  <li><a href="#posteriorprobability" id="toc-posteriorprobability" class="nav-link" data-scroll-target="#posteriorprobability"><code>PosteriorProbability</code></a></li>
+  <li><a href="#posteriorvariance" id="toc-posteriorvariance" class="nav-link" data-scroll-target="#posteriorvariance"><code>PosteriorVariance</code></a></li>
+  <li><a href="#linear-functionals" id="toc-linear-functionals" class="nav-link" data-scroll-target="#linear-functionals">Linear functionals</a></li>
+  <li><a href="#linearebayestarget" id="toc-linearebayestarget" class="nav-link" data-scroll-target="#linearebayestarget"><code>LinearEBayesTarget</code></a></li>
+  <li><a href="#priordensity" id="toc-priordensity" class="nav-link" data-scroll-target="#priordensity"><code>PriorDensity</code></a></li>
+  <li><a href="#marginaldensity" id="toc-marginaldensity" class="nav-link" data-scroll-target="#marginaldensity"><code>MarginalDensity</code></a></li>
+  <li><a href="#numerator" id="toc-numerator" class="nav-link" data-scroll-target="#numerator"><code>numerator</code></a></li>
+  <li><a href="#denominator" id="toc-denominator" class="nav-link" data-scroll-target="#denominator"><code>denominator</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../manual/samples.html">Manual</a></li><li class="breadcrumb-item"><a href="../manual/estimands.html"><span class="chapter-title">Estimands</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Empirikos</h1>
+<h1 class="title"><span class="chapter-title">Estimands</span></h1>
 </div>
 
 
@@ -313,74 +299,217 @@ window.Quarto = {
 </header>
 
 
-<blockquote class="blockquote">
-<p>ἐμπειρικός: “experienced” in ancient Greek, etymology of empirical</p>
-</blockquote>
-<p><strong>Empirical Bayes estimation and inference in Julia.</strong></p>
-<p>Consider <span class="math inline">\(n\)</span> independent samples <span class="math inline">\(Z_i\)</span> drawn from the following hierarchical model <span class="math display">\[
-\mu_i \sim G, \ \ Z_i \sim p_i(\cdot \mid \mu_i).
-\]</span> Here <span class="math inline">\(G\)</span> is the unknown prior (effect size distribution) and <span class="math inline">\(p_i(\cdot \mid \mu_i),i=1,\dotsc,n\)</span> are known likelihood functions.</p>
-<p>This package provides a unified framework for estimation and inference under the above setting, which is known as the empirical Bayes problem <span class="citation" data-cites="robbins1956empirical">(<a href="#ref-robbins1956empirical" role="doc-biblioref">Robbins 1956</a>)</span>.</p>
-<section id="installation" class="level2">
-<h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>The package is available from the Julia registry. It may be installed on Julia version 1.10 as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">add</span>(<span class="st">"Empirikos"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is <a href="https://jump.dev/JuMP.jl/dev/installation/#Supported-solvers">supported by JuMP.jl</a>. We recommend using the <a href="https://www.mosek.com/">MOSEK</a> solver through the <a href="https://github.com/jump-dev/MosekTools.jl">MosekTools.jl</a> package. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is <a href="https://github.com/chriscoey/Hypatia.jl">Hypatia.jl</a>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<p>This package defines dedicated types to describe empirical Bayes estimands (that can be used for estimation or inference).</p>
+<section id="ebayestarget" class="level2">
+<h2 class="anchored" data-anchor-id="ebayestarget"><code>EBayesTarget</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Modularity
+<div class="callout-body-container">
+<p>Abstract type that describes Empirical Bayes estimands (which we want to estimate or conduct inference for).</p>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This package has been designed with the goal of modularity. Specialized code (using Julia’s multiple dispatch) can be easily added to more efficiently handle different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently or is slow).</p>
 </div>
 </div>
 </section>
-<section id="related-packages" class="level2">
-<h2 class="anchored" data-anchor-id="related-packages">Related packages</h2>
-<section id="in-r" class="level3">
-<h3 class="anchored" data-anchor-id="in-r">In R:</h3>
-<ul>
-<li><a href="https://cran.r-project.org/web/packages/REBayes/index.html">REBayes</a> <span class="citation" data-cites="koenker2017rebayes">(<a href="#ref-koenker2017rebayes" role="doc-biblioref">Koenker and Gu 2017</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/ashr/index.html">Ashr</a> <span class="citation" data-cites="stephens2016false">(<a href="#ref-stephens2016false" role="doc-biblioref">Stephens 2016</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/deconvolveR/index.html">DeconvolveR</a> <span class="citation" data-cites="narasimhan2020deconvolver">(<a href="#ref-narasimhan2020deconvolver" role="doc-biblioref">Narasimhan and Efron 2020</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/EbayesThresh/index.html">EbayesThresh</a> <span class="citation" data-cites="johnstone2005ebayesthresh">(<a href="#ref-johnstone2005ebayesthresh" role="doc-biblioref">Johnstone and Silverman 2005</a>)</span></li>
-</ul>
+<section id="example-posteriormean" class="level2">
+<h2 class="anchored" data-anchor-id="example-posteriormean">Example: PosteriorMean</h2>
 </section>
-<section id="in-julia" class="level3">
-<h3 class="anchored" data-anchor-id="in-julia">In Julia:</h3>
-<ul>
-<li><a href="https://github.com/nignatiadis/Aurora.jl">Aurora.jl</a></li>
-</ul>
+<section id="posteriormean" class="level2">
+<h2 class="anchored" data-anchor-id="posteriormean"><code>PosteriorMean</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>PosteriorMean(Z::EBayesSample) &lt;: AbstractPosteriorTarget</code></pre>
+<p>Type representing the posterior mean, i.e.,</p>
+<p><span class="math display">\[
+E_G[\mu_i \mid Z_i = z]
+\]</span></p>
+</div>
+</div>
+</div>
+<p>A <code>target::EBayesTarget</code>, such as <code>PosteriorMean</code>, may be used as a callable on distributions (priors).</p>
+<pre class="julia-repl"><code>julia&gt; G = Normal()
+Normal{Float64}(μ=0.0, σ=1.0)
+
+julia&gt; postmean1 = PosteriorMean(StandardNormalSample(1.0))
+julia&gt; postmean1(G)
+0.5
+
+julia&gt; postmean2 = PosteriorMean(NormalSample(1.0, sqrt(3.0)))
+julia&gt; postmean2(G)
+0.25000000000000006</code></pre>
 </section>
+<section id="posterior-estimands" class="level2">
+<h2 class="anchored" data-anchor-id="posterior-estimands">Posterior estimands</h2>
+<p>In addition to <a href="@ref"><code>PosteriorMean</code></a>, other implemented posterior estimands are the following:</p>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<pre class="@bibliography"><code></code></pre>
+<section id="posteriorprobability" class="level2">
+<h2 class="anchored" data-anchor-id="posteriorprobability"><code>PosteriorProbability</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>PosteriorProbability(Z::EBayesSample, s) &lt;: AbstractPosteriorTarget</code></pre>
+<p>Type representing the posterior probability, i.e.,</p>
+<p><span class="math display">\[
+\Prob_G[\mu_i \in s \mid Z_i = z]
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="posteriorvariance" class="level2">
+<h2 class="anchored" data-anchor-id="posteriorvariance"><code>PosteriorVariance</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>PosteriorVariance(Z::EBayesSample) &lt;: AbstractPosteriorTarget</code></pre>
+<p>Type representing the posterior variance, i.e.,</p>
+<p><span class="math display">\[
+V_G[\mu_i \mid Z_i = z]
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="linear-functionals" class="level2">
+<h2 class="anchored" data-anchor-id="linear-functionals">Linear functionals</h2>
+<p>A special case of empirical Bayes estimands are linear functionals:</p>
+</section>
+<section id="linearebayestarget" class="level2">
+<h2 class="anchored" data-anchor-id="linearebayestarget"><code>LinearEBayesTarget</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>LinearEBayesTarget &lt;: EBayesTarget</code></pre>
+<p>Abstract type that describes Empirical Bayes estimands that are linear functionals of the prior <code>G</code>.</p>
+</div>
+</div>
+</div>
+<p>Currently available linear functionals:</p>
+</section>
+<section id="priordensity" class="level2">
+<h2 class="anchored" data-anchor-id="priordensity"><code>PriorDensity</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>PriorDensity(z::Float64) &lt;: LinearEBayesTarget</code></pre>
+<section id="example-call" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="example-call">Example call</h4>
+<pre class="jldoctest"><code>julia&gt; PriorDensity(2.0)
+PriorDensity{Float64}(2.0)</code></pre>
+</section>
+<section id="description" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="description">Description</h4>
+<p>This is the evaluation functional of the density of <span class="math inline">\(G\)</span> at <code>z</code>, i.e., <span class="math inline">\(L(G) = G'(z) = g(z)\)</span> or in Julia code <code>L(G) = pdf(G, z)</code>.</p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="marginaldensity" class="level2">
+<h2 class="anchored" data-anchor-id="marginaldensity"><code>MarginalDensity</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>MarginalDensity(Z::EBayesSample) &lt;: LinearEBayesTarget</code></pre>
+<section id="example-call-1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="example-call-1">Example call</h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">MarginalDensity</span>(<span class="fu">StandardNormalSample</span>(<span class="fl">2.0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="description-1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="description-1">Description</h4>
+<p>Describes the marginal density evaluated at <span class="math inline">\(Z=z\)</span> (e.g.&nbsp;<span class="math inline">\(Z=2\)</span> in the example above). In the example above the sample is drawn from the hierarchical model</p>
+<p><span class="math display">\[
+\mu \sim G, Z \sim \mathcal{N}(0,1)
+\]</span></p>
+<p>In other words, letting <span class="math inline">\(\varphi\)</span> the Standard Normal pdf</p>
+<p><span class="math display">\[
+L(G) = \varphi \star dG(z)
+\]</span></p>
+<p>Note that <code>2.0</code> has to be wrapped inside <code>StandardNormalSample(2.0)</code> since this target depends not only on <code>G</code> and the location, but also on the likelihood.</p>
+</section>
+</div>
+</div>
+</div>
+<p>Posterior estimands such as <a href="@ref"><code>PosteriorMean</code></a> can be typically decomposed into two linear functionals, a <code>numerator</code> and a <code>denominator</code>:</p>
+</section>
+<section id="numerator" class="level2">
+<h2 class="anchored" data-anchor-id="numerator"><code>numerator</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>numerator(x)</code></pre>
+<p>Numerator of the rational representation of <code>x</code>.</p>
+<section id="examples" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples">Examples</h3>
+<pre class="jldoctest"><code>julia&gt; numerator(2//3)
+2
+
+julia&gt; numerator(4)
+4</code></pre>
+<pre><code>Base.numerator(target::AbstractPosteriorTarget)</code></pre>
+<p>Suppose a posterior target <span class="math inline">\(\theta_G(z)\)</span>, such as the posterior mean can be written as:</p>
+<p><span class="math display">\[
+\theta_G(z) = \frac{ a_G(z)}{f_G(z)} = \frac{ \int h(\mu)dG(\mu)}{\int p(z \mid \mu)dG(\mu)}.
+\]</span></p>
+<p>For example, for the posterior mean <span class="math inline">\(h(\mu) =  \mu \cdot p(z \mid \mu)\)</span>. Then <code>Base.numerator</code> returns the linear functional representing <span class="math inline">\(G \mapsto a_G(z)\)</span>.</p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="denominator" class="level2">
+<h2 class="anchored" data-anchor-id="denominator"><code>denominator</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>denominator(x)</code></pre>
+<p>Denominator of the rational representation of <code>x</code>.</p>
+<section id="examples-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples-1">Examples</h3>
+<pre class="jldoctest"><code>julia&gt; denominator(2//3)
+3
+
+julia&gt; denominator(4)
+1</code></pre>
+<pre><code>Base.denominator(target::AbstractPosteriorTarget)</code></pre>
+<p>Suppose a posterior target <span class="math inline">\(\theta_G(z)\)</span>, such as the posterior mean can be written as:</p>
+<p><span class="math display">\[
+\theta_G(z) = \frac{ a_G(z)}{f_G(z)} = \frac{ \int h(\mu)dG(\mu)}{\int p(z \mid \mu)dG(\mu)}.
+\]</span></p>
+<p>For example, for the posterior mean <span class="math inline">\(h(\mu) =  \mu \cdot p(z \mid \mu)\)</span>. Then <code>Base.denominator</code> returns the linear functional representing <span class="math inline">\(G \mapsto f_G(z)\)</span> (i.e., typically the marginal density). Also see <a href="#Base.numerator(::AbstractPosteriorTarget)"><code>Base.numerator(::AbstractPosteriorTarget)</code></a>.</p>
+</section>
+</div>
+</div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-johnstone2005ebayesthresh" class="csl-entry" role="listitem">
-Johnstone, Iain M, and Bernard W Silverman. 2005. <span>“EbayesThresh: R and s-Plus Programs for Empirical Bayes Thresholding.”</span> <em>Journal of Statistical Software</em> 12: 1–38.
-</div>
-<div id="ref-koenker2017rebayes" class="csl-entry" role="listitem">
-Koenker, Roger, and Jiaying Gu. 2017. <span>“REBayes: Empirical Bayes Mixture Methods in r.”</span> <em>Journal of Statistical Software</em> 82 (8): 1–26.
-</div>
-<div id="ref-narasimhan2020deconvolver" class="csl-entry" role="listitem">
-Narasimhan, Balasubramanian, and Bradley Efron. 2020. <span>“deconvolveR: A g-Modeling Program for Deconvolution and Empirical Bayes Estimation.”</span> <em>Journal of Statistical Software</em> 94 (1): 1–20.
-</div>
-<div id="ref-robbins1956empirical" class="csl-entry" role="listitem">
-Robbins, Herbert. 1956. <span>“An Empirical Bayes Approach to Statistics.”</span> <em>Proceedings of the Third Berkeley Symposium on Mathematical Statistics and Probability, Volume 1: Contributions to the Theory of Statistics</em>.
-</div>
-<div id="ref-stephens2016false" class="csl-entry" role="listitem">
-Stephens, Matthew. 2016. <span>“False Discovery Rates: A New Deal.”</span> <em>Biostatistics</em> 18 (2): 275–94.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -947,10 +1076,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../manual/intervals.html" class="pagination-link" aria-label="Confidence intervals">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Confidence intervals</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./manual/samples.html" class="pagination-link" aria-label="Empirical Bayes samples">
-        <span class="nav-page-text"><span class="chapter-title">Empirical Bayes samples</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../manual/convexpriors.html" class="pagination-link" aria-label="Convex prior classes">
+        <span class="nav-page-text"><span class="chapter-title">Convex prior classes</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

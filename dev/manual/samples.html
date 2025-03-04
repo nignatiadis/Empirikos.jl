@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Empirikos</title>
+<title>Empirical Bayes samples – Empirikos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,82 +20,29 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./manual/samples.html" rel="next">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../manual/estimation.html" rel="next">
+<link href="../index.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -153,11 +100,11 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="_static/style.css">
-<meta property="og:title" content="Empirikos">
+<link rel="stylesheet" href="../_static/style.css">
+<meta property="og:title" content="Empirical Bayes samples – Empirikos">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Empirikos">
-<meta name="twitter:title" content="Empirikos">
+<meta name="twitter:title" content="Empirical Bayes samples – Empirikos">
 <meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
@@ -169,7 +116,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
   </div>
@@ -184,7 +131,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-title">Overview</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../manual/samples.html">Manual</a></li><li class="breadcrumb-item"><a href="../manual/samples.html"><span class="chapter-title">Empirical Bayes samples</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -206,7 +153,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Overview</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -220,32 +167,32 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
+  <a href="../manual/samples.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Empirical Bayes samples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
+  <a href="../manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
+  <a href="../manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
+  <a href="../manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
+  <a href="../manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
+  <a href="../manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
   </div>
 </li>
       </ul>
@@ -261,12 +208,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
+  <a href="../vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
+  <a href="../vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
   </div>
 </li>
       </ul>
@@ -281,22 +228,28 @@ window.Quarto = {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a></li>
-  <li><a href="#related-packages" id="toc-related-packages" class="nav-link" data-scroll-target="#related-packages">Related packages</a>
-  <ul class="collapse">
-  <li><a href="#in-r" id="toc-in-r" class="nav-link" data-scroll-target="#in-r">In R:</a></li>
-  <li><a href="#in-julia" id="toc-in-julia" class="nav-link" data-scroll-target="#in-julia">In Julia:</a></li>
-  </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#ebayessample" id="toc-ebayessample" class="nav-link active" data-scroll-target="#ebayessample"><code>EBayesSample</code></a></li>
+  <li><a href="#example-standardnormalsample" id="toc-example-standardnormalsample" class="nav-link" data-scroll-target="#example-standardnormalsample">Example: StandardNormalSample</a></li>
+  <li><a href="#standardnormalsample" id="toc-standardnormalsample" class="nav-link" data-scroll-target="#standardnormalsample"><code>StandardNormalSample</code></a></li>
+  <li><a href="#interface" id="toc-interface" class="nav-link" data-scroll-target="#interface">Interface</a></li>
+  <li><a href="#likelihood_distribution" id="toc-likelihood_distribution" class="nav-link" data-scroll-target="#likelihood_distribution"><code>likelihood_distribution</code></a></li>
+  <li><a href="#response" id="toc-response" class="nav-link" data-scroll-target="#response"><code>response</code></a></li>
+  <li><a href="#marginalize" id="toc-marginalize" class="nav-link" data-scroll-target="#marginalize"><code>marginalize</code></a></li>
+  <li><a href="#pdf" id="toc-pdf" class="nav-link" data-scroll-target="#pdf"><code>pdf</code></a></li>
+  <li><a href="#cdf" id="toc-cdf" class="nav-link" data-scroll-target="#cdf"><code>cdf</code></a></li>
+  <li><a href="#other-implemented-ebayessample-types" id="toc-other-implemented-ebayessample-types" class="nav-link" data-scroll-target="#other-implemented-ebayessample-types">Other implemented EBayesSample types</a></li>
+  <li><a href="#normalsample" id="toc-normalsample" class="nav-link" data-scroll-target="#normalsample"><code>NormalSample</code></a></li>
+  <li><a href="#binomialsample" id="toc-binomialsample" class="nav-link" data-scroll-target="#binomialsample"><code>BinomialSample</code></a></li>
+  <li><a href="#poissonsample" id="toc-poissonsample" class="nav-link" data-scroll-target="#poissonsample"><code>PoissonSample</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../manual/samples.html">Manual</a></li><li class="breadcrumb-item"><a href="../manual/samples.html"><span class="chapter-title">Empirical Bayes samples</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Empirikos</h1>
+<h1 class="title"><span class="chapter-title">Empirical Bayes samples</span></h1>
 </div>
 
 
@@ -313,74 +266,243 @@ window.Quarto = {
 </header>
 
 
-<blockquote class="blockquote">
-<p>ἐμπειρικός: “experienced” in ancient Greek, etymology of empirical</p>
-</blockquote>
-<p><strong>Empirical Bayes estimation and inference in Julia.</strong></p>
-<p>Consider <span class="math inline">\(n\)</span> independent samples <span class="math inline">\(Z_i\)</span> drawn from the following hierarchical model <span class="math display">\[
-\mu_i \sim G, \ \ Z_i \sim p_i(\cdot \mid \mu_i).
-\]</span> Here <span class="math inline">\(G\)</span> is the unknown prior (effect size distribution) and <span class="math inline">\(p_i(\cdot \mid \mu_i),i=1,\dotsc,n\)</span> are known likelihood functions.</p>
-<p>This package provides a unified framework for estimation and inference under the above setting, which is known as the empirical Bayes problem <span class="citation" data-cites="robbins1956empirical">(<a href="#ref-robbins1956empirical" role="doc-biblioref">Robbins 1956</a>)</span>.</p>
-<section id="installation" class="level2">
-<h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>The package is available from the Julia registry. It may be installed on Julia version 1.10 as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">add</span>(<span class="st">"Empirikos"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is <a href="https://jump.dev/JuMP.jl/dev/installation/#Supported-solvers">supported by JuMP.jl</a>. We recommend using the <a href="https://www.mosek.com/">MOSEK</a> solver through the <a href="https://github.com/jump-dev/MosekTools.jl">MosekTools.jl</a> package. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is <a href="https://github.com/chriscoey/Hypatia.jl">Hypatia.jl</a>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<p>The design choice of this package, is that each sample is wrapped in a type that represents its likelihood. This works well, since in the empirical Bayes problem, we typically impose (simple) assumptions on the distribution of <span class="math inline">\(Z_i \mid \mu_i\)</span> and complexity emerges from making compound or nonparametric assumptions on the <span class="math inline">\(\mu_i\)</span> and sharing information across <span class="math inline">\(i\)</span>. The main advantage is that it then makes it easy to add new likelihoods and have it automatically integrate with the rest of the package (say the nonparametric maximum likelihood estimator) through Julia’s multiple dispatch.</p>
+<p>The abstract type is</p>
+<section id="ebayessample" class="level2">
+<h2 class="anchored" data-anchor-id="ebayessample"><code>EBayesSample</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Modularity
+<div class="callout-body-container">
+<pre><code>EBayesSample{T}</code></pre>
+<p>Abstract type representing empirical Bayes samples with realizations of type <code>T</code>.</p>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This package has been designed with the goal of modularity. Specialized code (using Julia’s multiple dispatch) can be easily added to more efficiently handle different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently or is slow).</p>
 </div>
 </div>
 </section>
-<section id="related-packages" class="level2">
-<h2 class="anchored" data-anchor-id="related-packages">Related packages</h2>
-<section id="in-r" class="level3">
-<h3 class="anchored" data-anchor-id="in-r">In R:</h3>
+<section id="example-standardnormalsample" class="level2">
+<h2 class="anchored" data-anchor-id="example-standardnormalsample">Example: StandardNormalSample</h2>
+<p>We explain the interface in the most well-studied empirical Bayes setting, namely the Gaussian compound decision problem wherein <span class="math inline">\(Z_i \mid \mu_i \sim \mathcal{N}(\mu_i,1)\)</span>. Such a sample is represented through the <code>StandardNormalSample</code> type:</p>
+</section>
+<section id="standardnormalsample" class="level2">
+<h2 class="anchored" data-anchor-id="standardnormalsample"><code>StandardNormalSample</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>StandardNormalSample(Z)</code></pre>
+<p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Normal distribution with known variance <span class="math inline">\(\sigma^2 =1\)</span>.</p>
+<p><span class="math display">\[
+Z \sim \mathcal{N}(\mu, 1)
+\]</span></p>
+<p><span class="math inline">\(\mu\)</span> is assumed unknown. The type above is used when the sample <span class="math inline">\(Z\)</span> is to be used for estimation or inference of <span class="math inline">\(\mu\)</span>.</p>
+<pre class="jldoctest"><code>julia&gt; StandardNormalSample(0.5)          #Z=0.5
+N(0.5; μ, σ=1.0)</code></pre>
+</div>
+</div>
+</div>
+<p>The type can be used in three ways. First, say we observe <span class="math inline">\(Z_i=1.0\)</span>, then we reprent that as <code>Z = StandardNormalSample(1.0)</code>. A more advanced functionality consists of <code>StandardNormalSample(missing)</code>, which represents the random variable <span class="math inline">\(Z_i\)</span> without having observed its realization yet.</p>
+</section>
+<section id="interface" class="level2">
+<h2 class="anchored" data-anchor-id="interface">Interface</h2>
+<p>The main interface functions are the following:</p>
+</section>
+<section id="likelihood_distribution" class="level2">
+<h2 class="anchored" data-anchor-id="likelihood_distribution"><code>likelihood_distribution</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>likelihood_distribution(Z::EBayesSample, μ::Number)</code></pre>
+<p>Returns the distribution <span class="math inline">\(p(\cdot \mid \mu)\)</span> of <span class="math inline">\(Z \mid \mu\)</span> (the return type being a <code>Distributions.jl</code> Distribution).</p>
+<section id="examples" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples">Examples</h3>
+<pre class="jldoctest"><code>julia&gt; likelihood_distribution(StandardNormalSample(1.0), 2.0)
+Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="response" class="level2">
+<h2 class="anchored" data-anchor-id="response"><code>response</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>response(model::RegressionModel)</code></pre>
+<p>Return the model response (a.k.a. the dependent variable).</p>
+<pre><code>response(Z::EBayesSample{T})</code></pre>
+<p>Returns the concrete realization of <code>Z</code> as type <code>T</code>, thus dropping the information about the likelihood.</p>
+<section id="examples-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples-1">Examples</h3>
+<pre class="jldoctest"><code>julia&gt; response(StandardNormalSample(1.0))
+1.0</code></pre>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="marginalize" class="level2">
+<h2 class="anchored" data-anchor-id="marginalize"><code>marginalize</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>marginalize(Z::EBayesSample, prior::Distribution)</code></pre>
+<p>Given a <code>prior</code> distribution <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, return that marginal distribution of <span class="math inline">\(Z\)</span>. Works for `EBayesSample{Missing}``, i.e., no realization is needed.</p>
+<section id="examples-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples-2">Examples</h3>
+<p>`jldoctest julia&gt; marginalize(StandardNormalSample(1.0), Normal(2.0, sqrt(3))) Normal{Float64}(μ=2.0, σ=1.9999999999999998)``</p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="pdf" class="level2">
+<h2 class="anchored" data-anchor-id="pdf"><code>pdf</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>pdf(d::Distribution{ArrayLikeVariate{N}}, x::AbstractArray{&lt;:Real,N}) where {N}</code></pre>
+<p>Evaluate the probability density function of <code>d</code> at <code>x</code>.</p>
+<p>This function checks if the size of <code>x</code> is compatible with distribution <code>d</code>. This check can be disabled by using <code>@inbounds</code>.</p>
+<section id="implementation" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="implementation">Implementation</h3>
+<p>Instead of <code>pdf</code> one should implement <code>_pdf(d, x)</code> which does not have to check the size of <code>x</code>. However, since the default definition of <code>pdf(d, x)</code> falls back to <code>logpdf(d, x)</code> usually it is sufficient to implement <code>logpdf</code>.</p>
+<p>See also: <a href="#logpdf"><code>logpdf</code></a>.</p>
+<pre><code>pdf(d::Distribution{ArrayLikeVariate{N}}, x) where {N}</code></pre>
+<p>Evaluate the probability density function of <code>d</code> at every element in a collection <code>x</code>.</p>
+<p>This function checks for every element of <code>x</code> if its size is compatible with distribution <code>d</code>. This check can be disabled by using <code>@inbounds</code>.</p>
+<p>Here, <code>x</code> can be</p>
 <ul>
-<li><a href="https://cran.r-project.org/web/packages/REBayes/index.html">REBayes</a> <span class="citation" data-cites="koenker2017rebayes">(<a href="#ref-koenker2017rebayes" role="doc-biblioref">Koenker and Gu 2017</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/ashr/index.html">Ashr</a> <span class="citation" data-cites="stephens2016false">(<a href="#ref-stephens2016false" role="doc-biblioref">Stephens 2016</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/deconvolveR/index.html">DeconvolveR</a> <span class="citation" data-cites="narasimhan2020deconvolver">(<a href="#ref-narasimhan2020deconvolver" role="doc-biblioref">Narasimhan and Efron 2020</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/EbayesThresh/index.html">EbayesThresh</a> <span class="citation" data-cites="johnstone2005ebayesthresh">(<a href="#ref-johnstone2005ebayesthresh" role="doc-biblioref">Johnstone and Silverman 2005</a>)</span></li>
+<li>an array of dimension <code>&gt; N</code> with <code>size(x)[1:N] == size(d)</code>, or</li>
+<li>an array of arrays <code>xi</code> of dimension <code>N</code> with <code>size(xi) == size(d)</code>.</li>
 </ul>
+<pre><code>pdf(d::UnivariateDistribution, x::Real)</code></pre>
+<p>Evaluate the probability density (mass) at <code>x</code>.</p>
+<p>See also: <a href="#logpdf"><code>logpdf</code></a>.</p>
+<pre><code>pdf(d::Union{UnivariateMixture, MultivariateMixture}, x)</code></pre>
+<p>Evaluate the (mixed) probability density function over <code>x</code>. Here, <code>x</code> can be a single sample or an array of multiple samples.</p>
+<pre><code>pdf(prior::Distribution, Z::EBayesSample)</code></pre>
+<p>Given a <code>prior</code> <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, compute the marginal density of <code>Z</code>.</p>
 </section>
-<section id="in-julia" class="level3">
-<h3 class="anchored" data-anchor-id="in-julia">In Julia:</h3>
-<ul>
-<li><a href="https://github.com/nignatiadis/Aurora.jl">Aurora.jl</a></li>
-</ul>
+<section id="examples-3" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="examples-3">Examples</h3>
+<pre class="jldoctest"><code>julia&gt; Z = StandardNormalSample(1.0)
+N(1.0; μ, σ=1.0)
+julia&gt; prior = Normal(2.0, sqrt(3))
+Normal{Float64}(μ=2.0, σ=1.7320508075688772)
+julia&gt; pdf(prior, Z)
+0.17603266338214976
+julia&gt; pdf(Normal(2.0, 2.0), 1.0)
+0.17603266338214976</code></pre>
 </section>
+</div>
+</div>
+</div>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<pre class="@bibliography"><code></code></pre>
+<section id="cdf" class="level2">
+<h2 class="anchored" data-anchor-id="cdf"><code>cdf</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>cdf(d::UnivariateDistribution, x::Real)</code></pre>
+<p>Evaluate the cumulative probability at <code>x</code>.</p>
+<p>See also <a href="#ccdf"><code>ccdf</code></a>, <a href="#logcdf"><code>logcdf</code></a>, and <a href="#logccdf"><code>logccdf</code></a>.</p>
+<pre><code>cdf(d::Skellam, t::Real)</code></pre>
+<p>Implementation based on SciPy: https://github.com/scipy/scipy/blob/v0.15.1/scipy/stats/<em>discrete</em>distns.py</p>
+<p>Refer to Eqn (5) in On an Extension of the Connexion Between Poisson and χ2 Distributions, N.L Johnson(1959) Vol 46, No 3/4, doi:10.2307/2333532 It relates the Skellam and Non-central chisquare PDFs, which is very similar to their CDFs computation as well.</p>
+<p>Computing cdf of the Skellam distribution.</p>
+<pre><code>cdf(prior::Distribution, Z::EBayesSample)</code></pre>
+<p>Given a <code>prior</code> <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, evaluate the CDF of the marginal distribution of <span class="math inline">\(Z\)</span> at <code>response(Z)</code>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="other-implemented-ebayessample-types" class="level2">
+<h2 class="anchored" data-anchor-id="other-implemented-ebayessample-types">Other implemented EBayesSample types</h2>
+<p>Currently, the following samples have been implemented.</p>
+</section>
+<section id="normalsample" class="level2">
+<h2 class="anchored" data-anchor-id="normalsample"><code>NormalSample</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>NormalSample(Z,σ)</code></pre>
+<p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Normal distribution with known variance <span class="math inline">\(\sigma^2 &gt; 0\)</span>.</p>
+<p><span class="math display">\[
+Z \sim \mathcal{N}(\mu, \sigma^2)
+\]</span></p>
+<p><span class="math inline">\(\mu\)</span> is assumed unknown. The type above is used when the sample <span class="math inline">\(Z\)</span> is to be used for estimation or inference of <span class="math inline">\(\mu\)</span>.</p>
+<pre class="jldoctest"><code>julia&gt; NormalSample(0.5, 1.0)          #Z=0.5, σ=1
+N(0.5; μ, σ=1.0)</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="binomialsample" class="level2">
+<h2 class="anchored" data-anchor-id="binomialsample"><code>BinomialSample</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>BinomialSample(Z, n)</code></pre>
+<p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Binomial distribution with <code>n</code> trials.</p>
+<p><span class="math display">\[
+Z \sim \text{Binomial}(n, p)
+\]</span></p>
+<p><span class="math inline">\(p\)</span> is assumed unknown. The type above is used when the sample <span class="math inline">\(Z\)</span> is to be used for estimation or inference of <span class="math inline">\(p\)</span>.</p>
+<pre class="jldoctest"><code>julia&gt; BinomialSample(2, 10)          # 2 out of 10 trials successful
+ℬ𝒾𝓃(2; p, n=10)</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="poissonsample" class="level2">
+<h2 class="anchored" data-anchor-id="poissonsample"><code>PoissonSample</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>PoissonSample(Z, E)</code></pre>
+<p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Poisson distribution,</p>
+<p><span class="math display">\[
+Z \sim \text{Poisson}(\mu \cdot E).
+\]</span></p>
+<p>The multiplying intensity <span class="math inline">\(E\)</span> is assumed to be known (and equal to <code>1.0</code> by default), while <span class="math inline">\(\mu\)</span> is assumed unknown. The type above is used when the sample <span class="math inline">\(Z\)</span> is to be used for estimation or inference of <span class="math inline">\(\mu\)</span>.</p>
+<pre class="jldoctest"><code>julia&gt; PoissonSample(3)
+𝒫ℴ𝒾(3; μ)
+julia&gt; PoissonSample(3, 1.5)
+𝒫ℴ𝒾(3; μ⋅1.5)</code></pre>
+</div>
+</div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-johnstone2005ebayesthresh" class="csl-entry" role="listitem">
-Johnstone, Iain M, and Bernard W Silverman. 2005. <span>“EbayesThresh: R and s-Plus Programs for Empirical Bayes Thresholding.”</span> <em>Journal of Statistical Software</em> 12: 1–38.
-</div>
-<div id="ref-koenker2017rebayes" class="csl-entry" role="listitem">
-Koenker, Roger, and Jiaying Gu. 2017. <span>“REBayes: Empirical Bayes Mixture Methods in r.”</span> <em>Journal of Statistical Software</em> 82 (8): 1–26.
-</div>
-<div id="ref-narasimhan2020deconvolver" class="csl-entry" role="listitem">
-Narasimhan, Balasubramanian, and Bradley Efron. 2020. <span>“deconvolveR: A g-Modeling Program for Deconvolution and Empirical Bayes Estimation.”</span> <em>Journal of Statistical Software</em> 94 (1): 1–20.
-</div>
-<div id="ref-robbins1956empirical" class="csl-entry" role="listitem">
-Robbins, Herbert. 1956. <span>“An Empirical Bayes Approach to Statistics.”</span> <em>Proceedings of the Third Berkeley Symposium on Mathematical Statistics and Probability, Volume 1: Contributions to the Theory of Statistics</em>.
-</div>
-<div id="ref-stephens2016false" class="csl-entry" role="listitem">
-Stephens, Matthew. 2016. <span>“False Discovery Rates: A New Deal.”</span> <em>Biostatistics</em> 18 (2): 275–94.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -947,10 +1069,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../index.html" class="pagination-link" aria-label="Overview">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Overview</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./manual/samples.html" class="pagination-link" aria-label="Empirical Bayes samples">
-        <span class="nav-page-text"><span class="chapter-title">Empirical Bayes samples</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../manual/estimation.html" class="pagination-link" aria-label="Prior Estimation">
+        <span class="nav-page-text"><span class="chapter-title">Prior Estimation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

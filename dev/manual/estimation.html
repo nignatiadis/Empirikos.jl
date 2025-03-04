@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Empirikos</title>
+<title>Prior Estimation – Empirikos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,48 +54,29 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./manual/samples.html" rel="next">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../manual/intervals.html" rel="next">
+<link href="../manual/samples.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -153,11 +134,11 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="_static/style.css">
-<meta property="og:title" content="Empirikos">
+<link rel="stylesheet" href="../_static/style.css">
+<meta property="og:title" content="Prior Estimation – Empirikos">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Empirikos">
-<meta name="twitter:title" content="Empirikos">
+<meta name="twitter:title" content="Prior Estimation – Empirikos">
 <meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
@@ -169,7 +150,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
   </div>
@@ -184,7 +165,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-title">Overview</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../manual/samples.html">Manual</a></li><li class="breadcrumb-item"><a href="../manual/estimation.html"><span class="chapter-title">Prior Estimation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -206,7 +187,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Overview</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -220,32 +201,32 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
+  <a href="../manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
+  <a href="../manual/estimation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Prior Estimation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
+  <a href="../manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
+  <a href="../manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
+  <a href="../manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
+  <a href="../manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
   </div>
 </li>
       </ul>
@@ -261,12 +242,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
+  <a href="../vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
+  <a href="../vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
   </div>
 </li>
       </ul>
@@ -281,22 +262,25 @@ window.Quarto = {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a></li>
-  <li><a href="#related-packages" id="toc-related-packages" class="nav-link" data-scroll-target="#related-packages">Related packages</a>
+  <li><a href="#ebayesmethod" id="toc-ebayesmethod" class="nav-link active" data-scroll-target="#ebayesmethod"><code>EBayesMethod</code></a></li>
+  <li><a href="#nonparametric-estimation" id="toc-nonparametric-estimation" class="nav-link" data-scroll-target="#nonparametric-estimation">Nonparametric estimation</a>
   <ul class="collapse">
-  <li><a href="#in-r" id="toc-in-r" class="nav-link" data-scroll-target="#in-r">In R:</a></li>
-  <li><a href="#in-julia" id="toc-in-julia" class="nav-link" data-scroll-target="#in-julia">In Julia:</a></li>
+  <li><a href="#nonparametric-maximum-likelihood-estimation-npmle" id="toc-nonparametric-maximum-likelihood-estimation-npmle" class="nav-link" data-scroll-target="#nonparametric-maximum-likelihood-estimation-npmle">Nonparametric Maximum Likelihood estimation (NPMLE)</a></li>
   </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#npmle" id="toc-npmle" class="nav-link" data-scroll-target="#npmle"><code>NPMLE</code></a>
+  <ul class="collapse">
+  <li><a href="#other-available-nonparametric-methods" id="toc-other-available-nonparametric-methods" class="nav-link" data-scroll-target="#other-available-nonparametric-methods">Other available nonparametric methods</a></li>
+  </ul></li>
+  <li><a href="#kolmogorovsmirnovminimumdistance" id="toc-kolmogorovsmirnovminimumdistance" class="nav-link" data-scroll-target="#kolmogorovsmirnovminimumdistance"><code>KolmogorovSmirnovMinimumDistance</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../manual/samples.html">Manual</a></li><li class="breadcrumb-item"><a href="../manual/estimation.html"><span class="chapter-title">Prior Estimation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Empirikos</h1>
+<h1 class="title"><span class="chapter-title">Prior Estimation</span></h1>
 </div>
 
 
@@ -313,74 +297,80 @@ window.Quarto = {
 </header>
 
 
-<blockquote class="blockquote">
-<p>ἐμπειρικός: “experienced” in ancient Greek, etymology of empirical</p>
-</blockquote>
-<p><strong>Empirical Bayes estimation and inference in Julia.</strong></p>
-<p>Consider <span class="math inline">\(n\)</span> independent samples <span class="math inline">\(Z_i\)</span> drawn from the following hierarchical model <span class="math display">\[
-\mu_i \sim G, \ \ Z_i \sim p_i(\cdot \mid \mu_i).
-\]</span> Here <span class="math inline">\(G\)</span> is the unknown prior (effect size distribution) and <span class="math inline">\(p_i(\cdot \mid \mu_i),i=1,\dotsc,n\)</span> are known likelihood functions.</p>
-<p>This package provides a unified framework for estimation and inference under the above setting, which is known as the empirical Bayes problem <span class="citation" data-cites="robbins1956empirical">(<a href="#ref-robbins1956empirical" role="doc-biblioref">Robbins 1956</a>)</span>.</p>
-<section id="installation" class="level2">
-<h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>The package is available from the Julia registry. It may be installed on Julia version 1.10 as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">add</span>(<span class="st">"Empirikos"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is <a href="https://jump.dev/JuMP.jl/dev/installation/#Supported-solvers">supported by JuMP.jl</a>. We recommend using the <a href="https://www.mosek.com/">MOSEK</a> solver through the <a href="https://github.com/jump-dev/MosekTools.jl">MosekTools.jl</a> package. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is <a href="https://github.com/chriscoey/Hypatia.jl">Hypatia.jl</a>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<section id="ebayesmethod" class="level2">
+<h2 class="anchored" data-anchor-id="ebayesmethod"><code>EBayesMethod</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Modularity
+<div class="callout-body-container">
+<p>Abstract type representing empirical Bayes estimation methods.</p>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This package has been designed with the goal of modularity. Specialized code (using Julia’s multiple dispatch) can be easily added to more efficiently handle different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently or is slow).</p>
 </div>
 </div>
 </section>
-<section id="related-packages" class="level2">
-<h2 class="anchored" data-anchor-id="related-packages">Related packages</h2>
-<section id="in-r" class="level3">
-<h3 class="anchored" data-anchor-id="in-r">In R:</h3>
-<ul>
-<li><a href="https://cran.r-project.org/web/packages/REBayes/index.html">REBayes</a> <span class="citation" data-cites="koenker2017rebayes">(<a href="#ref-koenker2017rebayes" role="doc-biblioref">Koenker and Gu 2017</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/ashr/index.html">Ashr</a> <span class="citation" data-cites="stephens2016false">(<a href="#ref-stephens2016false" role="doc-biblioref">Stephens 2016</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/deconvolveR/index.html">DeconvolveR</a> <span class="citation" data-cites="narasimhan2020deconvolver">(<a href="#ref-narasimhan2020deconvolver" role="doc-biblioref">Narasimhan and Efron 2020</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/EbayesThresh/index.html">EbayesThresh</a> <span class="citation" data-cites="johnstone2005ebayesthresh">(<a href="#ref-johnstone2005ebayesthresh" role="doc-biblioref">Johnstone and Silverman 2005</a>)</span></li>
-</ul>
-</section>
-<section id="in-julia" class="level3">
-<h3 class="anchored" data-anchor-id="in-julia">In Julia:</h3>
-<ul>
-<li><a href="https://github.com/nignatiadis/Aurora.jl">Aurora.jl</a></li>
-</ul>
+<section id="nonparametric-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="nonparametric-estimation">Nonparametric estimation</h2>
+<p>The typical call for estimating the prior <span class="math inline">\(G\)</span> based on empirical Bayes samples <code>Zs</code> is the following,</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>StatsBase.<span class="fu">fit</span>(method, Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Above, <code>method</code> is a type that specifies both the assumptions made on <span class="math inline">\(G\)</span> (say, the convex prior class <span class="math inline">\(\mathcal{G}\)</span> in which <span class="math inline">\(G\)</span> lies), as well as details concerning the computation (typically a <a href="https://jump.dev/JuMP.jl/v0.21.6/installation/#Supported-solvers">JuMP.jl</a> compatible convex programming solver).</p>
+<section id="nonparametric-maximum-likelihood-estimation-npmle" class="level3">
+<h3 class="anchored" data-anchor-id="nonparametric-maximum-likelihood-estimation-npmle">Nonparametric Maximum Likelihood estimation (NPMLE)</h3>
+<p>For example, let us consider the nonparametric maximum likelihood estimator:</p>
 </section>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<pre class="@bibliography"><code></code></pre>
+<section id="npmle" class="level2">
+<h2 class="anchored" data-anchor-id="npmle"><code>NPMLE</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>NPMLE(convexclass, solver) &lt;: Empirikos.EBayesMethod</code></pre>
+<p>Given <span class="math inline">\(n\)</span> independent samples <span class="math inline">\(Z_i\)</span> from the empirical Bayes problem with prior <span class="math inline">\(G\)</span> known to lie in the <code>convexclass</code> <span class="math inline">\(\mathcal{G}\)</span>, estimate <span class="math inline">\(G\)</span> by Nonparametric Maximum Likelihood (NPMLE)</p>
+<p><span class="math display">\[
+\widehat{G}_n \in \operatorname{argmax}_{G \in \mathcal{G}}\left\{\sum_{i=1}^n \log( f_{i,G}(Z_i)) \right\},
+\]</span></p>
+<p>where <span class="math inline">\(f_{i,G}(z) = \int p_i(z \mid \mu) dG(\mu)\)</span> is the marginal density of the <span class="math inline">\(i\)</span>-th sample. The optimization is conducted by a JuMP compatible <code>solver</code>.</p>
+</div>
+</div>
+</div>
+<p>Suppose we have Poisson samples <code>Zs</code>, each with a different mean <span class="math inline">\(\mu_i\)</span> drawn from <span class="math inline">\(G=U[1,5]\)</span>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">1000</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>μs <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">Uniform</span>(<span class="fl">1</span>,<span class="fl">5</span>), n)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>Zs <span class="op">=</span> <span class="fu">PoissonSample</span>.(<span class="fu">rand</span>.(<span class="fu">Poisson</span>.(μs)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can then estimate <span class="math inline">\(G\)</span> as follows using Mosek:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">MosekTools</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>g_hat <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Mosek.Optimizer), Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Or we can use the open-source <a href="https://github.com/chriscoey/Hypatia.jl">Hypatia.jl</a> solver:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Hypatia</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>g_hat <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="other-available-nonparametric-methods" class="level3">
+<h3 class="anchored" data-anchor-id="other-available-nonparametric-methods">Other available nonparametric methods</h3>
+</section>
+</section>
+<section id="kolmogorovsmirnovminimumdistance" class="level2">
+<h2 class="anchored" data-anchor-id="kolmogorovsmirnovminimumdistance"><code>KolmogorovSmirnovMinimumDistance</code></h2>
+<div class="callout callout-style-simple callout-none no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<pre><code>KolmogorovSmirnovMinimumDistance(convexclass, solver) &lt;: Empirikos.EBayesMethod</code></pre>
+<p>Given <span class="math inline">\(n\)</span> i.i.d. samples from the empirical Bayes problem with prior <span class="math inline">\(G\)</span> known to lie in the <code>convexclass</code> <span class="math inline">\(\mathcal{G}\)</span> , estimate <span class="math inline">\(G\)</span> as follows:</p>
+<p><span class="math display">\[
+\widehat{G}_n \in \operatorname{argmin}_{G \in \mathcal{G}}\{\sup_{t \in \mathbb R}\lvert F_G(t) - \widehat{F}_n(t)\rvert\},
+\]</span></p>
+<p>where <span class="math inline">\(\widehat{F}_n\)</span> is the ECDF of the samples. The optimization is conducted by a JuMP compatible <code>solver</code>.</p>
+</div>
+</div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-johnstone2005ebayesthresh" class="csl-entry" role="listitem">
-Johnstone, Iain M, and Bernard W Silverman. 2005. <span>“EbayesThresh: R and s-Plus Programs for Empirical Bayes Thresholding.”</span> <em>Journal of Statistical Software</em> 12: 1–38.
-</div>
-<div id="ref-koenker2017rebayes" class="csl-entry" role="listitem">
-Koenker, Roger, and Jiaying Gu. 2017. <span>“REBayes: Empirical Bayes Mixture Methods in r.”</span> <em>Journal of Statistical Software</em> 82 (8): 1–26.
-</div>
-<div id="ref-narasimhan2020deconvolver" class="csl-entry" role="listitem">
-Narasimhan, Balasubramanian, and Bradley Efron. 2020. <span>“deconvolveR: A g-Modeling Program for Deconvolution and Empirical Bayes Estimation.”</span> <em>Journal of Statistical Software</em> 94 (1): 1–20.
-</div>
-<div id="ref-robbins1956empirical" class="csl-entry" role="listitem">
-Robbins, Herbert. 1956. <span>“An Empirical Bayes Approach to Statistics.”</span> <em>Proceedings of the Third Berkeley Symposium on Mathematical Statistics and Probability, Volume 1: Contributions to the Theory of Statistics</em>.
-</div>
-<div id="ref-stephens2016false" class="csl-entry" role="listitem">
-Stephens, Matthew. 2016. <span>“False Discovery Rates: A New Deal.”</span> <em>Biostatistics</em> 18 (2): 275–94.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -947,10 +937,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../manual/samples.html" class="pagination-link" aria-label="Empirical Bayes samples">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Empirical Bayes samples</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./manual/samples.html" class="pagination-link" aria-label="Empirical Bayes samples">
-        <span class="nav-page-text"><span class="chapter-title">Empirical Bayes samples</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../manual/intervals.html" class="pagination-link" aria-label="Confidence intervals">
+        <span class="nav-page-text"><span class="chapter-title">Confidence intervals</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Empirikos</title>
+<title>Identifying genes associated with prostate cancer – Empirikos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,48 +54,28 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./manual/samples.html" rel="next">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../vignettes/REBayes.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1c8cb474ebb30bc98f377e11c5e284f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a3da9a6eb239c902531f058baee3ee8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -123,42 +103,13 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="_static/style.css">
-<meta property="og:title" content="Empirikos">
-<meta property="og:description" content="">
+<link rel="stylesheet" href="../_static/style.css">
+<meta property="og:title" content="Identifying genes associated with prostate cancer – Empirikos">
+<meta property="og:description" content="F-localization interval analysis">
 <meta property="og:site_name" content="Empirikos">
-<meta name="twitter:title" content="Empirikos">
-<meta name="twitter:description" content="">
+<meta name="twitter:title" content="Identifying genes associated with prostate cancer – Empirikos">
+<meta name="twitter:description" content="F-localization interval analysis">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -169,7 +120,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
   </div>
@@ -184,7 +135,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-title">Overview</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/REBayes.html">Vignettes</a></li><li class="breadcrumb-item"><a href="../vignettes/prostate.html"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -206,7 +157,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Overview</span></a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -220,32 +171,32 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
+  <a href="../manual/samples.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirical Bayes samples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
+  <a href="../manual/estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Prior Estimation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
+  <a href="../manual/intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Confidence intervals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
+  <a href="../manual/estimands.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimands</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
+  <a href="../manual/convexpriors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Convex prior classes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
+  <a href="../manual/flocalizations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">F-Localizations</span></a>
   </div>
 </li>
       </ul>
@@ -261,12 +212,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
+  <a href="../vignettes/REBayes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/prostate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
+  <a href="../vignettes/prostate.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a>
   </div>
 </li>
       </ul>
@@ -281,22 +232,28 @@ window.Quarto = {
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a></li>
-  <li><a href="#related-packages" id="toc-related-packages" class="nav-link" data-scroll-target="#related-packages">Related packages</a>
+  <li><a href="#setup-and-data-loading" id="toc-setup-and-data-loading" class="nav-link active" data-scroll-target="#setup-and-data-loading">Setup and data loading</a></li>
+  <li><a href="#marginal-distribution-of-z-scores" id="toc-marginal-distribution-of-z-scores" class="nav-link" data-scroll-target="#marginal-distribution-of-z-scores">Marginal distribution of z-scores</a>
   <ul class="collapse">
-  <li><a href="#in-r" id="toc-in-r" class="nav-link" data-scroll-target="#in-r">In R:</a></li>
-  <li><a href="#in-julia" id="toc-in-julia" class="nav-link" data-scroll-target="#in-julia">In Julia:</a></li>
+  <li><a href="#dkw-f-localization" id="toc-dkw-f-localization" class="nav-link" data-scroll-target="#dkw-f-localization">DKW-F-Localization</a></li>
+  <li><a href="#kde-f-localization" id="toc-kde-f-localization" class="nav-link" data-scroll-target="#kde-f-localization">KDE-F-Localization</a></li>
   </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals">Confidence intervals</a>
+  <ul class="collapse">
+  <li><a href="#f-localization-methods-setup" id="toc-f-localization-methods-setup" class="nav-link" data-scroll-target="#f-localization-methods-setup">F-Localization methods setup</a></li>
+  <li><a href="#compute-confidence-intervals" id="toc-compute-confidence-intervals" class="nav-link" data-scroll-target="#compute-confidence-intervals">Compute confidence intervals</a></li>
+  <li><a href="#visualize-confidence-intervals-for-scale-mixture-priors" id="toc-visualize-confidence-intervals-for-scale-mixture-priors" class="nav-link" data-scroll-target="#visualize-confidence-intervals-for-scale-mixture-priors">Visualize confidence intervals for scale mixture priors</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/REBayes.html">Vignettes</a></li><li class="breadcrumb-item"><a href="../vignettes/prostate.html"><span class="chapter-title">Identifying genes associated with prostate cancer</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Empirikos</h1>
+<h1 class="title"><span class="chapter-title">Identifying genes associated with prostate cancer</span></h1>
+<p class="subtitle lead">F-localization interval analysis</p>
 </div>
 
 
@@ -313,74 +270,206 @@ window.Quarto = {
 </header>
 
 
-<blockquote class="blockquote">
-<p>ἐμπειρικός: “experienced” in ancient Greek, etymology of empirical</p>
-</blockquote>
-<p><strong>Empirical Bayes estimation and inference in Julia.</strong></p>
-<p>Consider <span class="math inline">\(n\)</span> independent samples <span class="math inline">\(Z_i\)</span> drawn from the following hierarchical model <span class="math display">\[
-\mu_i \sim G, \ \ Z_i \sim p_i(\cdot \mid \mu_i).
-\]</span> Here <span class="math inline">\(G\)</span> is the unknown prior (effect size distribution) and <span class="math inline">\(p_i(\cdot \mid \mu_i),i=1,\dotsc,n\)</span> are known likelihood functions.</p>
-<p>This package provides a unified framework for estimation and inference under the above setting, which is known as the empirical Bayes problem <span class="citation" data-cites="robbins1956empirical">(<a href="#ref-robbins1956empirical" role="doc-biblioref">Robbins 1956</a>)</span>.</p>
-<section id="installation" class="level2">
-<h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>The package is available from the Julia registry. It may be installed on Julia version 1.10 as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">add</span>(<span class="st">"Empirikos"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>For some of its functionality, this package requires a convex programming solver. The requirement for such a solver is that it can solve second order conic programs (SOCP), that it returns the dual variables associated with the SOCP constraints and that it is <a href="https://jump.dev/JuMP.jl/dev/installation/#Supported-solvers">supported by JuMP.jl</a>. We recommend using the <a href="https://www.mosek.com/">MOSEK</a> solver through the <a href="https://github.com/jump-dev/MosekTools.jl">MosekTools.jl</a> package. MOSEK is a commercial solver, but provides free academic licenses. An open-source alternative is <a href="https://github.com/chriscoey/Hypatia.jl">Hypatia.jl</a>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<section id="setup-and-data-loading" class="level2">
+<h2 class="anchored" data-anchor-id="setup-and-data-loading">Setup and data loading</h2>
+<div id="7f7fb990" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Empirikos</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Hypatia</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">PGFPlotsX</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LaTeXStrings</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">IntervalSets</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">JuMP</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up pgfplotsx and custom preamble</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">pgfplotsx</span>()</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">empty!</span>(PGFPlotsX.CUSTOM_PREAMBLE)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">push!</span>(PGFPlotsX.CUSTOM_PREAMBLE, <span class="st">raw"\usepackage{amssymb}"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">push!</span>(PGFPlotsX.CUSTOM_PREAMBLE, <span class="st">raw"\newcommand{\PP}[2][]{\mathbb{P}_{#1}\left[#2\right]}"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">push!</span>(PGFPlotsX.CUSTOM_PREAMBLE, <span class="st">raw"\newcommand{\EE}[2][]{\mathbb{E}_{#1}\left[#2\right]}"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Set plot theme</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="op">:</span>default;</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      background_color_legend <span class="op">=</span> <span class="op">:</span>transparent,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      foreground_color_legend <span class="op">=</span> <span class="op">:</span>transparent,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      grid<span class="op">=</span><span class="cn">nothing</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      frame<span class="op">=:</span>box,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      legendfonthalign <span class="op">=</span> <span class="op">:</span>left,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      thickness_scaling<span class="op">=</span><span class="fl">1.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout-title-container flex-fill">
-Modularity
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This package has been designed with the goal of modularity. Specialized code (using Julia’s multiple dispatch) can be easily added to more efficiently handle different combinations of estimation targets, statistical algorithms, classes of priors and likelihoods. Please open an issue if there is a combination thereof that you would like to use (and which does not work currently or is slow).</p>
+<div id="faa458c7" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the prostate data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Zs <span class="op">=</span> Prostate.<span class="fu">ebayes_samples</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>6033-element Vector{StandardNormalSample{Float64}}:
+ N(1.47236666651029; μ, σ=1.0)
+ N(3.57291516191986; μ, σ=1.0)
+ N(-0.0277536813375331; μ, σ=1.0)
+ N(-1.1320516549926; μ, σ=1.0)
+ N(-0.140220986707002; μ, σ=1.0)
+ N(0.958809840576886; μ, σ=1.0)
+ N(1.0681232949828; μ, σ=1.0)
+ N(-1.2914820655344; μ, σ=1.0)
+ N(-1.22750497688098; μ, σ=1.0)
+ N(1.17605516919472; μ, σ=1.0)
+ N(3.34583078878689; μ, σ=1.0)
+ N(0.188740669060314; μ, σ=1.0)
+ N(-0.851333492603207; μ, σ=1.0)
+ ⋮
+ N(0.55060618889427; μ, σ=1.0)
+ N(0.265461705731843; μ, σ=1.0)
+ N(-1.19340060387477; μ, σ=1.0)
+ N(-1.83473655530782; μ, σ=1.0)
+ N(0.0707678142839226; μ, σ=1.0)
+ N(0.0243971545443552; μ, σ=1.0)
+ N(-0.207896831967974; μ, σ=1.0)
+ N(0.287356609464891; μ, σ=1.0)
+ N(-0.777423419217064; μ, σ=1.0)
+ N(-1.18366655761165; μ, σ=1.0)
+ N(0.103544128661099; μ, σ=1.0)
+ N(-0.909192514625776; μ, σ=1.0)</code></pre>
 </div>
 </div>
 </section>
-<section id="related-packages" class="level2">
-<h2 class="anchored" data-anchor-id="related-packages">Related packages</h2>
-<section id="in-r" class="level3">
-<h3 class="anchored" data-anchor-id="in-r">In R:</h3>
-<ul>
-<li><a href="https://cran.r-project.org/web/packages/REBayes/index.html">REBayes</a> <span class="citation" data-cites="koenker2017rebayes">(<a href="#ref-koenker2017rebayes" role="doc-biblioref">Koenker and Gu 2017</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/ashr/index.html">Ashr</a> <span class="citation" data-cites="stephens2016false">(<a href="#ref-stephens2016false" role="doc-biblioref">Stephens 2016</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/deconvolveR/index.html">DeconvolveR</a> <span class="citation" data-cites="narasimhan2020deconvolver">(<a href="#ref-narasimhan2020deconvolver" role="doc-biblioref">Narasimhan and Efron 2020</a>)</span></li>
-<li><a href="https://cran.r-project.org/web/packages/EbayesThresh/index.html">EbayesThresh</a> <span class="citation" data-cites="johnstone2005ebayesthresh">(<a href="#ref-johnstone2005ebayesthresh" role="doc-biblioref">Johnstone and Silverman 2005</a>)</span></li>
-</ul>
+<section id="marginal-distribution-of-z-scores" class="level2">
+<h2 class="anchored" data-anchor-id="marginal-distribution-of-z-scores">Marginal distribution of z-scores</h2>
+<section id="dkw-f-localization" class="level3">
+<h3 class="anchored" data-anchor-id="dkw-f-localization">DKW-F-Localization</h3>
+<div id="18f2eec9" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the DKW F-Localization</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dkw_floc <span class="op">=</span> <span class="fu">DvoretzkyKieferWolfowitz</span>(<span class="fl">0.05</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fitted_dkw <span class="op">=</span> <span class="fu">fit</span>(dkw_floc, Zs)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the DKW band</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dkw_plot <span class="op">=</span> <span class="fu">plot</span>(fitted_dkw, label<span class="op">=</span><span class="st">"DKW band"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     xlab<span class="op">=</span>L<span class="st">"z"</span>, ylab<span class="op">=</span>L<span class="st">"\widehat{F}_n(z)"</span>,  size<span class="op">=</span>(<span class="fl">380</span>,<span class="fl">280</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+
+</div>
+</div>
 </section>
-<section id="in-julia" class="level3">
-<h3 class="anchored" data-anchor-id="in-julia">In Julia:</h3>
-<ul>
-<li><a href="https://github.com/nignatiadis/Aurora.jl">Aurora.jl</a></li>
-</ul>
+<section id="kde-f-localization" class="level3">
+<h3 class="anchored" data-anchor-id="kde-f-localization">KDE-F-Localization</h3>
+<div id="1486ccd5" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the KDE-based F-Localization</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>infty_floc <span class="op">=</span> Empirikos.<span class="fu">InfinityNormDensityBand</span>(α<span class="op">=</span><span class="fl">0.05</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fitted_infty_floc <span class="op">=</span> <span class="fu">fit</span>(infty_floc, Zs)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the KDE band with histogram</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>prostate_marginal_plot <span class="op">=</span> <span class="fu">histogram</span>([<span class="fu">response</span>(Z) for Z <span class="kw">in</span> Zs],</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    bins<span class="op">=</span><span class="fl">50</span>, normalize<span class="op">=</span><span class="cn">true</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"Histogram"</span>, fillalpha<span class="op">=</span><span class="fl">0.4</span>, linealpha<span class="op">=</span><span class="fl">0.4</span>, fillcolor<span class="op">=:</span>lightgray,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>(<span class="fl">380</span>,<span class="fl">280</span>), xlims<span class="op">=</span>(<span class="op">-</span><span class="fl">4.5</span>,<span class="fl">4.5</span>))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(prostate_marginal_plot, fitted_infty_floc,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      label<span class="op">=</span><span class="st">"KDE band"</span>, xlims<span class="op">=</span>(<span class="op">-</span><span class="fl">4.5</span>,<span class="fl">4.5</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>      yguide<span class="op">=</span>L<span class="st">"\widehat{f}_n(z)"</span>, xguide<span class="op">=</span>L<span class="st">"z"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(prostate_marginal_plot, [fitted_infty_floc.a_min; fitted_infty_floc.a_max], seriestype<span class="op">=:</span>vline,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      linestyle<span class="op">=:</span>dot, label<span class="op">=</span><span class="cn">nothing</span>, color<span class="op">=:</span>lightgrey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+
+</div>
+</div>
 </section>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<pre class="@bibliography"><code></code></pre>
+<section id="confidence-intervals" class="level2">
+<h2 class="anchored" data-anchor-id="confidence-intervals">Confidence intervals</h2>
+<div id="90f34b27" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define prior classes</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>gcal_scalemix <span class="op">=</span> Empirikos.<span class="fu">autoconvexclass</span>(<span class="fu">GaussianScaleMixtureClass</span>(), Zs; <span class="op">:</span>grid_scaling <span class="op">=&gt;</span> <span class="fl">1.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>GaussianScaleMixtureClass | σs = [0.1, 0.11, 0.121, 0.1331, 0.14641, 0.161051, 0.177156, 0.194872, 0.214359, 0.235795  …  4.52593, 4.97852, 5.47637, 6.02401, 6.62641, 7.28905, 8.01795, 8.81975, 9.70172, 10.6719]</code></pre>
+</div>
+</div>
+<section id="f-localization-methods-setup" class="level3">
+<h3 class="anchored" data-anchor-id="f-localization-methods-setup">F-Localization methods setup</h3>
+<div id="12029bb3" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>floc_method_dkw_scalemix <span class="op">=</span> <span class="fu">FLocalizationInterval</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    flocalization <span class="op">=</span> dkw_floc,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    convexclass <span class="op">=</span> gcal_scalemix, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> Hypatia.Optimizer</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>floc_method_kde_scalemix <span class="op">=</span> <span class="fu">FLocalizationInterval</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    flocalization <span class="op">=</span> infty_floc,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    convexclass <span class="op">=</span> gcal_scalemix, </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> Hypatia.Optimizer</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>EB intervals with F-Localization: ∞-density band [α: 0.05] [Kernel: FlatTopKernel | bandwidth = nothing] [Bootstrap: Multinomial(1000)]
+                  𝒢: GaussianScaleMixtureClass | σs = [0.1, 0.11, 0.121, 0.1331, 0.14641, 0.161051, 0.177156, 0.194872, 0.214359, 0.235795  …  4.52593, 4.97852, 5.47637, 6.02401, 6.62641, 7.28905, 8.01795, 8.81975, 9.70172, 10.6719]</code></pre>
+</div>
+</div>
+</section>
+<section id="compute-confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="compute-confidence-intervals">Compute confidence intervals</h3>
+<div id="1f6296d9" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define values for which to compute confidence intervals</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> <span class="op">-</span><span class="fl">3</span><span class="op">:</span><span class="fl">0.25</span><span class="op">:</span><span class="fl">3</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define posterior targets</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>postmean_targets <span class="op">=</span> Empirikos.<span class="fu">PosteriorMean</span>.(<span class="fu">StandardNormalSample</span>.(ts))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>25-element Vector{PosteriorMean{StandardNormalSample{Float64}}}:
+ 𝔼[μ | N(-3.0; μ, σ=1.0)]
+ 𝔼[μ | N(-2.75; μ, σ=1.0)]
+ 𝔼[μ | N(-2.5; μ, σ=1.0)]
+ 𝔼[μ | N(-2.25; μ, σ=1.0)]
+ 𝔼[μ | N(-2.0; μ, σ=1.0)]
+ 𝔼[μ | N(-1.75; μ, σ=1.0)]
+ 𝔼[μ | N(-1.5; μ, σ=1.0)]
+ 𝔼[μ | N(-1.25; μ, σ=1.0)]
+ 𝔼[μ | N(-1.0; μ, σ=1.0)]
+ 𝔼[μ | N(-0.75; μ, σ=1.0)]
+ 𝔼[μ | N(-0.5; μ, σ=1.0)]
+ 𝔼[μ | N(-0.25; μ, σ=1.0)]
+ 𝔼[μ | N(0.0; μ, σ=1.0)]
+ 𝔼[μ | N(0.25; μ, σ=1.0)]
+ 𝔼[μ | N(0.5; μ, σ=1.0)]
+ 𝔼[μ | N(0.75; μ, σ=1.0)]
+ 𝔼[μ | N(1.0; μ, σ=1.0)]
+ 𝔼[μ | N(1.25; μ, σ=1.0)]
+ 𝔼[μ | N(1.5; μ, σ=1.0)]
+ 𝔼[μ | N(1.75; μ, σ=1.0)]
+ 𝔼[μ | N(2.0; μ, σ=1.0)]
+ 𝔼[μ | N(2.25; μ, σ=1.0)]
+ 𝔼[μ | N(2.5; μ, σ=1.0)]
+ 𝔼[μ | N(2.75; μ, σ=1.0)]
+ 𝔼[μ | N(3.0; μ, σ=1.0)]</code></pre>
+</div>
+</div>
+<p>Compute confidence intervals for scale mixture priors</p>
+<div id="e844ae8c" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>postmean_ci_dkw_scalemix <span class="op">=</span> <span class="fu">confint</span>.(floc_method_dkw_scalemix, postmean_targets, Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="880578b2" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>postmean_ci_kde_scalemix <span class="op">=</span> <span class="fu">confint</span>.(floc_method_kde_scalemix, postmean_targets, Zs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualize-confidence-intervals-for-scale-mixture-priors" class="level3">
+<h3 class="anchored" data-anchor-id="visualize-confidence-intervals-for-scale-mixture-priors">Visualize confidence intervals for scale mixture priors</h3>
+<div id="fd929caa" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>postmean_scalemix_plot <span class="op">=</span> <span class="fu">plot</span>(ts, postmean_ci_kde_scalemix,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"Gauss-F-Loc"</span>, fillcolor<span class="op">=:</span>darkorange, fillalpha<span class="op">=</span><span class="fl">0.5</span>, ylim<span class="op">=</span>(<span class="op">-</span><span class="fl">2.55</span>,<span class="fl">2.55</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    xguide <span class="op">=</span> L<span class="st">"z"</span>, yguide<span class="op">=</span>L<span class="st">"\EE{\mu \mid Z=z}"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>(<span class="fl">380</span>,<span class="fl">280</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(postmean_scalemix_plot, ts, postmean_ci_dkw_scalemix,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"DKW-F-Loc"</span>, show_ribbon<span class="op">=</span><span class="cn">false</span>, alpha<span class="op">=</span><span class="fl">0.9</span>, color<span class="op">=:</span>black)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(postmean_scalemix_plot, [<span class="op">-</span><span class="fl">3.0</span>;<span class="fl">3.0</span>], [<span class="op">-</span><span class="fl">3.0</span>; <span class="fl">3.0</span>], seriestype<span class="op">=:</span>line,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    linestyle<span class="op">=:</span>dot, label<span class="op">=</span><span class="cn">nothing</span>, color<span class="op">=:</span>lightgrey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+
+</div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-johnstone2005ebayesthresh" class="csl-entry" role="listitem">
-Johnstone, Iain M, and Bernard W Silverman. 2005. <span>“EbayesThresh: R and s-Plus Programs for Empirical Bayes Thresholding.”</span> <em>Journal of Statistical Software</em> 12: 1–38.
-</div>
-<div id="ref-koenker2017rebayes" class="csl-entry" role="listitem">
-Koenker, Roger, and Jiaying Gu. 2017. <span>“REBayes: Empirical Bayes Mixture Methods in r.”</span> <em>Journal of Statistical Software</em> 82 (8): 1–26.
-</div>
-<div id="ref-narasimhan2020deconvolver" class="csl-entry" role="listitem">
-Narasimhan, Balasubramanian, and Bradley Efron. 2020. <span>“deconvolveR: A g-Modeling Program for Deconvolution and Empirical Bayes Estimation.”</span> <em>Journal of Statistical Software</em> 94 (1): 1–20.
-</div>
-<div id="ref-robbins1956empirical" class="csl-entry" role="listitem">
-Robbins, Herbert. 1956. <span>“An Empirical Bayes Approach to Statistics.”</span> <em>Proceedings of the Third Berkeley Symposium on Mathematical Statistics and Probability, Volume 1: Contributions to the Theory of Statistics</em>.
-</div>
-<div id="ref-stephens2016false" class="csl-entry" role="listitem">
-Stephens, Matthew. 2016. <span>“False Discovery Rates: A New Deal.”</span> <em>Biostatistics</em> 18 (2): 275–94.
-</div>
-</div>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -947,11 +1036,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../vignettes/REBayes.html" class="pagination-link" aria-label="Empirikos.jl: Reproducing REBayes Examples">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Empirikos.jl: Reproducing REBayes Examples</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./manual/samples.html" class="pagination-link" aria-label="Empirical Bayes samples">
-        <span class="nav-page-text"><span class="chapter-title">Empirical Bayes samples</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
