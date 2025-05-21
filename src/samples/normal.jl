@@ -155,3 +155,12 @@ end
 function Base.extrema(density::MarginalDensity{<:AbstractNormalSample{<:Real}})
     (0.0, 1 / sqrt(2π * var(location(density))))
 end
+
+# Marginalize Distributions.AffineDistribution
+
+function marginalize(Z::AbstractNormalSample, prior::Distributions.AffineDistribution)
+    (;μ,σ,ρ) = prior
+    iszero(σ) && throw(ArgumentError("σ must be non-zero"))
+    Zprime = NormalSample(response(Z), std(Z)/σ)
+    μ + σ * marginalize(Zprime, ρ)
+end

@@ -52,6 +52,7 @@ include("samples/truncatedpoisson.jl")
 include("samples/noncentralhypergeometric.jl")
 include("samples/scaledchisquare.jl")
 include("samples/normalchisquare.jl")
+include("samples/noncentral_t.jl")
 include("samples/foldednormal.jl")
 include("samples/truncated.jl")
 include("samples/replicated_sample.jl")
@@ -65,6 +66,7 @@ include("flocalization_intervals.jl")
 include("flocalization_kde.jl")
 include("amari.jl")
 include("empirical_partially_bayes_multiple_testing.jl")
+include("compound_evalues.jl")
 
 
 include("datasets/LordCressie/LordCressie.jl")
@@ -97,6 +99,7 @@ export EBayesSample,
     TruncatedPoissonSample,
     ScaledChiSquareSample,
     NormalChiSquareSample,
+    NoncentralTSample,
     NonCentralHypergeometricSample,
     marginalize,
     compound,
