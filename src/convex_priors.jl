@@ -298,7 +298,7 @@ Type representing a mixture of two types of Gaussians:
 1. Components with means `μs` and fixed standard deviation `std`
 2. Components with mean `0` and standard deviations `σs`
 `GaussianLocationScaleMixtureClass(μs,std, σs)` represents the same class of distributions
-as `MixturePriorClass.(Normal.(0, σs))`
+as `MixturePriorClass(vcat(Normal.(0, σs), Normal.(μs, std)))`
 ```jldoctest
 julia> Glscal = GaussianLocationScaleMixtureClass([1.0,2.0], 0.05, [1,2])
 GaussianLocationScaleMixtureClass | μs = [1.0, 2.0], std = 0.05, σs = [1, 2]
