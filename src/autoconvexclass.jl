@@ -145,15 +145,6 @@ function autoconvexclass(
     Zs::AbstractVector{<:AbstractNormalSample};
     μ_min=nothing, μ_max=nothing, σ_min=nothing, σ_max=nothing, kwargs...
 )
-       #std = (minimum(std.(Zs)) / 10)
-    #end
-    if isnothing(μ_min)
-        μ_min = 0.005
-    end
-
-    if isnothing(μ_max)
-        μ_max = 6
-    end
 
     if isnothing(σ_min)
         σ_min = minimum(std.(Zs))./ 10
