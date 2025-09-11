@@ -262,4 +262,72 @@ BetaMixtureClass() = BetaMixtureClass(nothing, nothing)
 
 components(convexclass::BetaMixtureClass) = Beta.(convexclass.αs, convexclass.βs)
 
+"""
+    UniformScaleMixtureClass(as) <: Empirikos.ConvexPriorClass
+
+Type representing the family of symmetric uniform mixtures with bounds `[-a, a]`.
+`UniformScaleMixtureClass(as)` represents the same class of distributions as
+`MixturePriorClass.(Uniform.(-a, a))` for a in `as`.
+```jldoctest
+julia> ucal = UniformScaleMixtureClass([1.0,2.0])
+UniformScaleMixtureClass | as = [1.0, 2.0]
+
+julia> ucal([0.2,0.8])
+MixtureModel{Uniform{Float64}}(K = 2)
+components[1] (prior = 0.2000): Uniform{Float64}(a=-1.0, b=1.0)
+components[2] (prior = 0.8000): Uniform{Float64}(a=-2.0, b=2.0)
+```    
+"""
+struct UniformScaleMixtureClass{S} <: AbstractMixturePriorClass
+    as::S 
+    end
+
+UniformScaleMixtureClass() = UniformScaleMixtureClass(nothing)
+
+function Base.show(io::IO, ucal::UniformScaleMixtureClass)
+    print(io, "UniformScaleMixtureClass | as = ")
+    show(IOContext(io, :compact => true), ucal.as)
+end
+    
+components(convexclass::UniformScaleMixtureClass) = [Uniform(-a, a) for a in convexclass.as]
+    
+"""
+    GaussianLocationScaleMixtureClass(μs,std, σs) <: Empirikos.ConvexPriorClass
+
+Type representing a mixture of two types of Gaussians:
+1. Components with means `μs` and fixed standard deviation `std`
+2. Components with mean `0` and standard deviations `σs`
+`GaussianLocationScaleMixtureClass(μs,std, σs)` represents the same class of distributions
+as `MixturePriorClass(vcat(Normal.(0, σs), Normal.(μs, std)))`
+```jldoctest
+julia> Glscal = GaussianLocationScaleMixtureClass([1.0,2.0], 0.05, [1,2])
+GaussianLocationScaleMixtureClass | μs = [1.0, 2.0], std = 0.05, σs = [1, 2]
+
+julia> Glscal([0.2,0.3,0.4,0.1])
+MixtureModel{Normal{Float64}}(K = 4)
+components[1] (prior = 0.2000): Normal{Float64}(μ=1.0, σ=0.05)
+components[2] (prior = 0.3000): Normal{Float64}(μ=2.0, σ=0.05)
+components[3] (prior = 0.4000): Normal{Float64}(μ=0.0, σ=1.0)
+components[4] (prior = 0.1000): Normal{Float64}(μ=0.0, σ=2.0)
+```    
+"""
+struct GaussianLocationScaleMixtureClass{M,T,S} <: AbstractMixturePriorClass
+    μs::M
+    std::T
+    σs::S
+end
+
+GaussianLocationScaleMixtureClass() = GaussianLocationScaleMixtureClass(nothing, nothing, nothing)
+function Base.show(io::IO, gcal::GaussianLocationScaleMixtureClass)
+    print(io, "GaussianLocationScaleMixtureClass | μs = ")
+    show(IOContext(io, :compact => true), gcal.μs)
+    print(io, ", std = ", gcal.std, ", σs = ")
+    show(IOContext(io, :compact => true), gcal.σs)
+end
+
+function components(gcal::GaussianLocationScaleMixtureClass)
+  location_comps = Normal.(gcal.μs, gcal.std)
+  zero_comps = Normal.(0, gcal.σs)
+  vcat(location_comps, zero_comps)
+end   
 
