@@ -76,7 +76,7 @@ sym_prior = MixtureModel([Normal(1.0, 0.5), Normal(-1.0, 0.5)], [0.5, 0.5])
     
 expected = Empirikos.compute_target(Empirikos.Conjugate(), PosteriorMean(Z), Z, sym_prior)
     
-computed = Empirikos.compute_target(Empirikos.Conjugate(), SymmetricPosteriorMean(Z), Z, prior)
+computed = Empirikos.compute_target(Empirikos.Conjugate(), Empirikos.SymmetrizedPosteriorMean(Z), Z, prior)
     
 posterior_mean1 = (1.0/(0.5^2) + 0.8/(1.0^2)) / (1/(0.5^2) + 1/(1.0^2))  
 
@@ -101,7 +101,7 @@ Z = NormalSample(2.0, 1.0)
     
 theoretical = (0.0/1.0 + 2.0/1.0) / (1/1.0 + 1/1.0)
 
-computed = Empirikos.compute_target(Empirikos.Conjugate(), SymmetricPosteriorMean(Z), Z, prior)
+computed = Empirikos.compute_target(Empirikos.Conjugate(), Empirikos.SymmetrizedPosteriorMean(Z), Z, prior)
 expected = Empirikos.compute_target(Empirikos.Conjugate(), PosteriorMean(Z), Z, prior)
     
 @test isapprox(theoretical, computed, atol=1e-6)
