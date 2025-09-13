@@ -325,6 +325,34 @@ function Base.show(io::IO, target::PosteriorMean)
     print(io, "𝔼[", param," | ", Z,"]")
 end
 
+"""
+    SymmetrizedPosteriorMean(Z::EBayesSample) <: AbstractPosteriorTarget
+
+Type representing the symmetrized posterior mean, i.e.,
+
+```math
+E_{\\text{Symm}[G]}[\\mu \\mid Z=z], \\text{where Symm}[G] := \\varepsilon \\cdot \\mu,  \\varepsilon \\sim \\mathrm{Rademacher}, \\mu \\perp\\varepsilon
+```
+"""
+struct SymmetrizedPosteriorMean{T} <: BasicPosteriorTarget
+    Z::T
+end
+
+function compute_target(::Conjugate, target::SymmetrizedPosteriorMean, Z::EBayesSample, prior)
+    reflected_prior = -1*prior
+    symm_prior = MixtureModel([prior, reflected_prior], [0.5, 0.5])
+    return compute_target(Conjugate(), PosteriorMean(Z), Z, symm_prior)
+end
+function (target::SymmetrizedPosteriorMean)(μ::Number)
+    μ 
+end
+
+function Base.show(io::IO, target::SymmetrizedPosteriorMean)
+    Z = target.Z
+    param = primary_parameter(Z)
+    print(io, "Symm𝔼[", param," | ", Z,"]")
+end
+
 
 """
     PosteriorSecondMoment(Z::EBayesSample) <: AbstractPosteriorTarget
