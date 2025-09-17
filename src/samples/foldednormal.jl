@@ -97,6 +97,13 @@ struct FoldedNormalSample{T,S} <: ContinuousEBayesSample{T}
     σ::S
 end
 
+function FoldedNormalSample(Z::Real, σ::Real)
+    z = float(Z); s = float(σ)
+    z ≥ 0      || throw(DomainError(Z, "Folded observation requires Z ≥ 0."))
+    (isfinite(s) && s > 0) || throw(DomainError(σ, "σ must be finite and > 0."))
+    return FoldedNormalSample{typeof(z), typeof(s)}(z, s)
+end
+
 FoldedNormalSample(Z) = FoldedNormalSample(Z, 1.0)
 FoldedNormalSample() = FoldedNormalSample(missing)
 
@@ -203,13 +210,19 @@ end
 
 
 """
-    marginalize(Z::FoldedNormalSample, prior::Uniform) -> Folded{Normal}
+    marginalize(Z::FoldedNormalSample, prior::Uniform) -> Folded{UniformNormal}
 
-Compute the marginal distribution for a folded normal observation under a symmetric uniform prior.
+Compute the marginal distribution for a folded normal observation under a uniform prior.
+
+# Arguments
+- `Z::FoldedNormalSample`: A folded normal observation.
+- `prior::Uniform`: Uniform prior distribution.
+
+# Returns
+- `Folded{UniformNormal}`: Folded UniformNormal distribution representing the marginal distribution.
 """
 function marginalize(Z::FoldedNormalSample, prior::Uniform)
     Z_unfolded = NormalSample(Z)
-    -prior.a != prior.b && throw(DomainError(prior, "Code currently requires symmetric uniform distribution"))
     unif_normal = marginalize(Z_unfolded, prior)
     fold(unif_normal)
 end
