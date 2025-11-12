@@ -445,7 +445,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="setup-and-data-loading" class="level2">
 <h2 class="anchored" data-anchor-id="setup-and-data-loading">Setup and data loading</h2>
-<div id="2640df1b" class="cell" data-execution_count="1">
+<div id="3b626962" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Empirikos</span></span>
@@ -468,7 +468,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      legendfonthalign <span class="op">=</span> <span class="op">:</span>left,</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      thickness_scaling<span class="op">=</span><span class="fl">1.3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="c0fab976" class="cell" data-execution_count="2">
+<div id="67109d23" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the prostate data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Zs <span class="op">=</span> Prostate.<span class="fu">ebayes_samples</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -506,7 +506,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="marginal-distribution-of-z-scores">Marginal distribution of z-scores</h2>
 <section id="dkw-f-localization" class="level3">
 <h3 class="anchored" data-anchor-id="dkw-f-localization">DKW-F-Localization</h3>
-<div id="5ce8b73f" class="cell" data-execution_count="3">
+<div id="e95735cd" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the DKW F-Localization</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dkw_floc <span class="op">=</span> <span class="fu">DvoretzkyKieferWolfowitz</span>(<span class="fl">0.05</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fitted_dkw <span class="op">=</span> <span class="fu">fit</span>(dkw_floc, Zs)</span>
@@ -521,7 +521,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="kde-f-localization" class="level3">
 <h3 class="anchored" data-anchor-id="kde-f-localization">KDE-F-Localization</h3>
-<div id="d60aef5e" class="cell" data-execution_count="4">
+<div id="1a3db5f3" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the KDE-based F-Localization</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>infty_floc <span class="op">=</span> Empirikos.<span class="fu">InfinityNormDensityBand</span>(α<span class="op">=</span><span class="fl">0.05</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fitted_infty_floc <span class="op">=</span> <span class="fu">fit</span>(infty_floc, Zs)</span>
@@ -546,7 +546,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="confidence-intervals" class="level2">
 <h2 class="anchored" data-anchor-id="confidence-intervals">Confidence intervals</h2>
-<div id="9bd3ca01" class="cell" data-execution_count="5">
+<div id="c41ec5f2" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define prior classes</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>gcal_scalemix <span class="op">=</span> Empirikos.<span class="fu">autoconvexclass</span>(<span class="fu">GaussianScaleMixtureClass</span>(), Zs; <span class="op">:</span>grid_scaling <span class="op">=&gt;</span> <span class="fl">1.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -555,7 +555,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="f-localization-methods-setup" class="level3">
 <h3 class="anchored" data-anchor-id="f-localization-methods-setup">F-Localization methods setup</h3>
-<div id="114a138b" class="cell" data-execution_count="6">
+<div id="2cf35bdc" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>floc_method_dkw_scalemix <span class="op">=</span> <span class="fu">FLocalizationInterval</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    flocalization <span class="op">=</span> dkw_floc,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    convexclass <span class="op">=</span> gcal_scalemix, </span>
@@ -575,7 +575,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="compute-confidence-intervals" class="level3">
 <h3 class="anchored" data-anchor-id="compute-confidence-intervals">Compute confidence intervals</h3>
-<div id="416574bf" class="cell" data-execution_count="7">
+<div id="8bee988e" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define values for which to compute confidence intervals</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> <span class="op">-</span><span class="fl">3</span><span class="op">:</span><span class="fl">0.25</span><span class="op">:</span><span class="fl">3</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -611,16 +611,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Compute confidence intervals for scale mixture priors</p>
-<div id="427f50cf" class="cell" data-execution_count="8">
+<div id="ec59c80a" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>postmean_ci_dkw_scalemix <span class="op">=</span> <span class="fu">confint</span>.(floc_method_dkw_scalemix, postmean_targets, Zs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a677ff6a" class="cell" data-execution_count="9">
+<div id="dc634544" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>postmean_ci_kde_scalemix <span class="op">=</span> <span class="fu">confint</span>.(floc_method_kde_scalemix, postmean_targets, Zs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="visualize-confidence-intervals-for-scale-mixture-priors" class="level3">
 <h3 class="anchored" data-anchor-id="visualize-confidence-intervals-for-scale-mixture-priors">Visualize confidence intervals for scale mixture priors</h3>
-<div id="6ee0be3b" class="cell" data-execution_count="10">
+<div id="04a76190" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>postmean_scalemix_plot <span class="op">=</span> <span class="fu">plot</span>(ts, postmean_ci_kde_scalemix,</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"Gauss-F-Loc"</span>, fillcolor<span class="op">=:</span>darkorange, fillalpha<span class="op">=</span><span class="fl">0.5</span>, ylim<span class="op">=</span>(<span class="op">-</span><span class="fl">2.55</span>,<span class="fl">2.55</span>),</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    xguide <span class="op">=</span> L<span class="st">"z"</span>, yguide<span class="op">=</span>L<span class="st">"E[\mu \mid Z=z]"</span>,</span>
