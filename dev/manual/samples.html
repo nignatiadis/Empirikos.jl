@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.24">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -39,14 +74,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-394ce171537221d18c49cfb0e6fcbe0f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-8cad6c2d26eae5a444de636a63079fbe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-394ce171537221d18c49cfb0e6fcbe0f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-9bb3037bf3ca28c20b8536f3f18381eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-57140b1e2c18feced288e8bc1a5145fe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-9bb3037bf3ca28c20b8536f3f18381eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -282,8 +317,6 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
@@ -312,10 +345,6 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -449,7 +478,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>EBayesSample{T}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>EBayesSample{T}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Abstract type representing empirical Bayes samples with realizations of type <code>T</code>.</p>
 </div>
 </div>
@@ -467,7 +496,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>StandardNormalSample(Z)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">StandardNormalSample</span>(Z)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Normal distribution with known variance <span class="math inline">\(\sigma^2 =1\)</span>.</p>
 <p><span class="math display">\[
 Z \sim \mathcal{N}(\mu, 1)
@@ -492,7 +521,7 @@ N(0.5; μ, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>likelihood_distribution(Z::EBayesSample, μ::Number)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">likelihood_distribution</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>, μ<span class="op">::</span><span class="dt">Number</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Returns the distribution <span class="math inline">\(p(\cdot \mid \mu)\)</span> of <span class="math inline">\(Z \mid \mu\)</span> (the return type being a <code>Distributions.jl</code> Distribution).</p>
 <section id="examples" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples">Examples</h3>
@@ -511,9 +540,9 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>response(model::RegressionModel)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response</span>(model<span class="op">::</span><span class="dt">RegressionModel</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Return the model response (a.k.a. the dependent variable).</p>
-<pre><code>response(Z::EBayesSample{T})</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response</span>(Z<span class="op">::</span><span class="dt">EBayesSample{T}</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Returns the concrete realization of <code>Z</code> as type <code>T</code>, thus dropping the information about the likelihood.</p>
 <section id="examples-1" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples-1">Examples</h3>
@@ -532,7 +561,7 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>marginalize(Z::EBayesSample, prior::Distribution)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marginalize</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>, prior<span class="op">::</span><span class="dt">Distribution</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Given a <code>prior</code> distribution <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, return that marginal distribution of <span class="math inline">\(Z\)</span>. Works for `EBayesSample{Missing}``, i.e., no realization is needed.</p>
 <section id="examples-2" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples-2">Examples</h3>
@@ -550,14 +579,14 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>pdf(d::Distribution{ArrayLikeVariate{N}}, x::AbstractArray{&lt;:Real,N}) where {N}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Distribution{ArrayLikeVariate{N}}</span>, x<span class="op">::</span><span class="dt">AbstractArray{&lt;:Real,N}</span>) <span class="kw">where</span> {N}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the probability density function of <code>d</code> at <code>x</code>.</p>
 <p>This function checks if the size of <code>x</code> is compatible with distribution <code>d</code>. This check can be disabled by using <code>@inbounds</code>.</p>
 <section id="implementation" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="implementation">Implementation</h3>
 <p>Instead of <code>pdf</code> one should implement <code>_pdf(d, x)</code> which does not have to check the size of <code>x</code>. However, since the default definition of <code>pdf(d, x)</code> falls back to <code>logpdf(d, x)</code> usually it is sufficient to implement <code>logpdf</code>.</p>
 <p>See also: <a href="#logpdf"><code>logpdf</code></a>.</p>
-<pre><code>pdf(d::Distribution{ArrayLikeVariate{N}}, x) where {N}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Distribution{ArrayLikeVariate{N}}</span>, x) <span class="kw">where</span> {N}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the probability density function of <code>d</code> at every element in a collection <code>x</code>.</p>
 <p>This function checks for every element of <code>x</code> if its size is compatible with distribution <code>d</code>. This check can be disabled by using <code>@inbounds</code>.</p>
 <p>Here, <code>x</code> can be</p>
@@ -565,12 +594,12 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <li>an array of dimension <code>&gt; N</code> with <code>size(x)[1:N] == size(d)</code>, or</li>
 <li>an array of arrays <code>xi</code> of dimension <code>N</code> with <code>size(xi) == size(d)</code>.</li>
 </ul>
-<pre><code>pdf(d::UnivariateDistribution, x::Real)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">UnivariateDistribution</span>, x<span class="op">::</span><span class="dt">Real</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the probability density (mass) at <code>x</code>.</p>
 <p>See also: <a href="#logpdf"><code>logpdf</code></a>.</p>
-<pre><code>pdf(d::Union{UnivariateMixture, MultivariateMixture}, x)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Union{UnivariateMixture, MultivariateMixture}</span>, x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the (mixed) probability density function over <code>x</code>. Here, <code>x</code> can be a single sample or an array of multiple samples.</p>
-<pre><code>pdf(prior::Distribution, Z::EBayesSample)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(prior<span class="op">::</span><span class="dt">Distribution</span>, Z<span class="op">::</span><span class="dt">EBayesSample</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Given a <code>prior</code> <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, compute the marginal density of <code>Z</code>.</p>
 </section>
 <section id="examples-3" class="level3 unnumbered">
@@ -596,14 +625,10 @@ julia&gt; pdf(Normal(2.0, 2.0), 1.0)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>cdf(d::UnivariateDistribution, x::Real)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdf</span>(d<span class="op">::</span><span class="dt">UnivariateDistribution</span>, x<span class="op">::</span><span class="dt">Real</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the cumulative probability at <code>x</code>.</p>
 <p>See also <a href="#ccdf"><code>ccdf</code></a>, <a href="#logcdf"><code>logcdf</code></a>, and <a href="#logccdf"><code>logccdf</code></a>.</p>
-<pre><code>cdf(d::Skellam, t::Real)</code></pre>
-<p>Implementation based on SciPy: https://github.com/scipy/scipy/blob/v0.15.1/scipy/stats/<em>discrete</em>distns.py</p>
-<p>Refer to Eqn (5) in On an Extension of the Connexion Between Poisson and χ2 Distributions, N.L Johnson(1959) Vol 46, No 3/4, doi:10.2307/2333532 It relates the Skellam and Non-central chisquare PDFs, which is very similar to their CDFs computation as well.</p>
-<p>Computing cdf of the Skellam distribution.</p>
-<pre><code>cdf(prior::Distribution, Z::EBayesSample)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdf</span>(prior<span class="op">::</span><span class="dt">Distribution</span>, Z<span class="op">::</span><span class="dt">EBayesSample</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Given a <code>prior</code> <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, evaluate the CDF of the marginal distribution of <span class="math inline">\(Z\)</span> at <code>response(Z)</code>.</p>
 </div>
 </div>
@@ -621,7 +646,7 @@ julia&gt; pdf(Normal(2.0, 2.0), 1.0)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>NormalSample(Z,σ)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">NormalSample</span>(Z,σ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Normal distribution with known variance <span class="math inline">\(\sigma^2 &gt; 0\)</span>.</p>
 <p><span class="math display">\[
 Z \sim \mathcal{N}(\mu, \sigma^2)
@@ -641,7 +666,7 @@ N(0.5; μ, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>BinomialSample(Z, n)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">BinomialSample</span>(Z, n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Binomial distribution with <code>n</code> trials.</p>
 <p><span class="math display">\[
 Z \sim \text{Binomial}(n, p)
@@ -661,7 +686,7 @@ Z \sim \text{Binomial}(n, p)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>PoissonSample(Z, E)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PoissonSample</span>(Z, E)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Poisson distribution,</p>
 <p><span class="math display">\[
 Z \sim \text{Poisson}(\mu \cdot E).

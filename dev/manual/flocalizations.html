@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.24">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -39,14 +74,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-394ce171537221d18c49cfb0e6fcbe0f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-8cad6c2d26eae5a444de636a63079fbe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-394ce171537221d18c49cfb0e6fcbe0f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-9bb3037bf3ca28c20b8536f3f18381eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-57140b1e2c18feced288e8bc1a5145fe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-9bb3037bf3ca28c20b8536f3f18381eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -282,8 +317,6 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
@@ -312,10 +345,6 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -467,7 +496,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>DvoretzkyKieferWolfowitz(;α = 0.05, max_constraints = 1000) &lt;: FLocalization</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DvoretzkyKieferWolfowitz</span>(;α <span class="op">=</span> <span class="fl">0.05</span>, max_constraints <span class="op">=</span> <span class="fl">1000</span>) <span class="op">&lt;:</span><span class="dt"> FLocalization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The Dvoretzky-Kiefer-Wolfowitz band (based on the Kolmogorov-Smirnov distance) at confidence level <code>1-α</code> that bounds the distance of the true distribution function to the ECDF <span class="math inline">\(\widehat{F}_n\)</span> based on <span class="math inline">\(n\)</span> samples. The constant of the band is the sharp constant derived by Massart:</p>
 <p><span class="math display">\[
 F \text{ distribution}:  \sup_{t \in \mathbb R}\lvert F(t) - \widehat{F}_n(t) \rvert  \leq  \sqrt{\log(2/\alpha)/(2n)}
@@ -485,7 +514,7 @@ F \text{ distribution}:  \sup_{t \in \mathbb R}\lvert F(t) - \widehat{F}_n(t) \r
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>ChiSquaredFLocalization(α) &lt;: FLocalization</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ChiSquaredFLocalization</span>(α) <span class="op">&lt;:</span><span class="dt"> FLocalization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <span class="math inline">\(\chi^2\)</span> F-localization at confidence level <span class="math inline">\(1-\alpha\)</span> for a discrete random variable taking values in <span class="math inline">\(\{0,\dotsc, N\}\)</span>. It is equal to:</p>
 <p><span class="math display">\[
 f: \sum_{x=0}^N \frac{(n \hat{f}_n(x) - n f(x))^2}{n f(x)} \leq \chi^2_{N,1-\alpha},
@@ -503,14 +532,14 @@ f: \sum_{x=0}^N \frac{(n \hat{f}_n(x) - n f(x))^2}{n f(x)} \leq \chi^2_{N,1-\alp
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>InfinityNormDensityBand(;a_min,
-                         a_max,
-                         kernel  =  Empirikos.FlatTopKernel(),
-                         bootstrap = :Multinomial,
-                         nboot = 1000,
-                         α = 0.05,
-                         rng = Random.MersenneTwister(1)
-                    )  &lt;: FLocalization</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">InfinityNormDensityBand</span>(;a_min,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                         a_max,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                         kernel  <span class="op">=</span>  Empirikos.<span class="fu">FlatTopKernel</span>(),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                         bootstrap <span class="op">=</span> <span class="op">:</span>Multinomial,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                         nboot <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                         α <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                         rng <span class="op">=</span> <span class="bu">Random</span>.<span class="fu">MersenneTwister</span>(<span class="fl">1</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                    )  <span class="op">&lt;:</span><span class="dt"> FLocalization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This struct contains hyperparameters that will be used for constructing a neighborhood of the marginal density. The steps of the method (and corresponding hyperparameter meanings) are as follows</p>
 <ul>
 <li>First a kernel density estimate <span class="math inline">\(\bar{f}\)</span> with <code>kernel</code> is fit to the data.</li>
@@ -533,7 +562,7 @@ f: \sum_{x=0}^N \frac{(n \hat{f}_n(x) - n f(x))^2}{n f(x)} \leq \chi^2_{N,1-\alp
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>FlatTopKernel(h) &lt; InfiniteOrderKernel</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FlatTopKernel</span>(h) <span class="op">&lt;</span> InfiniteOrderKernel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Implements the <code>FlatTopKernel</code> with bandwidth <code>h</code> to be used for kernel density estimation through the <code>KernelDensity.jl</code> package. The flat-top kernel is defined as follows:</p>
 <p><span class="math display">\[
 K(x) = \frac{\sin^2(1.1x/2)-\sin^2(x/2)}{\pi x^2/ 20}.
@@ -560,7 +589,7 @@ FlatTopKernel | bandwidth = 0.1</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>SincKernel(h) &lt;: InfiniteOrderKernel</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">SincKernel</span>(h) <span class="op">&lt;:</span><span class="dt"> InfiniteOrderKernel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Implements the <code>SincKernel</code> with bandwidth <code>h</code> to be used for kernel density estimation through the <code>KernelDensity.jl</code> package. The sinc kernel is defined as follows:</p>
 <p><span class="math display">\[
 K_{\text{sinc}}(x) = \frac{\sin(x)}{\pi x}

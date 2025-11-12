@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.24">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,14 +74,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-394ce171537221d18c49cfb0e6fcbe0f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-8cad6c2d26eae5a444de636a63079fbe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-394ce171537221d18c49cfb0e6fcbe0f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-9bb3037bf3ca28c20b8536f3f18381eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-57140b1e2c18feced288e8bc1a5145fe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-9bb3037bf3ca28c20b8536f3f18381eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -317,8 +317,6 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Empirikos</span>
     </a>
@@ -347,10 +345,6 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -498,7 +492,7 @@ window.Quarto = {
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>PosteriorMean(Z::EBayesSample) &lt;: AbstractPosteriorTarget</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PosteriorMean</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>) <span class="op">&lt;:</span><span class="dt"> AbstractPosteriorTarget</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Type representing the posterior mean, i.e.,</p>
 <p><span class="math display">\[
 E_G[\mu_i \mid Z_i = z]
@@ -530,7 +524,7 @@ julia&gt; postmean2(G)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>PosteriorProbability(Z::EBayesSample, s) &lt;: AbstractPosteriorTarget</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PosteriorProbability</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>, s) <span class="op">&lt;:</span><span class="dt"> AbstractPosteriorTarget</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Type representing the posterior probability, i.e.,</p>
 <p><span class="math display">\[
 \Prob_G[\mu_i \in s \mid Z_i = z]
@@ -547,7 +541,7 @@ julia&gt; postmean2(G)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>PosteriorVariance(Z::EBayesSample) &lt;: AbstractPosteriorTarget</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PosteriorVariance</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>) <span class="op">&lt;:</span><span class="dt"> AbstractPosteriorTarget</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Type representing the posterior variance, i.e.,</p>
 <p><span class="math display">\[
 V_G[\mu_i \mid Z_i = z]
@@ -568,7 +562,7 @@ V_G[\mu_i \mid Z_i = z]
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>LinearEBayesTarget &lt;: EBayesTarget</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>LinearEBayesTarget <span class="op">&lt;:</span><span class="dt"> EBayesTarget</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Abstract type that describes Empirical Bayes estimands that are linear functionals of the prior <code>G</code>.</p>
 </div>
 </div>
@@ -583,7 +577,7 @@ V_G[\mu_i \mid Z_i = z]
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>PriorDensity(z::Float64) &lt;: LinearEBayesTarget</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PriorDensity</span>(z<span class="op">::</span><span class="dt">Float64</span>) <span class="op">&lt;:</span><span class="dt"> LinearEBayesTarget</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="example-call" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="example-call">Example call</h4>
 <pre class="jldoctest"><code>julia&gt; PriorDensity(2.0)
@@ -605,7 +599,7 @@ PriorDensity{Float64}(2.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>MarginalDensity(Z::EBayesSample) &lt;: LinearEBayesTarget</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">MarginalDensity</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>) <span class="op">&lt;:</span><span class="dt"> LinearEBayesTarget</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="example-call-1" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="example-call-1">Example call</h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">MarginalDensity</span>(<span class="fu">StandardNormalSample</span>(<span class="fl">2.0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -635,7 +629,7 @@ L(G) = \varphi \star dG(z)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>numerator(x)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">numerator</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Numerator of the rational representation of <code>x</code>.</p>
 <section id="examples" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples">Examples</h3>
@@ -644,7 +638,7 @@ L(G) = \varphi \star dG(z)
 
 julia&gt; numerator(4)
 4</code></pre>
-<pre><code>Base.numerator(target::AbstractPosteriorTarget)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">numerator</span>(target<span class="op">::</span><span class="dt">AbstractPosteriorTarget</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Suppose a posterior target <span class="math inline">\(\theta_G(z)\)</span>, such as the posterior mean can be written as:</p>
 <p><span class="math display">\[
 \theta_G(z) = \frac{ a_G(z)}{f_G(z)} = \frac{ \int h(\mu)dG(\mu)}{\int p(z \mid \mu)dG(\mu)}.
@@ -663,7 +657,7 @@ julia&gt; numerator(4)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<pre><code>denominator(x)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">denominator</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Denominator of the rational representation of <code>x</code>.</p>
 <section id="examples-1" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples-1">Examples</h3>
@@ -672,7 +666,7 @@ julia&gt; numerator(4)
 
 julia&gt; denominator(4)
 1</code></pre>
-<pre><code>Base.denominator(target::AbstractPosteriorTarget)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Base</span>.<span class="fu">denominator</span>(target<span class="op">::</span><span class="dt">AbstractPosteriorTarget</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Suppose a posterior target <span class="math inline">\(\theta_G(z)\)</span>, such as the posterior mean can be written as:</p>
 <p><span class="math display">\[
 \theta_G(z) = \frac{ a_G(z)}{f_G(z)} = \frac{ \int h(\mu)dG(\mu)}{\int p(z \mid \mu)dG(\mu)}.
