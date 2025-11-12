@@ -93,12 +93,3 @@ function logmyeval(t, s²; ν)
     logpdf(prior, T) - logpdf(Dirac(0), T) + log(n/(ν + t²)) + logpdf(q, σ̂²) - logpdf(var_dbn_null, S²)
 end
 
-
-
-
-
-logmyeval(Z.Z, response(S_squared); ν=3)
-
-
-ttest_evalue(T.Z, Z.ν, (ν+1)/abs2(σ))
-
