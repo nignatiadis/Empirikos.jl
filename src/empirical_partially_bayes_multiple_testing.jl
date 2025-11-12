@@ -24,7 +24,7 @@ Base.@kwdef struct EmpiricalPartiallyBayesTTest
     multiple_test = BenjaminiHochberg()
     α = 0.05
     prior = DiscretePriorClass()
-    solver = Hypatia.Optimizer
+    solver
     discretize_marginal = false
     prior_grid_size = 300
     lower_quantile = 0.01

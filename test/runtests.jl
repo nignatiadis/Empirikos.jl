@@ -31,12 +31,21 @@ end
 end
 
 
+@testset "Posterior" begin
+    include("test_posterior.jl")
+end
+
+
 @testset "Binomial samples" begin
     include("test_binomial.jl")
 end
 
 @testset "Normal samples" begin
     include("test_normal.jl")
+end
+
+@testset "Normal samples" begin
+    include("test_t_normal_chisquare.jl")
 end
 
 @testset "Test targets" begin

@@ -67,10 +67,11 @@ function marginalize(Z::EBayesSample, prior::DiscreteNonParametric)
 end
 
 function posterior(Z::EBayesSample, prior::DiscreteNonParametric)
-    πs = probs(prior)
-    fs = likelihood.(Z, support(prior))
-    posterior_πs = πs .* fs
-    posterior_πs /= sum(posterior_πs)
+    log_πs = log.(probs(prior))
+    log_fs = loglikelihood.(Z, support(prior))
+    log_posterior_πs = log_πs .+ log_fs
+    log_normalizer = logsumexp(log_posterior_πs)
+    posterior_πs = exp.(log_posterior_πs .- log_normalizer)
     DiscreteNonParametric(support(prior), posterior_πs)
 end
 
@@ -91,10 +92,13 @@ function marginalize(Z::EBayesSample, prior::MixtureModel)
 end
 
 function posterior(Z::EBayesSample, prior::MixtureModel)
-    πs = probs(prior)
-    fs = pdf.(components(prior), Z)
-    posterior_πs = πs .* fs
-    posterior_πs /= sum(posterior_πs)
+    log_πs = log.(probs(prior))
+    log_fs = logpdf.(components(prior), Z)
+    log_posterior_πs = log_πs .+ log_fs
+    log_normalizer = logsumexp(log_posterior_πs)
+    posterior_πs = exp.(log_posterior_πs .- log_normalizer)
     posterior_components = posterior.(Z, components(prior))
     MixtureModel(posterior_components, posterior_πs)
 end
+
+
