@@ -1,7 +1,7 @@
 name = "Empirikos"
 uuid = "cab608d6-c565-4ea1-96d6-ce5441ba21b0"
 authors = ["Nikos Ignatiadis <nikos.ignatiadis01@gmail.com> and contributors"]
-version = "0.6.1"
+version = "0.6.2"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
