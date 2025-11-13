@@ -14,7 +14,7 @@ end
 function Distributions.pdf(d::ZeroTruncatedPoisson, x::Real)
     pois = Poisson(d.λ)
     pois_pdf = Distributions.pdf(pois, x)
-    pois_zero = 1-Distributions.pdf(pois, zero(x))
+    pois_zero = Distributions.ccdf(pois, 0)
     return x > 0 ? pois_pdf/pois_zero : zero(pois_pdf)
 end
 
@@ -30,7 +30,7 @@ function _logpdf(d::ZeroTruncatedPoisson, x::T) where {T<:Real}
 end
 
 function Distributions.logpdf(d::ZeroTruncatedPoisson, x::T) where {T<:Real}
-    isinteger(x) || return -TF(Inf)
+    isinteger(x) || return -T(Inf)
     return _logpdf(d, x)
 end
 

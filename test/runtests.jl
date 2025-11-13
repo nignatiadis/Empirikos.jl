@@ -8,6 +8,7 @@ using QuadGK
 using Documenter
 using CSV
 using Distributions
+using Random
 
 # Doctests
 
@@ -44,7 +45,12 @@ end
     include("test_normal.jl")
 end
 
-@testset "Normal samples" begin
+
+@testset "Truncated Poisson samples" begin
+    include("test_truncated_poisson.jl")
+end
+
+@testset "Normal-Chisquare samples" begin
     include("test_t_normal_chisquare.jl")
 end
 
