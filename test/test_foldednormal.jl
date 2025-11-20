@@ -56,6 +56,7 @@ using Distributions
         @test Empirikos.cdf(folded_asy, 2.0) == cdf(asy, 2.0) - cdf(asy, -2.0)
 
         # Mixture of Asymmetric Normals
+        ys_pos = [0.0, 0.2, 0.8, 1.7, 3.5, 6.0]
         @test Empirikos.cdf(fmx, -0.1) == 0.0
         @test Empirikos.cdf(fmx,  0.0) == 0.0
         @test all(y -> isapprox(Empirikos.cdf(fmx, y), 0.3*(cdf(comp[1], y) - cdf(comp[1], -y))+ 0.7*(cdf(comp[2], y) - cdf(comp[2], -y));
@@ -289,5 +290,6 @@ using Distributions
         end
     end
 end
+
 
 
