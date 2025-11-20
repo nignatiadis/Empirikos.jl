@@ -1,3 +1,16 @@
+"""
+    Folded{D<:ContinuousUnivariateDistribution} <: ContinuousUnivariateDistribution
+
+A folded continuous univariate distribution, representing the absolute value of a random variable 
+following the original distribution `D`. For a distribution `dist`, the folded version has:
+
+- `pdf(d, x) = pdf(unfold(d), x) + pdf(unfold(d), -x)` for x ≥ 0  
+- `cdf(d, x) =  P(unfold(d) ≤ x) − P(unfold(d) ≤ −x)` for x ≥ 0  
+- analogously for `ccdf` and `quantile`
+
+# Fields
+- `dist::D`: The original (unfolded) distribution.
+"""
 struct Folded{D<:ContinuousUnivariateDistribution} <: ContinuousUnivariateDistribution
     dist::D
 end
@@ -39,8 +52,30 @@ function Distributions.ccdf(d::Folded, x::Real)
     return x > 0 ? d_ccdf : one(d_ccdf)
 end
 
+"""
+    quantile(d::Folded, q::Real)
 
-function Distributions.quantile(d::Folded, q::Real)
+Compute the quantile of a folded normal by using the noncentral chi-squared distribution.
+"""
+function Distributions.quantile(d::Folded{<:Normal}, q::Real)
+    orig_normal = d.dist
+    μ = mean(orig_normal)  
+    σ = std(orig_normal)  
+    σ == 0 && return abs(μ)
+    
+    λ = (μ/σ)^2
+    nc_chisq = NoncentralChisq(1, λ)
+    
+    σ * sqrt(quantile(nc_chisq, q))
+end
+
+"""
+    quantile(d::Folded{<:TDist}, q::Real)
+
+Compute the quantile for folded t-distributions, this maps to the 
+`(1 + q)/2` quantile of the original symmetric distribution.
+"""
+function Distributions.quantile(d::Folded{<:TDist}, q::Real)
     Distributions.quantile(unfold(d), (1+q)/2)
 end
 
@@ -62,6 +97,13 @@ struct FoldedNormalSample{T,S} <: ContinuousEBayesSample{T}
     σ::S
 end
 
+function FoldedNormalSample(Z::Real, σ::Real)
+    z = float(Z); s = float(σ)
+    z ≥ 0      || throw(DomainError(Z, "Folded observation requires Z ≥ 0."))
+    (isfinite(s) && s > 0) || throw(DomainError(σ, "σ must be finite and > 0."))
+    return FoldedNormalSample{typeof(z), typeof(s)}(z, s)
+end
+
 FoldedNormalSample(Z) = FoldedNormalSample(Z, 1.0)
 FoldedNormalSample() = FoldedNormalSample(missing)
 
@@ -74,6 +116,11 @@ nuisance_parameter(Z::FoldedNormalSample) = Z.σ
 std(Z::FoldedNormalSample) = Z.σ
 var(Z::FoldedNormalSample) = abs2(std(Z))
 
+"""
+    NormalSample(Z::FoldedNormalSample; positive_sign = true)
+
+Convert a `FoldedNormalSample` back to a `NormalSample` by assigning a sign (default: positive).
+"""
 function NormalSample(Z::FoldedNormalSample; positive_sign = true)
     response_Z = positive_sign ? response(Z) : -response(Z)
     NormalSample(response_Z, nuisance_parameter(Z))
@@ -82,12 +129,21 @@ function Base.show(io::IO, Z::FoldedNormalSample)
     print(io, "|", NormalSample(Z), "|")
 end
 
+"""
+    _symmetrize(Zs::AbstractVector{<:FoldedNormalSample})
 
+Randomly assign signs to a vector of FoldedNormalSample to reconstruct a vector of `NormalSample`s. 
+"""
 function _symmetrize(Zs::AbstractVector{<:FoldedNormalSample})
    random_signs =  2 .* rand(Bernoulli(), length(Zs)) .-1
    NormalSample.(random_signs .* response.(Zs), std.(Zs))
 end
 
+"""
+    likelihood_distribution(Z::FoldedNormalSample, μ)
+
+Return the folded Normal distribution `fold(Normal(μ, σ))` for a given mean `μ`.
+"""
 function likelihood_distribution(Z::FoldedNormalSample, μ)
     fold(Normal(μ, nuisance_parameter(Z)))
 end
@@ -102,6 +158,16 @@ function default_target_computation(::BasicPosteriorTarget,
 end
 
 # perhaps this can apply to more general folded samples.
+
+"""
+    marginalize(Z::FoldedNormalSample, prior::Normal) -> Folded{Normal}
+
+Compute marginal distribution for folded normal observation with normal prior.
+
+1. Unfold the observation to normal sample
+2. Compute marginal distribution of the normal sample with the normal prior
+3. Fold the resulting distribution
+"""
 function marginalize(Z::FoldedNormalSample, prior::Normal)
     Z_unfolded = NormalSample(Z)
     fold(marginalize(Z_unfolded, prior)) 
@@ -111,7 +177,12 @@ function marginalize(Z::FoldedNormalSample, prior::Folded{Normal})
     marginalize(Z, unfold(prior))
 end
 
+"""
+    posterior(Z::FoldedNormalSample, prior::Normal) -> MixtureModel{Normal}
 
+Compute the posterior distribution for a folded normal observation by considering both possible 
+signs of the original observation, weighted by their marginal probabilities under the prior.
+"""
 function posterior(Z::FoldedNormalSample, prior::Normal)
     Z_unfolded_positive = NormalSample(Z; positive_sign = true)
     Z_unfolded_negative = NormalSample(Z; positive_sign = false)
@@ -138,11 +209,20 @@ end
 
 
 
+"""
+    marginalize(Z::FoldedNormalSample, prior::Uniform) -> Folded{UniformNormal}
 
+Compute the marginal distribution for a folded normal observation under a uniform prior.
 
+# Arguments
+- `Z::FoldedNormalSample`: A folded normal observation.
+- `prior::Uniform`: Uniform prior distribution.
+
+# Returns
+- `Folded{UniformNormal}`: Folded UniformNormal distribution representing the marginal distribution.
+"""
 function marginalize(Z::FoldedNormalSample, prior::Uniform)
     Z_unfolded = NormalSample(Z)
-    -prior.a != prior.b && throw(DomainError(prior, "Code currently requires symmetric uniform distribution"))
     unif_normal = marginalize(Z_unfolded, prior)
     fold(unif_normal)
 end
