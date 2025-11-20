@@ -527,6 +527,8 @@ N(0.5; μ, σ=1.0)</code></pre>
 <h3 class="unnumbered anchored" data-anchor-id="examples">Examples</h3>
 <pre class="jldoctest"><code>julia&gt; likelihood_distribution(StandardNormalSample(1.0), 2.0)
 Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">likelihood_distribution</span>(Z<span class="op">::</span><span class="dt">FoldedNormalSample</span>, μ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Return the folded Normal distribution <code>fold(Normal(μ, σ))</code> for a given mean <code>μ</code>.</p>
 </section>
 </div>
 </div>
@@ -540,9 +542,9 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response</span>(model<span class="op">::</span><span class="dt">RegressionModel</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response</span>(model<span class="op">::</span><span class="dt">RegressionModel</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Return the model response (a.k.a. the dependent variable).</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response</span>(Z<span class="op">::</span><span class="dt">EBayesSample{T}</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">response</span>(Z<span class="op">::</span><span class="dt">EBayesSample{T}</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Returns the concrete realization of <code>Z</code> as type <code>T</code>, thus dropping the information about the likelihood.</p>
 <section id="examples-1" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples-1">Examples</h3>
@@ -561,11 +563,33 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marginalize</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>, prior<span class="op">::</span><span class="dt">Distribution</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marginalize</span>(Z<span class="op">::</span><span class="dt">EBayesSample</span>, prior<span class="op">::</span><span class="dt">Distribution</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Given a <code>prior</code> distribution <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, return that marginal distribution of <span class="math inline">\(Z\)</span>. Works for `EBayesSample{Missing}``, i.e., no realization is needed.</p>
 <section id="examples-2" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="examples-2">Examples</h3>
 <p>`jldoctest julia&gt; marginalize(StandardNormalSample(1.0), Normal(2.0, sqrt(3))) Normal{Float64}(μ=2.0, σ=1.9999999999999998)``</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marginalize</span>(Z<span class="op">::</span><span class="dt">FoldedNormalSample</span>, prior<span class="op">::</span><span class="dt">Normal</span>) <span class="op">-&gt;</span> Folded{Normal}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Compute marginal distribution for folded normal observation with normal prior.</p>
+<ol type="1">
+<li>Unfold the observation to normal sample</li>
+<li>Compute marginal distribution of the normal sample with the normal prior</li>
+<li>Fold the resulting distribution</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marginalize</span>(Z<span class="op">::</span><span class="dt">FoldedNormalSample</span>, prior<span class="op">::</span><span class="dt">Uniform</span>) <span class="op">-&gt;</span> Folded{UniformNormal}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Compute the marginal distribution for a folded normal observation under a uniform prior.</p>
+</section>
+<section id="arguments" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="arguments">Arguments</h3>
+<ul>
+<li><code>Z::FoldedNormalSample</code>: A folded normal observation.</li>
+<li><code>prior::Uniform</code>: Uniform prior distribution.</li>
+</ul>
+</section>
+<section id="returns" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="returns">Returns</h3>
+<ul>
+<li><code>Folded{UniformNormal}</code>: Folded UniformNormal distribution representing the marginal distribution.</li>
+</ul>
 </section>
 </div>
 </div>
@@ -579,14 +603,14 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Distribution{ArrayLikeVariate{N}}</span>, x<span class="op">::</span><span class="dt">AbstractArray{&lt;:Real,N}</span>) <span class="kw">where</span> {N}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Distribution{ArrayLikeVariate{N}}</span>, x<span class="op">::</span><span class="dt">AbstractArray{&lt;:Real,N}</span>) <span class="kw">where</span> {N}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the probability density function of <code>d</code> at <code>x</code>.</p>
 <p>This function checks if the size of <code>x</code> is compatible with distribution <code>d</code>. This check can be disabled by using <code>@inbounds</code>.</p>
 <section id="implementation" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="implementation">Implementation</h3>
 <p>Instead of <code>pdf</code> one should implement <code>_pdf(d, x)</code> which does not have to check the size of <code>x</code>. However, since the default definition of <code>pdf(d, x)</code> falls back to <code>logpdf(d, x)</code> usually it is sufficient to implement <code>logpdf</code>.</p>
 <p>See also: <a href="#logpdf"><code>logpdf</code></a>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Distribution{ArrayLikeVariate{N}}</span>, x) <span class="kw">where</span> {N}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Distribution{ArrayLikeVariate{N}}</span>, x) <span class="kw">where</span> {N}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the probability density function of <code>d</code> at every element in a collection <code>x</code>.</p>
 <p>This function checks for every element of <code>x</code> if its size is compatible with distribution <code>d</code>. This check can be disabled by using <code>@inbounds</code>.</p>
 <p>Here, <code>x</code> can be</p>
@@ -594,12 +618,12 @@ Normal{Float64}(μ=2.0, σ=1.0)</code></pre>
 <li>an array of dimension <code>&gt; N</code> with <code>size(x)[1:N] == size(d)</code>, or</li>
 <li>an array of arrays <code>xi</code> of dimension <code>N</code> with <code>size(xi) == size(d)</code>.</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">UnivariateDistribution</span>, x<span class="op">::</span><span class="dt">Real</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">UnivariateDistribution</span>, x<span class="op">::</span><span class="dt">Real</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the probability density (mass) at <code>x</code>.</p>
 <p>See also: <a href="#logpdf"><code>logpdf</code></a>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Union{UnivariateMixture, MultivariateMixture}</span>, x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(d<span class="op">::</span><span class="dt">Union{UnivariateMixture, MultivariateMixture}</span>, x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the (mixed) probability density function over <code>x</code>. Here, <code>x</code> can be a single sample or an array of multiple samples.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(prior<span class="op">::</span><span class="dt">Distribution</span>, Z<span class="op">::</span><span class="dt">EBayesSample</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(prior<span class="op">::</span><span class="dt">Distribution</span>, Z<span class="op">::</span><span class="dt">EBayesSample</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Given a <code>prior</code> <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, compute the marginal density of <code>Z</code>.</p>
 </section>
 <section id="examples-3" class="level3 unnumbered">
@@ -625,10 +649,10 @@ julia&gt; pdf(Normal(2.0, 2.0), 1.0)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdf</span>(d<span class="op">::</span><span class="dt">UnivariateDistribution</span>, x<span class="op">::</span><span class="dt">Real</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdf</span>(d<span class="op">::</span><span class="dt">UnivariateDistribution</span>, x<span class="op">::</span><span class="dt">Real</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Evaluate the cumulative probability at <code>x</code>.</p>
 <p>See also <a href="#ccdf"><code>ccdf</code></a>, <a href="#logcdf"><code>logcdf</code></a>, and <a href="#logccdf"><code>logccdf</code></a>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdf</span>(prior<span class="op">::</span><span class="dt">Distribution</span>, Z<span class="op">::</span><span class="dt">EBayesSample</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdf</span>(prior<span class="op">::</span><span class="dt">Distribution</span>, Z<span class="op">::</span><span class="dt">EBayesSample</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Given a <code>prior</code> <span class="math inline">\(G\)</span> and <code>EBayesSample</code> <span class="math inline">\(Z\)</span>, evaluate the CDF of the marginal distribution of <span class="math inline">\(Z\)</span> at <code>response(Z)</code>.</p>
 </div>
 </div>
@@ -646,7 +670,7 @@ julia&gt; pdf(Normal(2.0, 2.0), 1.0)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">NormalSample</span>(Z,σ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">NormalSample</span>(Z,σ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Normal distribution with known variance <span class="math inline">\(\sigma^2 &gt; 0\)</span>.</p>
 <p><span class="math display">\[
 Z \sim \mathcal{N}(\mu, \sigma^2)
@@ -654,6 +678,8 @@ Z \sim \mathcal{N}(\mu, \sigma^2)
 <p><span class="math inline">\(\mu\)</span> is assumed unknown. The type above is used when the sample <span class="math inline">\(Z\)</span> is to be used for estimation or inference of <span class="math inline">\(\mu\)</span>.</p>
 <pre class="jldoctest"><code>julia&gt; NormalSample(0.5, 1.0)          #Z=0.5, σ=1
 N(0.5; μ, σ=1.0)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">NormalSample</span>(Z<span class="op">::</span><span class="dt">FoldedNormalSample</span>; positive_sign <span class="op">=</span> <span class="cn">true</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Convert a <code>FoldedNormalSample</code> back to a <code>NormalSample</code> by assigning a sign (default: positive).</p>
 </div>
 </div>
 </div>
@@ -666,7 +692,7 @@ N(0.5; μ, σ=1.0)</code></pre>
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">BinomialSample</span>(Z, n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">BinomialSample</span>(Z, n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Binomial distribution with <code>n</code> trials.</p>
 <p><span class="math display">\[
 Z \sim \text{Binomial}(n, p)
@@ -686,7 +712,7 @@ Z \sim \text{Binomial}(n, p)
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PoissonSample</span>(Z, E)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PoissonSample</span>(Z, E)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An observed sample <span class="math inline">\(Z\)</span> drawn from a Poisson distribution,</p>
 <p><span class="math display">\[
 Z \sim \text{Poisson}(\mu \cdot E).
