@@ -1,7 +1,6 @@
 using Empirikos
 using Test
 using Distributions
-using Statistics
 @testset "Folded Distribution" begin
     # Symmetric normal
     d = Normal(0.0, 1.0)
@@ -290,4 +289,5 @@ using Statistics
         end
     end
 end
+
 
