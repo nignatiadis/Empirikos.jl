@@ -173,7 +173,7 @@ function marginalize(Z::FoldedNormalSample, prior::Normal)
     fold(marginalize(Z_unfolded, prior)) 
 end
 
-function marginalize(Z::FoldedNormalSample, prior::Folded{Normal})
+function marginalize(Z::FoldedNormalSample, prior::Folded{<:Normal})
     marginalize(Z, unfold(prior))
 end
 
