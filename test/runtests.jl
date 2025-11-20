@@ -45,6 +45,9 @@ end
     include("test_normal.jl")
 end
 
+@testset "FoldedNormal samples" begin
+    include("test_foldednormal.jl")
+end
 
 @testset "Truncated Poisson samples" begin
     include("test_truncated_poisson.jl")
