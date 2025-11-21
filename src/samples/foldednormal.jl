@@ -47,6 +47,18 @@ function Distributions.cdf(d::Folded, x::Real)
     return x > 0 ? d_cdf : zero(d_cdf)
 end
 
+function Distributions.logcdf(d::Folded, x::Real)
+    if x ≤ 0
+        return oftype(float(x), -Inf)  
+    elseif x == Inf
+        return oftype(float(x), 0.0)    
+    end
+
+    lx  = logcdf(unfold(d),  x)
+    lmx = logcdf(unfold(d), -x)
+    LogExpFunctions.logsubexp(lx, lmx)
+end
+
 function Distributions.ccdf(d::Folded, x::Real)
     d_ccdf = ccdf(unfold(d), x) + cdf(unfold(d), -x)
     return x > 0 ? d_ccdf : one(d_ccdf)
