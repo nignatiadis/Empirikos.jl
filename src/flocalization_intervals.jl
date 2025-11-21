@@ -177,7 +177,7 @@ end
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.AbstractPosteriorTarget, ::QuasiConvexBisection)
 
-    @unpack n_bisection, solver, convexclass, flocalization = method
+    (; n_bisection, solver, convexclass, flocalization) = method
 
     _max_vals = Vector{Float64}(undef, n_bisection)
     _min_vals = Vector{Float64}(undef, n_bisection)
@@ -266,7 +266,7 @@ end
 function StatsBase.fit(method::FLocalizationInterval{<:Empirikos.FittedFLocalization},
     target::Empirikos.PosteriorVariance)
 
-    @unpack n_bisection = method
+    (; n_bisection) = method
 
     postmean_target = PosteriorMean(location(target))
 
@@ -355,7 +355,7 @@ function confint(
     fitted_worst_case::FittedFLocalizationInterval;
     level=1-nominal_alpha(fitted_worst_case)
 )
-    @unpack target, method, lower, upper = fitted_worst_case
+    (; target, method, lower, upper) = fitted_worst_case
     α = nominal_alpha(fitted_worst_case)
     α ≈ 1-level || error("F-Localization is not at correct confidence-level")
     LowerUpperConfidenceInterval(α=α, target=target, lower=lower,

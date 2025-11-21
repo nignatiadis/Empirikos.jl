@@ -33,7 +33,6 @@ using StatsBase
 import StatsBase: loglikelihood, response, fit, nobs, weights, confint
 
 using StatsDiscretizations
-using UnPack
 
 include("utils.jl")
 include("ebayes_samples.jl")

@@ -84,7 +84,7 @@ abstract type DeltaTuner end
 abstract type BiasVarAggregate <: DeltaTuner end
 
 function get_bias_var(modulus_model::AbstractModulusModel)
-    @unpack model = modulus_model
+    (; model) = modulus_model
     δ = get_δ(modulus_model)
     ω_δ = objective_value(model)
     ω_δ_prime = -JuMP.dual(modulus_model.bound_delta)
@@ -174,7 +174,7 @@ end
 function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithF}, target::Empirikos.LinearEBayesTarget, δ)
 
     #TODO: perhaps this can also be moved..
-    @unpack discretizer, solver, convexclass, flocalization, representative_eb_samples = method
+    (; discretizer, solver, convexclass, flocalization, representative_eb_samples) = method
 
     length(representative_eb_samples.vec) == 1 ||
             throw(ArgumentError("ModulusModelWithF only works for Homoskedastic samples."))
@@ -237,7 +237,7 @@ end
 function initialize_modulus_model(method::AMARI, ::Type{ModulusModelWithoutF}, target::Empirikos.LinearEBayesTarget, δ)
 
 
-    @unpack flocalization, convexclass, discretizer, plugin_G, solver, representative_eb_samples = method
+    (; flocalization, convexclass, discretizer, plugin_G, solver, representative_eb_samples) = method
 
     model = Model(solver)
 
@@ -274,7 +274,7 @@ function set_δ!(modulus_model::AbstractModulusModel, δ)
 end
 
 function set_target!(modulus_model::AbstractModulusModel, target::Empirikos.LinearEBayesTarget)
-    @unpack model, g1, g2 = modulus_model
+    (; model, g1, g2) = modulus_model
     @objective(model, Max, target(g2) - target(g1))
     modulus_model = @set modulus_model.target = target
     optimize!(model)
@@ -324,7 +324,7 @@ function initialize_method(method::AMARI, target::Empirikos.LinearEBayesTarget, 
     n = nobs(Zs)
     method = @set method.n = n
 
-    @unpack delta_grid = method
+    (; delta_grid) = method
 
     δ1 = delta_grid[1]
     modulus_model = initialize_modulus_model(method, modulus_model, target, δ1)
@@ -361,7 +361,7 @@ Base.@kwdef struct QDonoho{G,H,T,D}
 end
 
 function (Q::QDonoho)(Z::EBayesSample)
-    @unpack g1, g2, plugin_G, mult, offset, discretizer  = Q
+    (;g1, g2, plugin_G, mult, offset, discretizer) = Q
     Z = discretizer(Z)
     _g1_val = exp(logpdf(g1, Z) - logpdf(plugin_G, Z))
     _g2_val = exp(logpdf(g2, Z) - logpdf(plugin_G, Z))
@@ -370,8 +370,8 @@ end
 
 
 function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
-    @unpack model, method, target, discretizer, representative_eb_samples  = modulus_model
-    @unpack convexclass, plugin_G = method
+    (; model, method, target, discretizer, representative_eb_samples)  = modulus_model
+    (; convexclass, plugin_G) = method
 
     discretizer == method.discretizer || throw("Internal discretizer modified.")
 
@@ -421,8 +421,8 @@ function SteinMinimaxEstimator(modulus_model::ModulusModelWithoutF)
 end
 
 function SteinMinimaxEstimator(modulus_model::ModulusModelWithF)
-    @unpack model, method, target, estimated_marginal_density = modulus_model
-    @unpack convexclass, representative_eb_samples = method
+    (; model, method, target, estimated_marginal_density) = modulus_model
+    (; convexclass, representative_eb_samples) = method
     Z = first(representative_eb_samples.vec)
    
     δ = get_δ(modulus_model)
@@ -469,7 +469,7 @@ end
 
 
 function fit_initialized!(method::AMARI, target, Zs; kwargs...)
-    @unpack modulus_model, delta_grid, delta_objective, n = method
+    (; modulus_model, delta_grid, delta_objective, n) = method
 
     modulus_model = set_target!(modulus_model, target)
 
@@ -649,7 +649,7 @@ end
 
 # used right now only for sanity check in tests
 function worst_case_bias_lp(fitted_amari::AMARI, Q::QDonoho, target; max=true)
-    @unpack convexclass, solver, discretizer, flocalization, representative_eb_samples = fitted_amari
+    (; convexclass, solver, discretizer, flocalization, representative_eb_samples) = fitted_amari
 
     transposed_intervals = reshape(discretizer, 1, length(discretizer))
     Zs = set_response.(representative_eb_samples.vec, transposed_intervals)

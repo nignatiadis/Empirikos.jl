@@ -53,7 +53,7 @@ end
 
 function marginalize(Z::PoissonSample, prior::Gamma)
     E = nuisance_parameter(Z)
-    @unpack α, θ = prior
+    (; α, θ) = prior
     β = 1 / θ
     p = β / (E + β)
     NegativeBinomial(α, p)
@@ -61,7 +61,7 @@ end
 
 function posterior(Z::PoissonSample, prior::Gamma)
     E = nuisance_parameter(Z)
-    @unpack α, θ = prior
+    (; α, θ) = prior
     β = 1 / θ
     α_post = α + response(Z)
     β_post = β + E

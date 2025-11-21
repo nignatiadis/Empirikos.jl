@@ -68,7 +68,7 @@ function StatsBase.fit(method::ConvexMinimumDistanceMethod, Zs; kwargs...)
 end
 
 function _fit(npmle::NPMLE, Zs)
-    @unpack convexclass, solver = npmle
+    (; convexclass, solver) = npmle
     model = Model(solver)
 
     π = Empirikos.prior_variable!(model, convexclass)
@@ -121,7 +121,7 @@ function Base.show(io::IO, ks::KolmogorovSmirnovMinimumDistance)
 end
 
 function _fit(method::KolmogorovSmirnovMinimumDistance, Zs)
-    @unpack convexclass, solver = method
+    (; convexclass, solver) = method
     model = Model(solver)
 
     π = Empirikos.prior_variable!(model, convexclass)

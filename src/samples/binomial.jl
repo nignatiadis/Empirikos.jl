@@ -61,7 +61,7 @@ function default_target_computation(::BasicPosteriorTarget,::BinomialSample, ::B
 end
 
 function marginalize(Z::BinomialSample, prior::Beta)
-    @unpack α, β = prior
+    (; α, β) = prior
     BetaBinomial(ntrials(Z), α, β)
 end
 

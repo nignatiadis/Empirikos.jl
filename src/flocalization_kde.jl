@@ -209,7 +209,8 @@ end
 
 The result of running
 ```julia
-StatsBase.fit(opt::InfinityNormDensityBand, Zs)```
+StatsBase.fit(opt::InfinityNormDensityBand, Zs)
+```
 Here `opt` is an instance
 of [`InfinityNormDensityBand`](@ref) and `Zs` is a vector of [`AbstractNormalSample`](@ref)s
 distributed according to a density ``f``..
@@ -255,7 +256,7 @@ function StatsBase.fit(
         opt = @set opt.kernel.h = default_bandwidth(opt.kernel, Zs)
     end
 
-    @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
+    (; a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng) = opt
 
     # deepcopying below to make sure RNG status for sampling here remains the same.
     rng = deepcopy(rng)
@@ -297,7 +298,7 @@ function StatsBase.fit(
     if isnothing(bandwidth(opt.kernel))
         opt = @set opt.kernel.h = default_bandwidth(opt.kernel, Zs)
     end
-    @unpack a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng = opt
+    (; a_min, a_max, npoints, kernel, nboot, α, bootstrap, rng) = opt
 
     # deepcopying below to make sure RNG status for sampling here remains the same.
     rng = deepcopy(rng)
