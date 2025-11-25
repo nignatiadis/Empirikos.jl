@@ -91,6 +91,23 @@ function Distributions.quantile(d::Folded{<:TDist}, q::Real)
     Distributions.quantile(unfold(d), (1+q)/2)
 end
 
+"""
+    quantile(d::Folded{<:LocationScale{T, Continuous, <:TDist}}, q::Real) where T
+
+Compute the quantile for a folded location-scale t-distribution.
+Currently only supports the case where μ = 0 (symmetric about origin).
+"""
+function Distributions.quantile(d::Folded{<:LocationScale{T, Continuous, <:TDist}}, q::Real) where T
+    ls = d.dist
+    μ, σ = ls.μ, ls.σ
+    tdist = ls.ρ
+    
+    μ == 0 || throw(ArgumentError("quantile for Folded LocationScale TDist only supported when μ = 0, got μ = $μ"))
+    
+    σ * quantile(tdist, (1 + q) / 2)
+end
+
+
 
 """
     FoldedNormalSample(Z,σ)
