@@ -50,7 +50,9 @@ using Distributions
     @testset "CDF and logcdf" begin
         @test Empirikos.cdf(folded_d, 1.0) == cdf(d, 1.0) - cdf(d, -1.0)
         @test Empirikos.cdf(folded_d, 0.0) == 0.0
-        
+        @test Empirikos.logcdf(folded_d, -1) == -Inf
+        @test Empirikos.logcdf(folded_d, Inf) == 0.0
+
         # Asymmetric normal
         @test Empirikos.cdf(folded_asy, -1.0) == 0.0
         @test Empirikos.cdf(folded_asy, 2.0) == cdf(asy, 2.0) - cdf(asy, -2.0)
@@ -293,6 +295,7 @@ using Distributions
         end
     end
 end
+
 
 
 
