@@ -255,3 +255,46 @@ function marginalize(Z::FoldedNormalSample, prior::Uniform)
     unif_normal = marginalize(Z_unfolded, prior)
     fold(unif_normal)
 end
+
+"""
+    SignAgreementProbability(Z::FoldedNormalSample) <: AbstractPosteriorTarget
+
+Type representing the probability that the observed z-score and the true stan-
+dardized effect share the same sign (specifically for FoldedNormalSample), i.e.,
+
+```math
+P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z}
+```
+"""
+struct SignAgreementProbability{T<:FoldedNormalSample} <: BasicPosteriorTarget
+    Z::T
+end
+
+location(target::SignAgreementProbability) = target.Z
+
+function (target::SignAgreementProbability)(prior::Distribution)
+    num_val = numerator(target)(prior)
+    den_val = denominator(target)(prior)
+    return num_val / den_val
+end
+
+struct SignAgreementProbabilityNumerator{T<:FoldedNormalSample} <: LinearEBayesTarget
+    Z::T
+end
+
+function (t::SignAgreementProbabilityNumerator)(prior::Distribution)
+    z_val = t.Z.Z
+    Z_plus = NormalSample(z_val, 1)
+    Z_minus = NormalSample(-z_val, 1)
+    
+    positive_set = Interval(0.0, Inf)
+    negative_set = Interval(-Inf, 0.0)
+    prob_positive = numerator(PosteriorProbability(Z_plus, positive_set))(prior)
+    prob_negative = numerator(PosteriorProbability(Z_minus, negative_set))(prior)
+    
+    prob_positive + prob_negative
+end
+
+
+Base.numerator(t::SignAgreementProbability) = SignAgreementProbabilityNumerator(location(t))
+
