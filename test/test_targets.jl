@@ -125,7 +125,7 @@ function signagree_closed_form(z, μ, τ)
 end
 @testset "SignAgreementProbability" begin
     #test for numerator functionality
-    t   = SignAgreementProbability(FoldedNormalSample(4))
+    t   = Empirikos.SignAgreementProbability(FoldedNormalSample(4))
     t_num = numerator(t)
     p = Normal(1,2)
     @test t_num(p) == numerator(Empirikos.PosteriorProbability(StandardNormalSample(4), Interval(0.0, Inf)))(p) +
@@ -134,7 +134,7 @@ end
     for (μ, τ) in ((0.0, 0.5), (0.0, 1.0), (0.4, 0.7), (-0.8, 1.2), (1.0, 2.0))
         prior = Normal(μ, τ)
         for z in (0.0, 0.25, 0.5, 1.0, 2.0, 3.0)
-            t    = SignAgreementProbability(FoldedNormalSample(abs(z)))
+            t    = Empirikos.SignAgreementProbability(FoldedNormalSample(abs(z)))
             num  = numerator(t)(prior)
             den  = denominator(t)(prior)
             val  = t(prior)
@@ -146,7 +146,7 @@ end
     end
     #test for uniform prior
     prior = Uniform(-10.0, 10.0)
-    t   = SignAgreementProbability(FoldedNormalSample(4))
+    t   = Empirikos.SignAgreementProbability(FoldedNormalSample(4))
             
     num_pos, _ = quadgk(μ -> (μ > 0) * pdf(Normal(μ, 1), 4) * pdf(prior, μ), -10, 10)
 
