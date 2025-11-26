@@ -106,3 +106,52 @@ expected = Empirikos.compute_target(Empirikos.Conjugate(), PosteriorMean(Z), Z, 
     
 @test isapprox(theoretical, computed, atol=1e-6)
 @test isapprox(expected, computed, atol=1e-6)
+
+
+#Test for SignAgreementProbability
+function signagree_closed_form(z, μ, τ)
+    σ = sqrt(1 + τ^2)
+    s     = τ / σ
+    m_plus  = (τ^2 * z + μ) / (1 + τ^2)
+    m_minus = (-τ^2 * z + μ) / (1 + τ^2)
+
+    fz   = pdf(Normal(μ, σ),  z)
+    fneg = pdf(Normal(μ, σ), -z)
+
+    num = fz   * cdf(Normal(),  m_plus / s) +
+          fneg * cdf(Normal(), -m_minus / s)
+    den = fz + fneg
+    return num / den
+end
+@testset "SignAgreementProbability" begin
+    #test for numerator functionality
+    t   = SignAgreementProbability(FoldedNormalSample(4))
+    t_num = numerator(t)
+    p = Normal(1,2)
+    @test t_num(p) == numerator(Empirikos.PosteriorProbability(StandardNormalSample(4), Interval(0.0, Inf)))(p) +
+                     numerator(Empirikos.PosteriorProbability(StandardNormalSample(-4), Interval(-Inf, 0.0)))(p)
+    #test for normal prior
+    for (μ, τ) in ((0.0, 0.5), (0.0, 1.0), (0.4, 0.7), (-0.8, 1.2), (1.0, 2.0))
+        prior = Normal(μ, τ)
+        for z in (0.0, 0.25, 0.5, 1.0, 2.0, 3.0)
+            t    = SignAgreementProbability(FoldedNormalSample(abs(z)))
+            num  = numerator(t)(prior)
+            den  = denominator(t)(prior)
+            val  = t(prior)
+            val_impl  = num / den
+            @test isapprox(val, val_impl; rtol=1e-11, atol=1e-12)
+            val_exact = signagree_closed_form(abs(z), μ, τ)
+            @test isapprox(val_impl, val_exact; rtol=1e-11, atol=1e-12)
+        end
+    end
+    #test for uniform prior
+    prior = Uniform(-10.0, 10.0)
+    t   = SignAgreementProbability(FoldedNormalSample(4))
+            
+    num_pos, _ = quadgk(μ -> (μ > 0) * pdf(Normal(μ, 1), 4) * pdf(prior, μ), -10, 10)
+
+    num_neg, _ = quadgk(μ -> (μ < 0) * pdf(Normal(μ, 1), -4) * pdf(prior, μ), -10, 10)
+    
+    @test isapprox(numerator(t)(prior), num_pos + num_neg, atol=1e-6)
+
+end
