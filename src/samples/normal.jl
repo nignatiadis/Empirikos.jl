@@ -151,6 +151,25 @@ function marginalize(Z::AbstractNormalSample, prior::Uniform)
     UniformNormal(prior.a, prior.b, std(Z))
 end
 
+
+function default_target_computation(::BasicPosteriorTarget,
+    ::AbstractNormalSample,
+    ::Uniform
+)
+    Conjugate()
+end
+
+
+function posterior(Z::AbstractNormalSample, prior::Uniform)
+    z = response(Z)
+    σ = std(Z)
+    a = prior.a        
+    b = prior.b
+    truncated(Normal(z, σ), a, b)
+end
+
+
+
 # Target specifics
 function Base.extrema(density::MarginalDensity{<:AbstractNormalSample{<:Real}})
     (0.0, 1 / sqrt(2π * var(location(density))))
