@@ -439,7 +439,37 @@ function _support(target::PosteriorTargetNumerator{<:PosteriorProbability})
     target.posterior_target.s
 end
 
+"""
+    SignAgreementProbability(Z) <: AbstractPosteriorTarget
 
+Type representing the probability that the observed z-score and the true stan-
+dardized effect share the same sign, i.e.,
+
+```math
+P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z} for foldednormal sample and 
+P_{G}{\\mu \\cdot Z > 0 \\mid Z=z} for normal sample.
+```
+"""
+struct SignAgreementProbability{T} <: BasicPosteriorTarget
+    Z::T
+end
+
+location(target::SignAgreementProbability) = target.Z
+
+function (target::SignAgreementProbability)(prior::Distribution)
+    z = target.Z.Z
+    if z == 0
+        return 0.5
+    end
+    num_val = numerator(target)(prior)
+    den_val = denominator(target)(prior)
+    return num_val / den_val
+end
+
+struct SignAgreementProbabilityNumerator{T} <: LinearEBayesTarget
+    Z::T
+end
+Base.numerator(t::SignAgreementProbability) = SignAgreementProbabilityNumerator(location(t))
 # Some additional linear targets that we keep unexported for now.
 
 
