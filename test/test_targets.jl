@@ -203,7 +203,7 @@ end
     prior = Uniform(-10.0, 10.0)
 
     for z in (4.0, -4.0)
-        t = Empirikos.SignAgreementProbability(NormalSample(z, 1))
+        t = Empirikos.SignAgreementProbability(NormalSample(z, 1.0))
 
         if z > 0
             num_quad, _ = quadgk(μ -> (μ > 0) * pdf(Normal(μ, 1), z) * pdf(prior, μ), -10, 10)
