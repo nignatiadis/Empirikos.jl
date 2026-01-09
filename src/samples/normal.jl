@@ -136,6 +136,13 @@ function Distributions.pdf(d::UniformNormal, x::Real)
     (cdf(base_normal, b-x) - cdf(base_normal, a-x)) / (b-a)
 end
 
+function Distributions.logpdf(d::UniformNormal, x::Real)
+    base_normal = Normal(0.0, d.σ)
+    a = d.a 
+    b = d.b 
+    logdiffcdf(base_normal, b-x, a-x) - log(b-a)
+end
+
 function Distributions.cdf(d::UniformNormal, x::Real)
     σ = d.σ
     a = d.a 

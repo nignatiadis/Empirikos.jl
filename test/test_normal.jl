@@ -45,3 +45,6 @@ post_mean_denominator = quadgk(μ-> Empirikos.likelihood(Z,μ) * pdf(u,μ), u.a,
 
 marg_u = Empirikos.marginalize(Z, u)
 @test pdf(marg_u, response(Z)) ≈ post_mean_denominator
+
+@test exp(logpdf(marg_u, response(Z))) ≈ post_mean_denominator
+

@@ -1,7 +1,7 @@
 module Empirikos
 
 
-import Base: broadcast, broadcast!, broadcasted, eltype, zero, <=
+import Base: broadcast, broadcast!, broadcasted, eltype, zero, <=, rand
 using DataStructures
 using Distributions
 import Distributions:
