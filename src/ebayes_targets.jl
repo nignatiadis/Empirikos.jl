@@ -446,9 +446,11 @@ Type representing the probability that the observed z-score and the true stan-
 dardized effect share the same sign, i.e.,
 
 ```math
-P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z} for foldednormal sample and 
+P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z} for foldednormal sample and
 P_{G}{\\mu \\cdot Z > 0 \\mid Z=z} for normal sample.
 ```
+And we define P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=0} = 0.5, and 
+P_{G}{\\mu \\cdot Z > 0 \\mid Z=0} = P_{G}{\\mu > 0 \\mid Z=0}.
 """
 struct SignAgreementProbability{T} <: BasicPosteriorTarget
     Z::T
@@ -458,13 +460,11 @@ location(target::SignAgreementProbability) = target.Z
 
 function (target::SignAgreementProbability)(prior::Distribution)
     z = target.Z.Z
-    if z == 0
-        return 0.5
-    end
     num_val = numerator(target)(prior)
     den_val = denominator(target)(prior)
     return num_val / den_val
 end
+
 
 struct SignAgreementProbabilityNumerator{T} <: LinearEBayesTarget
     Z::T
