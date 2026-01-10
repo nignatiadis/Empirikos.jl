@@ -261,8 +261,8 @@ function (t::SignAgreementProbabilityNumerator{<:FoldedNormalSample})(prior::Dis
     Z_plus = NormalSample(t.Z)
     Z_minus = NormalSample(t.Z; positive_sign=false)
     
-    positive_set = Interval(0.0, Inf)
-    negative_set = Interval(-Inf, 0.0)
+    positive_set = Interval{:open,:open}(0.0, Inf)
+    negative_set = Interval{:open,:open}(-Inf, 0.0)
     prob_positive = numerator(PosteriorProbability(Z_plus, positive_set))(prior)
     prob_negative = numerator(PosteriorProbability(Z_minus, negative_set))(prior)
     
@@ -271,14 +271,12 @@ end
 
 function (t::SignAgreementProbabilityNumerator{<:NormalSample})(prior::Distribution)
     z_val = t.Z.Z
-    if z_val > 0
-        positive_set = Interval(0.0, Inf)
+    if z_val >= 0
+        positive_set = Interval{:open,:open}(0.0, Inf)
         return numerator(PosteriorProbability(t.Z, positive_set))(prior)
-    elseif z_val < 0
-        negative_set = Interval(-Inf, 0.0)
-        return numerator(PosteriorProbability(t.Z, negative_set))(prior)
     else
-        return 0.0
+        negative_set = Interval{:open,:open}(-Inf, 0.0)
+        return numerator(PosteriorProbability(t.Z, negative_set))(prior)
     end
 end
 
