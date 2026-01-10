@@ -443,14 +443,21 @@ end
     SignAgreementProbability(Z) <: AbstractPosteriorTarget
 
 Type representing the probability that the observed z-score and the true stan-
-dardized effect share the same sign, i.e.,
+dardized effect share the same sign.
+For instance, for folded normal samples with ``z > 0`` this is defined as
 
 ```math
-P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z} for foldednormal sample and
-P_{G}{\\mu \\cdot Z > 0 \\mid Z=z} for normal sample.
+P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z}
 ```
-And we define P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=0} = 0.5, and 
-P_{G}{\\mu \\cdot Z > 0 \\mid Z=0} = P_{G}{\\mu > 0 \\mid Z=0}.
+And for normal samples with ``z \\neq 0``, this is defined as
+```math
+P_{G}{\\mu \\cdot Z > 0 \\mid Z=z}
+```
+At ``z = 0`` we define the sign agreement probability by convention:
+for foldednormal sample we define by the continuous extension so that it takes the value of
+``1/2 (P_{G}{\\mu > 0 \\mid Z=0} + P_{G}{\\mu < 0 \\mid Z=0})``, 
+and for normal samples we define a right-continuous extension, setting it equal to
+``P_{G}{\\mu > 0 \\mid Z=0}``.
 """
 struct SignAgreementProbability{T} <: BasicPosteriorTarget
     Z::T
