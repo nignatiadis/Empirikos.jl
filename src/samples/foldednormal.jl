@@ -255,3 +255,17 @@ function marginalize(Z::FoldedNormalSample, prior::Uniform)
     unif_normal = marginalize(Z_unfolded, prior)
     fold(unif_normal)
 end
+
+function (t::SignAgreementProbabilityNumerator{<:FoldedNormalSample})(prior::Distribution)
+    z_val = t.Z.Z
+    Z_plus = NormalSample(t.Z)
+    Z_minus = NormalSample(t.Z; positive_sign=false)
+    
+    positive_set = Interval{:open,:open}(0.0, Inf)
+    negative_set = Interval{:open,:open}(-Inf, 0.0)
+    prob_positive = numerator(PosteriorProbability(Z_plus, positive_set))(prior)
+    prob_negative = numerator(PosteriorProbability(Z_minus, negative_set))(prior)
+    
+    prob_positive + prob_negative
+end
+

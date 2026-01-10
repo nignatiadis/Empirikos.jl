@@ -439,7 +439,44 @@ function _support(target::PosteriorTargetNumerator{<:PosteriorProbability})
     target.posterior_target.s
 end
 
+"""
+    SignAgreementProbability(Z) <: AbstractPosteriorTarget
 
+Type representing the probability that the observed z-score and the true stan-
+dardized effect share the same sign.
+For instance, for folded normal samples with ``z > 0`` this is defined as
+
+```math
+P_{G}{\\mu \\cdot Z > 0 \\mid \\abs{Z}=z}
+```
+And for normal samples with ``z \\neq 0``, this is defined as
+```math
+P_{G}{\\mu \\cdot Z > 0 \\mid Z=z}
+```
+At ``z = 0`` we define the sign agreement probability by convention:
+for foldednormal sample we define by the continuous extension so that it takes the value of
+``1/2 (P_{G}{\\mu > 0 \\mid Z=0} + P_{G}{\\mu < 0 \\mid Z=0})``, 
+and for normal samples we define a right-continuous extension, setting it equal to
+``P_{G}{\\mu > 0 \\mid Z=0}``.
+"""
+struct SignAgreementProbability{T} <: BasicPosteriorTarget
+    Z::T
+end
+
+location(target::SignAgreementProbability) = target.Z
+
+function (target::SignAgreementProbability)(prior::Distribution)
+    z = target.Z.Z
+    num_val = numerator(target)(prior)
+    den_val = denominator(target)(prior)
+    return num_val / den_val
+end
+
+
+struct SignAgreementProbabilityNumerator{T} <: LinearEBayesTarget
+    Z::T
+end
+Base.numerator(t::SignAgreementProbability) = SignAgreementProbabilityNumerator(location(t))
 # Some additional linear targets that we keep unexported for now.
 
 
