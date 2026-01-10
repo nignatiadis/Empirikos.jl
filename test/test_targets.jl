@@ -129,12 +129,10 @@ function signagree_closed_form_normalsample(z, μ, τ)
     s = τ / σ
     m = (τ^2 * z + μ) / (1 + τ^2)
 
-    if z > 0
+    if z >= 0
         return cdf(Normal(),  m / s)    
-    elseif z < 0
-        return cdf(Normal(), -m / s)   
     else
-        return 0.5
+        return cdf(Normal(), -m / s)   
     end
 end
 @testset "SignAgreementProbability" begin
