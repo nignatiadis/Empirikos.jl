@@ -142,8 +142,8 @@ end
     t   = Empirikos.SignAgreementProbability(FoldedNormalSample(4))
     t_num = numerator(t)
     p = Normal(1,2)
-    @test t_num(p) == numerator(Empirikos.PosteriorProbability(StandardNormalSample(4), Interval(0.0, Inf)))(p) +
-                     numerator(Empirikos.PosteriorProbability(StandardNormalSample(-4), Interval(-Inf, 0.0)))(p)
+    @test t_num(p) == numerator(Empirikos.PosteriorProbability(StandardNormalSample(4), Interval{:open,:open}(0.0, Inf)))(p) +
+                     numerator(Empirikos.PosteriorProbability(StandardNormalSample(-4), Interval{:open,:open}(-Inf, 0.0)))(p)
     #test for normal prior (folded normal)
     for (μ, τ) in ((0.0, 0.5), (0.0, 1.0), (0.4, 0.7), (-0.8, 1.2), (1.0, 2.0))
         prior = Normal(μ, τ)
@@ -173,12 +173,12 @@ end
     Zp = NormalSample(4.0, 1)
     tp = Empirikos.SignAgreementProbability(Zp)
     @test numerator(tp)(prior) ==
-          numerator(Empirikos.PosteriorProbability(Zp, Interval(0.0, Inf)))(prior)
+          numerator(Empirikos.PosteriorProbability(Zp, Interval{:open,:open}(0.0, Inf)))(prior)
 
     Zn = NormalSample(-4.0, 1)
     tn = Empirikos.SignAgreementProbability(Zn)
     @test numerator(tn)(prior) ==
-          numerator(Empirikos.PosteriorProbability(Zn, Interval(-Inf, 0.0)))(prior)
+          numerator(Empirikos.PosteriorProbability(Zn, Interval{:open,:open}(-Inf, 0.0)))(prior)
 
     #test for Normal prior (Normal sample)
     for (μ, τ) in ((0.0, 0.5), (0.0, 1.0), (0.4, 0.7), (-0.8, 1.2), (1.0, 2.0))
@@ -189,13 +189,9 @@ end
             den = denominator(t)(prior)
             val  = t(prior)
             val_impl  = num / den
-            if z != 0.0
-                @test isapprox(val, val_impl; rtol=1e-11, atol=1e-12)
-            else
-                @test isapprox(val, 0.5; rtol=1e-11, atol=1e-12)
-            end
+            @test isapprox(val, val_impl; rtol=1e-11, atol=1e-12)
             val_exact = signagree_closed_form_normalsample(z, μ, τ)
-            @test isapprox(t(prior), val_exact; rtol=1e-11, atol=1e-12)
+            @test isapprox(val, val_exact; rtol=1e-11, atol=1e-12)
         end
     end
 
