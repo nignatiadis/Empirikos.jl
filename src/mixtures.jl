@@ -11,7 +11,7 @@ Distributions.cdf(d::ContinuousDirac, x::Real) = x < d.value ? 0.0 : isnan(x) ? 
 Distributions.logcdf(d::ContinuousDirac, x::Real) = x < d.value ? -Inf : isnan(x) ? NaN : 0.0
 Distributions.ccdf(d::ContinuousDirac, x::Real) = x < d.value ? 1.0 : isnan(x) ? NaN : 0.0
 Distributions.logccdf(d::ContinuousDirac, x::Real) = x < d.value ? 0.0 : isnan(x) ? NaN : -Inf
-
+Base.rand(rng::Random.AbstractRNG, d::ContinuousDirac) = d.value
 
 const GDirac{T} = Union{ContinuousDirac{T}, Dirac{T}}
 
