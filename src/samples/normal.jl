@@ -151,6 +151,19 @@ function marginalize(Z::AbstractNormalSample, prior::Uniform)
     UniformNormal(prior.a, prior.b, std(Z))
 end
 
+
+# Sign agreement probability for NormalSample
+function (t::SignAgreementProbabilityNumerator{<:NormalSample})(prior::Distribution)
+    z_val = t.Z.Z
+    if z_val >= 0
+        positive_set = Interval{:open,:open}(0.0, Inf)
+        return numerator(PosteriorProbability(t.Z, positive_set))(prior)
+    else
+        negative_set = Interval{:open,:open}(-Inf, 0.0)
+        return numerator(PosteriorProbability(t.Z, negative_set))(prior)
+    end
+end
+
 # Target specifics
 function Base.extrema(density::MarginalDensity{<:AbstractNormalSample{<:Real}})
     (0.0, 1 / sqrt(2π * var(location(density))))
