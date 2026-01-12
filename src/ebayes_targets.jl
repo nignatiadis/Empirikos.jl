@@ -512,7 +512,7 @@ struct ReplicationProbability_num{T} <: LinearEBayesTarget
     Z::T
 end
 
-
+Base.numerator(t::ReplicationProbability) = ReplicationProbability_num(location(t))
 
 # Some additional linear targets that we keep unexported for now.
 
