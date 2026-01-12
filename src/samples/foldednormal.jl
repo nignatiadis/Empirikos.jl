@@ -284,3 +284,18 @@ function (t::ReplicationProbability_num{<:FoldedNormalSample})(prior::Distributi
     
     return term_plus + term_minus
 end
+
+function (t::FutureCoverageProbability_num{<:FoldedNormalSample})(prior::Distribution)
+    z_abs = t.Z.Z
+    lower = Distributions.minimum(prior)
+    upper = Distributions.maximum(prior)
+    term_plus, _ = quadgk(μ -> begin
+        pdf(Normal(μ, 1), z_abs) * (cdf(Normal(μ, 1), z_abs+1.96) - cdf(Normal(μ, 1), z_abs-1.96)) * pdf(prior, μ)
+    end, lower, upper)
+    
+    term_minus, _ = quadgk(μ -> begin
+        pdf(Normal(μ, 1), -z_abs) * (cdf(Normal(μ, 1), -z_abs+1.96) - cdf(Normal(μ, 1), -z_abs-1.96)) * pdf(prior, μ)
+    end, lower, upper)
+    
+    return term_plus + term_minus
+end
