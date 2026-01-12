@@ -171,6 +171,24 @@ function (t::SignAgreementProbabilityNumerator{<:NormalSample})(prior::Distribut
     end
 end
 
+#Replication probability for NormalSample
+function (t::ReplicationProbability_num{<:NormalSample})(prior::Distribution)
+    z_val = t.Z.Z 
+    lower = Distributions.minimum(prior)
+    upper = Distributions.maximum(prior)
+    if z_val >= 0
+        term_plus, _ = quadgk(μ -> begin
+            pdf(Normal(μ, 1), z_val) * ccdf(Normal(μ, 1), 1.96) * pdf(prior, μ)
+        end, lower, upper)
+        return term_plus
+    else
+        term_minus, _ = quadgk(μ -> begin
+            pdf(Normal(μ, 1), z_val) * cdf(Normal(μ, 1), -1.96) * pdf(prior, μ)
+        end, lower, upper)
+        return term_minus
+    end
+end
+
 function default_target_computation(::BasicPosteriorTarget,
     ::AbstractNormalSample,
     ::Uniform

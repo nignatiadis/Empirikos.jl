@@ -477,6 +477,43 @@ struct SignAgreementProbabilityNumerator{T} <: LinearEBayesTarget
     Z::T
 end
 Base.numerator(t::SignAgreementProbability) = SignAgreementProbabilityNumerator(location(t))
+
+"""
+    ReplicationProbability(Z::EBayesSample) <: AbstractPosteriorTarget
+
+Type representing the probability that a z-score ``Z'`` from a replication achieves 
+statistical significance and has the same sign as the original z-score ``Z``.
+For instance, for folded normal samples with ``z > 0`` this is defined as
+```math
+P_{G}{|Z'| > 1.96, ZZ'>0\\mid |Z|=z}
+```
+And for normal samples with ``z \\neq 0``, this is defined as
+```math
+P_{G}{|Z'| > 1.96, ZZ'>0\\mid Z=z}
+```
+At ``z = 0`` we define the replication probability by convention:
+for foldednormal sample we define by the continuous extension so that it takes the value of
+``1/2 (P_{G}{Z' > 1.96 \\mid Z=0} + P_{G}{Z' < -1.96 \\mid Z=0})``, 
+and for normal samples we define a right-continuous extension, setting it equal to
+``P_{G}{Z' > 1.96 \\mid Z=0}``.
+"""
+struct ReplicationProbability{T} <: BasicPosteriorTarget
+    Z::T
+end
+location(target::ReplicationProbability) = target.Z
+
+function (target::ReplicationProbability)(prior::Distribution)
+    num_val = numerator(target)(prior)
+    den_val = denominator(target)(prior)
+    return num_val / den_val
+end
+
+struct ReplicationProbability_num{T} <: LinearEBayesTarget
+    Z::T
+end
+
+Base.numerator(t::ReplicationProbability) = ReplicationProbability_num(location(t))
+
 # Some additional linear targets that we keep unexported for now.
 
 
