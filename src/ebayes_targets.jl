@@ -514,6 +514,38 @@ end
 
 Base.numerator(t::ReplicationProbability) = ReplicationProbability_num(location(t))
 
+"""
+    FutureCoverageProbability(Z::EBayesSample) <: AbstractPosteriorTarget
+
+Type representing the probability that a 95% confidence interval of z-score ``Z'`` 
+from a replication contains the original z-score ``Z``.
+For instance, for folded normal samples this is defined as
+```math
+P_{G}{Z \\in Z' \\pm 1.96\\mid |Z|=z}
+```
+And for normal samples this is defined as
+```math
+P_{G}{Z \\in Z' \\pm 1.96 \\mid Z=z}
+```
+"""
+struct FutureCoverageProbability{T} <: BasicPosteriorTarget
+    Z::T
+end
+location(target::FutureCoverageProbability) = target.Z
+
+
+function (target::FutureCoverageProbability)(prior::Distribution)
+    num_val = numerator(target)(prior)
+    den_val = denominator(target)(prior)
+    return num_val / den_val
+end
+
+struct FutureCoverageProbability_num{T} <: LinearEBayesTarget
+    Z::T
+end
+
+Base.numerator(t::FutureCoverageProbability) = FutureCoverageProbability_num(location(t))
+
 # Some additional linear targets that we keep unexported for now.
 
 
