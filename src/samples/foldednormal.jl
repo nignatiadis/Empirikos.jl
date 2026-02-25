@@ -285,7 +285,26 @@ function (t::ReplicationProbability_num{<:FoldedNormalSample})(prior::Distributi
     return term_plus + term_minus
 end
 
-function (t::FutureCoverageProbability_num{<:FoldedNormalSample})(prior::Distribution)
+function (t::FutureCoverageProbabilityNumerator{<:FoldedNormalSample})(prior::Normal)
+    z_abs = t.Z.Z
+    μ = mean(prior)
+    τ = std(prior)
+    z = z_abs
+    σ = sqrt(1 + τ^2 / (1 + τ^2))
+    mplus  = (τ^2 * z + μ) / (1 + τ^2)
+    mminus = (-τ^2 * z + μ) / (1 + τ^2)
+    σm = sqrt(1 + τ^2)
+    fz   = pdf(Normal(μ, σm),  z)
+    fneg = pdf(Normal(μ, σm), -z)
+
+    prob_plus  = cdf(Normal(mplus,  σ),  z + 1.96) - cdf(Normal(mplus,  σ),  z - 1.96)
+    prob_minus =  cdf(Normal(mminus, σ), -z + 1.96) - cdf(Normal(mminus, σ), -z - 1.96)
+
+    num = fz * prob_plus + fneg * prob_minus
+    return num
+end
+
+function (t::FutureCoverageProbabilityNumerator{<:FoldedNormalSample})(prior::Distribution)
     z_abs = t.Z.Z
     lower = Distributions.minimum(prior)
     upper = Distributions.maximum(prior)
