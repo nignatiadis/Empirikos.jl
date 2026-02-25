@@ -540,11 +540,11 @@ function (target::FutureCoverageProbability)(prior::Distribution)
     return num_val / den_val
 end
 
-struct FutureCoverageProbability_num{T} <: LinearEBayesTarget
+struct FutureCoverageProbabilityNumerator{T} <: LinearEBayesTarget
     Z::T
 end
 
-Base.numerator(t::FutureCoverageProbability) = FutureCoverageProbability_num(location(t))
+Base.numerator(t::FutureCoverageProbability) = FutureCoverageProbabilityNumerator(location(t))
 
 # Some additional linear targets that we keep unexported for now.
 
