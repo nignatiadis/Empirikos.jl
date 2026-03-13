@@ -189,6 +189,29 @@ function (t::ReplicationProbability_num{<:NormalSample})(prior::Distribution)
     end
 end
 
+#Future coverage probability for NormalSample
+function (t::FutureCoverageProbabilityNumerator{<:NormalSample})(prior::Normal)
+    z_val = t.Z.Z 
+    m = mean(prior)
+    τ = std(prior)
+    σm = sqrt(1 + τ^2)
+    fz = pdf(Normal(m, σm),  z_val)
+    mz = (m + τ^2 * z_val) / (1 + τ^2)
+    σ = sqrt(1 + τ^2 / (1 + τ^2))
+    prob = cdf(Normal(mz,  σ),  z_val + 1.96) - cdf(Normal(mz,  σ),  z_val - 1.96)
+    return fz * prob
+end
+
+function (t::FutureCoverageProbabilityNumerator{<:NormalSample})(prior::Distribution)
+    z_val = t.Z.Z
+    lower = Distributions.minimum(prior)
+    upper = Distributions.maximum(prior)
+    term, _ = quadgk(μ -> begin
+        pdf(Normal(μ, 1), z_val) * (cdf(Normal(μ, 1), z_val+1.96) - cdf(Normal(μ, 1), z_val-1.96)) * pdf(prior, μ)
+    end, lower, upper)
+    
+    return term
+end
 function default_target_computation(::BasicPosteriorTarget,
     ::AbstractNormalSample,
     ::Uniform

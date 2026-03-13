@@ -292,3 +292,80 @@ end
         @test isapprox(numerator(t)(prior), num_quad; atol=1e-6)
     end
 end
+
+#Test for FutureCoverageProbability
+function futcov_closed_form(z, μ, τ)
+    σ = sqrt(1 + τ^2 / (1 + τ^2))
+    mplus  = (τ^2 * z + μ) / (1 + τ^2)
+    mminus = (-τ^2 * z + μ) / (1 + τ^2)
+    σm = sqrt(1 + τ^2)
+    fz   = pdf(Normal(μ, σm),  z)
+    fneg = pdf(Normal(μ, σm), -z)
+
+    prob_plus  = cdf(Normal(mplus,  σ),  z + 1.96) - cdf(Normal(mplus,  σ),  z - 1.96)
+    prob_minus =  cdf(Normal(mminus, σ), -z + 1.96) - cdf(Normal(mminus, σ), -z - 1.96)
+
+    num = fz * prob_plus + fneg * prob_minus
+    den = fz + fneg
+    return num / den
+end
+
+function futcov_closed_form_normalsample(z, μ, τ)
+    σ = sqrt(1 + τ^2 / (1 + τ^2))
+    m = (τ^2 * z + μ) / (1 + τ^2)
+
+    return cdf(Normal(m, σ), z + 1.96) - cdf(Normal(m, σ), z - 1.96)
+end
+
+
+@testset "FutureCoverageProbability" begin
+    #test for normal prior (folded normal)
+    for (μ0, τ) in ((0.0, 0.5), (0.0, 1.0), (0.4, 0.7), (-0.8, 1.2), (1.0, 2.0))
+        prior = Normal(μ0, τ)
+        for z in (0.0, 0.25, 0.5, 1.0, 2.0, 3.0)
+            t = Empirikos.FutureCoverageProbability(FoldedNormalSample(abs(z)))
+            val = t(prior)
+            val_impl = numerator(t)(prior) / denominator(t)(prior)
+            @test isapprox(val, val_impl; rtol=1e-11, atol=1e-12)
+
+            val_exact = futcov_closed_form(abs(z), μ0, τ)
+            @test isapprox(val, val_exact; rtol=1e-10, atol=1e-12)
+        end
+    end
+    
+    #test for uniform prior (folded normal)
+    prior = Uniform(-10.0, 10.0)
+    z = 4.0
+    t = Empirikos.FutureCoverageProbability(FoldedNormalSample(z))
+
+    term_plus, _ = quadgk(μ -> pdf(Normal(μ, 1),  z) *
+        (cdf(Normal(μ, 1),  z + 1.96) - cdf(Normal(μ, 1),  z - 1.96)) * pdf(prior, μ), -10, 10)
+    term_minus,_ = quadgk(μ -> pdf(Normal(μ, 1), -z) * 
+        (cdf(Normal(μ, 1), -z + 1.96) - cdf(Normal(μ, 1), -z - 1.96)) * pdf(prior, μ), -10, 10)
+
+    @test isapprox(numerator(t)(prior), term_plus + term_minus; atol=1e-6)
+
+    #test for Normal prior (Normal sample)
+    for (μ0, τ) in ((0.0, 0.5), (0.0, 1.0), (0.4, 0.7), (-0.8, 1.2), (1.0, 2.0))
+        prior = Normal(μ0, τ)
+        for z in (-3.0, -1.0, -0.25, 0.0, 0.25, 1.0, 3.0)
+            t = Empirikos.FutureCoverageProbability(NormalSample(z, 1.0))
+            val = t(prior)
+            val_impl = numerator(t)(prior) / denominator(t)(prior)
+            @test isapprox(val, val_impl; rtol=1e-11, atol=1e-12)
+
+            val_exact = futcov_closed_form_normalsample(z, μ0, τ)
+            @test isapprox(val, val_exact; rtol=1e-10, atol=1e-12)
+        end
+    end
+
+    #test for uniform prior (Normal sample)
+    prior = Uniform(-10.0, 10.0)
+    for z in (4.0, -4.0)
+        t = Empirikos.FutureCoverageProbability(NormalSample(z, 1.0))
+        num_quad, _ = quadgk(μ -> pdf(Normal(μ, 1), z) * 
+        (cdf(Normal(μ, 1), z + 1.96) - cdf(Normal(μ, 1), z - 1.96))  * pdf(prior, μ), -10, 10)
+        @test isapprox(numerator(t)(prior), num_quad; atol=1e-6)
+    end
+end
+
