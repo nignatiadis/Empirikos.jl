@@ -1,5 +1,7 @@
 using Empirikos
 using Test
+using StatsDiscretizations 
+using Distributions 
 
 @testset "_truncated" begin
     d = Normal()
