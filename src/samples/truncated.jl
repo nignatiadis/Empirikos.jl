@@ -13,13 +13,25 @@ function Base.show(io::IO, Z::TruncatedSample)
 end
 
 function _truncated(d::Distribution, interval::AbstractInterval)
-    (isleftclosed(interval) && isinf(rightendpoint(d))) || throw("Only [a, ∞) {left-closed, right-unbounded} intervals allowed currently.")
-    Distributions.truncated(d, first(interval), nothing)
+    l = leftendpoint(interval)
+    u = rightendpoint(interval)
+
+    if l == Inf
+        throw(ArgumentError("left endpoint cannot be Inf"))
+    end
+    if u == -Inf
+        throw(ArgumentError("right endpoint cannot be -Inf"))
+    end
+
+    l2 = l == -Inf ? nothing : l
+    u2 = u ==  Inf ? nothing : u
+
+    return Distributions.truncated(d, l2, u2)
 end
 
 function likelihood_distribution(Z::TruncatedSample{<:Any,<:Any,<:AbstractInterval}, μ)
     untruncated_d = likelihood_distribution(Z.Z, μ)
-    _truncated(untruncated_d, Z.truncation_set) # TODO: introduce truncated subject to more general constraints
+    _truncated(untruncated_d, Z.truncation_set) 
 end
 
 Base.@kwdef struct SelectionTilted{D<:Distributions.ContinuousUnivariateDistribution, F1,  T, EB, S} <: Distributions.ContinuousUnivariateDistribution
@@ -60,6 +72,18 @@ function tilt(𝒢::AbstractMixturePriorClass, Z_trunc_set)
     MixturePriorClass(tilt.(components(𝒢), Z_trunc_set))
 end
 
+function untilt(𝒢::AbstractMixturePriorClass)
+    MixturePriorClass(untilt.(components(𝒢)))
+end
+
+function untilt(𝒢::MixtureModel{a, b, <:SelectionTilted}) where {a, b}
+    tilted_weights = probs(𝒢)
+    tilted_comps = components(𝒢)
+    untilted_weights = tilted_weights ./ getfield.(tilted_comps, :selection_probability)
+    untilted_weights = untilted_weights ./ sum(untilted_weights) 
+    MixtureModel(untilt.(components(𝒢)), untilted_weights)
+end
+
 
 function Distributions.pdf(d::SelectionTilted, x::Real)
     Distributions.pdf(d.untilted, x) / d.selection_probability * d.tilting_function(x)
@@ -72,7 +96,7 @@ function marginalize(Z_trunc::TruncatedSample, prior::SelectionTilted)
         throw("selection tilt and truncated sample do not match")
     end
     marginal_untrunc = marginalize(Z_untrunc, prior.untilted)
-    Distributions.truncated(marginal_untrunc, truncation_set)
+    _truncated(marginal_untrunc, truncation_set)
 end
 
 struct ExtendedMarginalDensity{T} <: LinearEBayesTarget
