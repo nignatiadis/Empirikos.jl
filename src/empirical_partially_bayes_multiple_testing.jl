@@ -1,6 +1,31 @@
 struct Limma end
 
 """
+    NaturalSplineVarianceTrend(; df = nothing, min_variance = 1e-12, intercept = true)
+
+Specification for fitting a natural spline to `log(S²)` as a function of `Ms`.
+The fitting method is provided by the Splines2 package extension.
+"""
+Base.@kwdef struct NaturalSplineVarianceTrend{D,T}
+    df::D = nothing
+    min_variance::T = 1.0e-12
+    intercept::Bool = true
+end
+
+"""
+    TrendedPrior(; base = DiscretePriorClass(), trend = NaturalSplineVarianceTrend())
+
+Variance-prior wrapper that first removes a log-variance trend. `base` may be a
+prior specification and `trend` may be a trend specification or a callable fitted
+trend. The fit result exposes the fitted base prior as `prior` and the callable
+fitted trend as `trend`.
+"""
+Base.@kwdef struct TrendedPrior{B,T}
+    base::B = DiscretePriorClass()
+    trend::T = NaturalSplineVarianceTrend()
+end
+
+"""
     EmpiricalPartiallyBayesTTest(; multiple_test = BenjaminiHochberg(), α = 0.05, prior = DiscretePriorClass(), solver = Hypatia.Optimizer, discretize_marginal = false, prior_grid_size = 300, lower_quantile = 0.01)
 
 Performs empirical partially Bayes multiple testing.
@@ -9,7 +34,7 @@ Performs empirical partially Bayes multiple testing.
 
 - `multiple_test`: Multiple testing procedure from MultipleTesting.jl (default: `BenjaminiHochberg()`).
 - `α`: Significance level (default: 0.05).
-- `prior`: Prior distribution. Default: `DiscretePriorClass()`. Alternatives include `Empirikos.Limma()` or a distribution from Distributions.jl. Note: Other fields are ignored if using these alternatives.
+- `prior`: Prior distribution. Default: `DiscretePriorClass()`. Alternatives include `Empirikos.Limma()`, `Empirikos.TrendedPrior()`, or a distribution from Distributions.jl. Note: Other fields are ignored if using these alternatives.
 - `solver`: Optimization solver (default: `Hypatia.Optimizer`). Not used with alternative `prior` choices.
 - `discretize_marginal`: If true, discretizes marginal distribution (default: false). Not used with alternative `prior` choices.
 - `prior_grid_size`: Grid size for prior distribution (default: 300). Not used with alternative `prior` choices.
@@ -60,29 +85,52 @@ A named tuple containing the following fields:
   - `total_rejections`: The total number of rejections.
 
 """
-function fit(test::EmpiricalPartiallyBayesTTest, Zs::AbstractArray{<:NormalChiSquareSample})
+function fit(
+    test::EmpiricalPartiallyBayesTTest,
+    Zs::AbstractArray{<:NormalChiSquareSample},
+    Ms = nothing,
+)
     mu_hat = getproperty.(Zs, :Z)
     Ss = ScaledChiSquareSample.(Zs)
 
-    prior = fit_prior(test, test.prior, Ss)
+    _fit_ttest(test, test.prior, mu_hat, Ss, Ms)
+end
 
-    multiple_test = test.multiple_test
-    α = test.α
-
-    pvalues = limma_pvalue.(mu_hat, Ss, prior)
-    adjp = adjust(pvalues, multiple_test)
-    rj_idx = adjp .<= α
-    total_rejections = sum(rj_idx)
-
-    if iszero(total_rejections)
-        cutoff = zero(Float64)
-    else
-        cutoff = maximum(pvalues[rj_idx])
-    end
+function _fit_ttest(test::EmpiricalPartiallyBayesTTest, prior, mu_hat, Ss, Ms)
+    fitted_prior = fit_prior(test, prior, Ss)
+    pvalues = limma_pvalue(mu_hat, Ss, fitted_prior)
 
     (
         method = test,
-        prior = prior,
+        prior = fitted_prior,
+        _multiple_testing_result(test, pvalues)...,
+    )
+end
+
+function _fit_ttest(test::EmpiricalPartiallyBayesTTest, prior::TrendedPrior, mu_hat, Ss, Ms)
+    fitted_trend = fit_trend(prior.trend, Ms, response.(Ss))
+    fitted_logvariance = fitted_trend.(Ms)
+    Ss_trended = _rescale_variances(Ss, fitted_logvariance)
+    fitted_prior = fit_prior(test, prior.base, Ss_trended)
+    mu_hat_trended = mu_hat ./ exp.(fitted_logvariance ./ 2)
+    pvalues = limma_pvalue(mu_hat_trended, Ss_trended, fitted_prior)
+
+    (
+        method = test,
+        prior = fitted_prior,
+        trend = fitted_trend,
+        fitted_logvariance = fitted_logvariance,
+        _multiple_testing_result(test, pvalues)...,
+    )
+end
+
+function _multiple_testing_result(test, pvalues)
+    adjp = adjust(pvalues, test.multiple_test)
+    rj_idx = adjp .<= test.α
+    total_rejections = sum(rj_idx)
+    cutoff = iszero(total_rejections) ? zero(Float64) : maximum(pvalues[rj_idx])
+
+    (
         pvalue = pvalues,
         cutoff = cutoff,
         adjp = adjp,
@@ -91,11 +139,13 @@ function fit(test::EmpiricalPartiallyBayesTTest, Zs::AbstractArray{<:NormalChiSq
     )
 end
 
+limma_pvalue(mu_hat::AbstractArray, Ss::AbstractArray{<:ScaledChiSquareSample}, prior) =
+    limma_pvalue.(mu_hat, Ss, Ref(prior))
 
 function fit_prior(test::EmpiricalPartiallyBayesTTest, prior::DiscretePriorClass, Ss)
 
     prior = autoconvexclass(
-        test.prior,
+        prior,
         Ss;
         prior_grid_size = test.prior_grid_size,
         lower_quantile = test.lower_quantile,
@@ -122,6 +172,28 @@ function fit_prior(::EmpiricalPartiallyBayesTTest, prior::Distribution, Ss)
     prior
 end
 
+function _rescale_variances(Ss, logscale)
+    length(logscale) == length(Ss) ||
+        throw(DimensionMismatch("fitted log-variance trend has length $(length(logscale)); expected $(length(Ss))."))
+
+    ScaledChiSquareSample.(response.(Ss) ./ exp.(logscale), dof.(Ss))
+end
+
+function fit_trend(trend, Ms, s²s)
+    if isnothing(Ms)
+        throw(ArgumentError("A callable fitted trend requires passing `Ms` to `fit(test, Zs, Ms)`."))
+    elseif isempty(Ms)
+        throw(ArgumentError("`Ms` must be nonempty."))
+    elseif applicable(trend, first(Ms))
+        trend
+    else
+        throw(ArgumentError(
+            "trend must be a supported unfitted trend specification or a callable fitted trend. " *
+            "For NaturalSplineVarianceTrend, run `using Splines2` before fitting.",
+        ))
+    end
+end
+
 # Baseline: Regular t-test
 
 Base.@kwdef struct SimultaneousTTest
@@ -133,23 +205,6 @@ function fit(test::SimultaneousTTest, samples)
     mu_hat = getproperty.(samples, :Z)
     Ss = ScaledChiSquareSample.(samples)
 
-    multiple_test = test.multiple_test
-    α = test.α
     pvalues = 2*ccdf.(TDist.(dof.(Ss)), abs.(mu_hat) ./ sqrt.(response.(Ss)))
-    adjp = adjust(pvalues, multiple_test)
-    rj_idx = adjp .<= α
-    total_rejections = sum(rj_idx)
-    if iszero(total_rejections)
-        cutoff = zero(Float64)
-    else
-        cutoff = maximum(pvalues[rj_idx])
-    end
-
-    (
-    pvalue = pvalues,
-    cutoff = cutoff,
-    adjp = adjp,
-    rj_idx = rj_idx,
-    total_rejections = total_rejections
-    )
+    _multiple_testing_result(test, pvalues)
 end

@@ -118,6 +118,8 @@ export EBayesSample,
     MixturePriorClass,
     GaussianScaleMixtureClass,
     NPMLE,
+    TrendedPrior,
+    NaturalSplineVarianceTrend,
     nominal_alpha
 
 export loglikelihood,

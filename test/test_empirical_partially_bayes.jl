@@ -1,7 +1,9 @@
 using SpecialFunctions
 using Empirikos
+using Distributions
 using QuadGK
 using Setfield
+using Splines2
 using Test 
 using Random
 
@@ -184,3 +186,46 @@ all(dists_at_3 .< dists_at_2 .* log.(1 ./ dists_at_2))
 ν = 20
 u=1e-7
 @test cdf(Chisq(ν), u)*u^(-ν/2) ≈ 2^(-ν/2)/gamma(1 + (ν/2)) rtol = 1e-5
+
+
+@testset "Trended partially Bayes t-test" begin
+    Ms = [1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 7.0]
+    vars = [0.45, 0.32, 0.25, 0.24, 0.18, 0.13, 0.11, 0.08]
+    Zs = NormalChiSquareSample.(zeros(length(vars)), vars, 6)
+
+    trend_fit = fit(
+        Empirikos.EmpiricalPartiallyBayesTTest(
+            prior = Empirikos.TrendedPrior(
+                base = Dirac(1.0),
+                trend = Empirikos.NaturalSplineVarianceTrend(),
+            ),
+            solver = nothing,
+        ),
+        Zs,
+        Ms,
+    )
+
+    basis = Splines2.ns(Ms; df=3, intercept=true)
+    expected_logvariance = basis * (basis \ log.(vars))
+    @test trend_fit.fitted_logvariance ≈ expected_logvariance
+    @test trend_fit.trend.(Ms) ≈ expected_logvariance
+    @test response.(ScaledChiSquareSample.(Zs)) ./ exp.(trend_fit.fitted_logvariance) ≈ vars ./ exp.(expected_logvariance)
+
+    βs = [-2.0, -0.5, 0.25, 1.5]
+    vars_prefit = [0.5, 0.3, 0.8, 0.4]
+    Zs_prefit = NormalChiSquareSample.(βs, vars_prefit, 6)
+    trend = m -> log(1 + m / 10)
+    fitted_logvariance = trend.(Ms[1:length(Zs_prefit)])
+    callable_fit = fit(
+        Empirikos.EmpiricalPartiallyBayesTTest(
+            prior = Empirikos.TrendedPrior(base = Dirac(1.0), trend = trend),
+            solver = nothing,
+        ),
+        Zs_prefit,
+        Ms[1:length(Zs_prefit)],
+    )
+
+    @test callable_fit.trend === trend
+    @test callable_fit.fitted_logvariance ≈ fitted_logvariance
+    @test callable_fit.pvalue ≈ 2 .* ccdf.(Normal(), abs.(βs ./ sqrt.(exp.(fitted_logvariance))))
+end
