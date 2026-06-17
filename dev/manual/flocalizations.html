@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>F-Localizations – Empirikos</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -20,45 +23,10 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -69,19 +37,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../manual/convexpriors.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-5157cb3881a4929c14b9ceeb4e3dbe7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-bd3f0b0271b102c991f7a6f533950a57.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-5157cb3881a4929c14b9ceeb4e3dbe7d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-ce955e58bf5a890d91fbb58fb504cd70.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3af3ab176d7c9d2273a371d6077b18a1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-ce955e58bf5a890d91fbb58fb504cd70.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -108,9 +75,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -424,20 +394,8 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of Contents</h2>
-   
-  <ul>
-  <li><a href="#flocalization" id="toc-flocalization" class="nav-link active" data-scroll-target="#flocalization"><code>FLocalization</code></a></li>
-  <li><a href="#fittedflocalization" id="toc-fittedflocalization" class="nav-link" data-scroll-target="#fittedflocalization"><code>FittedFLocalization</code></a></li>
-  <li><a href="#dvoretzkykieferwolfowitz" id="toc-dvoretzkykieferwolfowitz" class="nav-link" data-scroll-target="#dvoretzkykieferwolfowitz"><code>DvoretzkyKieferWolfowitz</code></a></li>
-  <li><a href="#chisquaredflocalization" id="toc-chisquaredflocalization" class="nav-link" data-scroll-target="#chisquaredflocalization"><code>ChiSquaredFLocalization</code></a></li>
-  <li><a href="#infinitynormdensityband" id="toc-infinitynormdensityband" class="nav-link" data-scroll-target="#infinitynormdensityband"><code>InfinityNormDensityBand</code></a></li>
-  <li><a href="#flattopkernel" id="toc-flattopkernel" class="nav-link" data-scroll-target="#flattopkernel"><code>FlatTopKernel</code></a></li>
-  <li><a href="#sinckernel" id="toc-sinckernel" class="nav-link" data-scroll-target="#sinckernel"><code>SincKernel</code></a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -462,148 +420,115 @@ window.Quarto = {
 </header>
 
 
-<section id="flocalization" class="level2">
-<h2 class="anchored" data-anchor-id="flocalization"><code>FLocalization</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
+<div class="markdown"><h2 class="anchored">`FLocalization`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
 <p>Abstract type representing F-Localizations.</p>
+
+
+
+<p>:::</p>
+
 </div>
+<div class="markdown"><h2 class="anchored">`FittedFLocalization`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
+<p>Abstract type representing a fitted F-Localization    (i.e., wherein the F-localization has already been determined by data).</p>
+
+
+
+<p>:::</p>
+
 </div>
-</div>
-</section>
-<section id="fittedflocalization" class="level2">
-<h2 class="anchored" data-anchor-id="fittedflocalization"><code>FittedFLocalization</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>Abstract type representing a fitted F-Localization (i.e., wherein the F-localization has already been determined by data).</p>
-</div>
-</div>
-</div>
-</section>
-<section id="dvoretzkykieferwolfowitz" class="level2">
-<h2 class="anchored" data-anchor-id="dvoretzkykieferwolfowitz"><code>DvoretzkyKieferWolfowitz</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DvoretzkyKieferWolfowitz</span>(;α <span class="op">=</span> <span class="fl">0.05</span>, max_constraints <span class="op">=</span> <span class="fl">1000</span>) <span class="op">&lt;:</span><span class="dt"> FLocalization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The Dvoretzky-Kiefer-Wolfowitz band (based on the Kolmogorov-Smirnov distance) at confidence level <code>1-α</code> that bounds the distance of the true distribution function to the ECDF <span class="math inline">\(\widehat{F}_n\)</span> based on <span class="math inline">\(n\)</span> samples. The constant of the band is the sharp constant derived by Massart:</p>
-<p><span class="math display">\[
-F \text{ distribution}:  \sup_{t \in \mathbb R}\lvert F(t) - \widehat{F}_n(t) \rvert  \leq  \sqrt{\log(2/\alpha)/(2n)}
-\]</span></p>
+<div class="markdown"><h2 class="anchored">`DvoretzkyKieferWolfowitz`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
+<pre><code class="language-julia">DvoretzkyKieferWolfowitz(;α = 0.05, max_constraints = 1000) &lt;: FLocalization</code></pre>
+<p>The Dvoretzky-Kiefer-Wolfowitz band (based on the Kolmogorov-Smirnov distance) at confidence level <code>1-α</code> that bounds the distance of the true distribution function to the ECDF $\widehat{F}_n$ based on $n$ samples. The constant of the band is the sharp constant derived by Massart:</p>
+$F \text{ distribution}:  \sup_{t \in \mathbb R}\lvert F(t) - \widehat{F}_n(t) \rvert  \leq  \sqrt{\log(2/\alpha)/(2n)}$
 <p>The supremum above is enforced discretely on at most <code>max_constraints</code> number of points.</p>
+
+
+
+<p>:::</p>
+
 </div>
+<div class="markdown"><h2 class="anchored">`ChiSquaredFLocalization`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
+<pre><code class="language-julia">ChiSquaredFLocalization(α) &lt;: FLocalization</code></pre>
+<p>The $\chi^2$ F-localization at confidence level $1-\alpha$ for a discrete random variable taking values in $\{0,\dotsc, N\}$. It is equal to:</p>
+$f: \sum_{x=0}^N \frac{(n \hat{f}_n(x) - n f(x))^2}{n f(x)} \leq \chi^2_{N,1-\alpha},$
+<p>where $\chi^2_{N,1-\alpha}$ is the $1-\alpha$ quantile of the Chi-squared distribution with $N$ degrees of freedom, $n$ is the sample size, $\hat{f}_n(x)$ is the proportion of samples equal to $x$ and $f(x)$ is then population pmf.</p>
+
+
+
+<p>:::</p>
+
 </div>
-</div>
-</section>
-<section id="chisquaredflocalization" class="level2">
-<h2 class="anchored" data-anchor-id="chisquaredflocalization"><code>ChiSquaredFLocalization</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ChiSquaredFLocalization</span>(α) <span class="op">&lt;:</span><span class="dt"> FLocalization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <span class="math inline">\(\chi^2\)</span> F-localization at confidence level <span class="math inline">\(1-\alpha\)</span> for a discrete random variable taking values in <span class="math inline">\(\{0,\dotsc, N\}\)</span>. It is equal to:</p>
-<p><span class="math display">\[
-f: \sum_{x=0}^N \frac{(n \hat{f}_n(x) - n f(x))^2}{n f(x)} \leq \chi^2_{N,1-\alpha},
-\]</span></p>
-<p>where <span class="math inline">\(\chi^2_{N,1-\alpha}\)</span> is the <span class="math inline">\(1-\alpha\)</span> quantile of the Chi-squared distribution with <span class="math inline">\(N\)</span> degrees of freedom, <span class="math inline">\(n\)</span> is the sample size, <span class="math inline">\(\hat{f}_n(x)\)</span> is the proportion of samples equal to <span class="math inline">\(x\)</span> and <span class="math inline">\(f(x)\)</span> is then population pmf.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="infinitynormdensityband" class="level2">
-<h2 class="anchored" data-anchor-id="infinitynormdensityband"><code>InfinityNormDensityBand</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">InfinityNormDensityBand</span>(;a_min,</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                         a_max,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                         kernel  <span class="op">=</span>  Empirikos.<span class="fu">FlatTopKernel</span>(),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                         bootstrap <span class="op">=</span> <span class="op">:</span>Multinomial,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                         nboot <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                         α <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                         rng <span class="op">=</span> <span class="bu">Random</span>.<span class="fu">MersenneTwister</span>(<span class="fl">1</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                    )  <span class="op">&lt;:</span><span class="dt"> FLocalization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="markdown"><h2 class="anchored">`InfinityNormDensityBand`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
+<pre><code class="language-julia">InfinityNormDensityBand(;a_min,
+                         a_max,
+                         kernel  =  Empirikos.FlatTopKernel(),
+                         bootstrap = :Multinomial,
+                         nboot = 1000,
+                         α = 0.05,
+                         rng = Random.MersenneTwister(1)
+                    )  &lt;: FLocalization</code></pre>
 <p>This struct contains hyperparameters that will be used for constructing a neighborhood of the marginal density. The steps of the method (and corresponding hyperparameter meanings) are as follows</p>
 <ul>
-<li>First a kernel density estimate <span class="math inline">\(\bar{f}\)</span> with <code>kernel</code> is fit to the data.</li>
-<li>Second, a <code>bootstrap</code> (options: <code>:Multinomial</code> or <code>Poisson</code>) with <code>nboot</code> bootstrap replicates will be used to estimate <span class="math inline">\(c_n\)</span>, such that:</li>
+<li><p>First a kernel density estimate $\bar{f}$ with <code>kernel</code> is fit to the data.</p>
+</li>
+<li><p>Second, a <code>bootstrap</code> (options: <code>:Multinomial</code> or <code>Poisson</code>) with <code>nboot</code> bootstrap replicates will be used to estimate $c_n$, such that:</p>
+</li>
 </ul>
-<p><span class="math display">\[
-\liminf_{n \to \infty}\mathbb{P}\left[\sup_{x \in [a_{\text{min}} , a_{\text{max}}]} | \bar{f}(x) - f(x)| \leq c_ n\right] \geq 1-\alpha
-\]</span></p>
+$\liminf_{n \to \infty}\mathbb{P}\left[\sup_{x \in [a_{\text{min}} , a_{\text{max}}]} | \bar{f}(x) - f(x)| \leq c_ n\right] \geq 1-\alpha$
 <p>Note that the bound is valid from <code>a_min</code> to <code>a_max</code>. <code>α</code> is the nominal level and finally <code>rng</code> sets the seed for the bootstrap samples.</p>
-</div>
-</div>
+
+
+
+<p>:::</p>
+
 </div>
 <p>This F-Localization currently only works for homoskedastic Normal samples with common noise variance <span class="math inline">\(\sigma^2\)</span>. By default the above uses the following kernel, with bandwidth <span class="math inline">\(h = \sigma/\sqrt{\log(n)}\)</span>, where <span class="math inline">\(n\)</span> is the sample size:</p>
-</section>
-<section id="flattopkernel" class="level2">
-<h2 class="anchored" data-anchor-id="flattopkernel"><code>FlatTopKernel</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FlatTopKernel</span>(h) <span class="op">&lt;</span> InfiniteOrderKernel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="markdown"><h2 class="anchored">`FlatTopKernel`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
+<pre><code class="language-julia">FlatTopKernel(h) &lt; InfiniteOrderKernel</code></pre>
 <p>Implements the <code>FlatTopKernel</code> with bandwidth <code>h</code> to be used for kernel density estimation through the <code>KernelDensity.jl</code> package. The flat-top kernel is defined as follows:</p>
-<p><span class="math display">\[
-K(x) = \frac{\sin^2(1.1x/2)-\sin^2(x/2)}{\pi x^2/ 20}.
-\]</span></p>
+$K(x) = \frac{\sin^2(1.1x/2)-\sin^2(x/2)}{\pi x^2/ 20}.$
 <p>Its use case is similar to the <a href="#SincKernel"><code>SincKernel</code></a>, however it has the advantage of being integrable (in the Lebesgue sense) and having bounded total variation. Its Fourier transform is the following:</p>
-<p><span class="math display">\[
-K^*(t) = \begin{cases}
-1, &amp; \text{ if } t|\leq 1 \\
-0, &amp;\text{ if } |t| \geq 1.1 \\
-11-10|t|,&amp; \text{ if } |t| \in [1,1.1]
-\end{cases}
-\]</span></p>
-<pre class="jldoctest"><code>julia&gt; Empirikos.FlatTopKernel(0.1)
+$K^*(t) = \begin{cases}
+ 1, &amp; \text{ if } t|\leq 1 \\
+ 0, &amp;\text{ if } |t| \geq 1.1 \\
+ 11-10|t|,&amp; \text{ if } |t| \in [1,1.1]
+ \end{cases}$
+<pre><code class="language-jldoctest">julia&gt; Empirikos.FlatTopKernel(0.1)
 FlatTopKernel | bandwidth = 0.1</code></pre>
+
+
+
+<p>:::</p>
+
 </div>
-</div>
-</div>
-</section>
-<section id="sinckernel" class="level2">
-<h2 class="anchored" data-anchor-id="sinckernel"><code>SincKernel</code></h2>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">SincKernel</span>(h) <span class="op">&lt;:</span><span class="dt"> InfiniteOrderKernel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="markdown"><h2 class="anchored">`SincKernel`</h2>
+<p>:::{.callout appearance="minimal"}</p>
+
+<pre><code class="language-julia">SincKernel(h) &lt;: InfiniteOrderKernel</code></pre>
 <p>Implements the <code>SincKernel</code> with bandwidth <code>h</code> to be used for kernel density estimation through the <code>KernelDensity.jl</code> package. The sinc kernel is defined as follows:</p>
-<p><span class="math display">\[
-K_{\text{sinc}}(x) = \frac{\sin(x)}{\pi x}
-\]</span></p>
+$K_{\text{sinc}}(x) = \frac{\sin(x)}{\pi x}$
 <p>It is not typically used for kernel density estimation, because this kernel is not a density itself. However, it is particularly well suited to deconvolution problems and estimation of very smooth densities because its Fourier transform is the following:</p>
-<p><span class="math display">\[
-K^*_{\text{sinc}}(t) = \mathbf 1( t \in [-1,1])
-\]</span></p>
-</div>
-</div>
+$K^*_{\text{sinc}}(t) = \mathbf 1( t \in [-1,1])$
+
+
+
+<p>:::</p>
+
 </div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1036,4 +961,4 @@ K^*_{\text{sinc}}(t) = \mathbf 1( t \in [-1,1])
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://git@github.com:nignatiadis/Empirikos.jl/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
