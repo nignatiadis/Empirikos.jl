@@ -4,6 +4,7 @@ using Distributions
 using QuadGK
 using Setfield
 using Splines2
+using StatsDiscretizations
 using Test 
 using Random
 
@@ -228,4 +229,59 @@ u=1e-7
     @test callable_fit.trend === trend
     @test callable_fit.fitted_logvariance ≈ fitted_logvariance
     @test callable_fit.pvalue ≈ 2 .* ccdf.(Normal(), abs.(βs ./ sqrt.(exp.(fitted_logvariance))))
+end
+
+@testset "Binned partially Bayes t-test" begin
+    βs = [-1.0, 0.2, 1.3, -0.5, 2.0, -1.6]
+    vars = [0.4, 0.55, 0.48, 1.7, 2.1, 1.9]
+    Zs = NormalChiSquareSample.(βs, vars, 8)
+    bins = [:small, :small, :small, :large, :large, :large]
+    priorclass = DiscretePriorClass(0.2:0.2:2.4)
+
+    binned_test = Empirikos.EmpiricalPartiallyBayesTTest(
+        prior = Empirikos.BinnedPrior(base = priorclass),
+        solver = Hypatia.Optimizer,
+    )
+    binned_fit = fit(binned_test, Zs, bins)
+
+    small = findall(==(:small), bins)
+    large = findall(==(:large), bins)
+    unbinned_test = Empirikos.EmpiricalPartiallyBayesTTest(
+        prior = priorclass,
+        solver = Hypatia.Optimizer,
+    )
+    small_fit = fit(unbinned_test, Zs[small])
+    large_fit = fit(unbinned_test, Zs[large])
+
+    @test binned_fit.bin == bins
+    @test collect(keys(binned_fit.prior)) == [:small, :large]
+    @test binned_fit.pvalue[small] ≈ small_fit.pvalue
+    @test binned_fit.pvalue[large] ≈ large_fit.pvalue
+
+    Ms = [1, 2, 3, 8, 9, 10]
+    binning = m -> m <= 3 ? :small : :large
+    function_binned_fit = fit(
+        Empirikos.EmpiricalPartiallyBayesTTest(
+            prior = Empirikos.BinnedPrior(base = Dirac(1.0), binning = binning),
+            solver = nothing,
+        ),
+        Zs,
+        Ms,
+    )
+
+    @test function_binned_fit.bin == bins
+    @test function_binned_fit.pvalue ≈ Empirikos.limma_pvalue.(βs, ScaledChiSquareSample.(Zs), Ref(Dirac(1.0)))
+
+    discretizer = RealLineDiscretizer{:closed,:open}([0.0, 4.0])
+    discretized_fit = fit(
+        Empirikos.EmpiricalPartiallyBayesTTest(
+            prior = Empirikos.BinnedPrior(base = Dirac(1.0), binning = discretizer),
+            solver = nothing,
+        ),
+        Zs,
+        Ms,
+    )
+
+    @test discretized_fit.bin == discretizer.(Ms)
+    @test discretized_fit.pvalue ≈ function_binned_fit.pvalue
 end

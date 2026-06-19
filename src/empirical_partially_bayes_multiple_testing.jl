@@ -26,6 +26,28 @@ Base.@kwdef struct TrendedPrior{B,T}
 end
 
 """
+    BinnedPrior(; base = DiscretePriorClass(), binning = identity)
+
+Variance-prior wrapper that fits a separate prior for each value of
+`binning.(Ms)`. The optional third argument to `fit(test, Zs, Ms)` is the
+covariate. The default `binning = identity` treats `Ms` as a discrete covariate;
+otherwise, `binning` may be a scalar function or a StatsDiscretizations
+discretizer.
+"""
+Base.@kwdef struct BinnedPrior{B,F}
+    base::B = DiscretePriorClass()
+    binning::F = identity
+end
+
+struct FittedBinnedPrior{D<:StatsDiscretizations.Dictionary}
+    store::D
+end
+
+Base.keys(prior::FittedBinnedPrior) = keys(prior.store)
+Base.getindex(prior::FittedBinnedPrior, bin) = prior.store[bin]
+(prior::FittedBinnedPrior)(bin) = prior[bin]
+
+"""
     EmpiricalPartiallyBayesTTest(; multiple_test = BenjaminiHochberg(), α = 0.05, prior = DiscretePriorClass(), solver = Hypatia.Optimizer, discretize_marginal = false, prior_grid_size = 300, lower_quantile = 0.01)
 
 Performs empirical partially Bayes multiple testing.
@@ -34,7 +56,7 @@ Performs empirical partially Bayes multiple testing.
 
 - `multiple_test`: Multiple testing procedure from MultipleTesting.jl (default: `BenjaminiHochberg()`).
 - `α`: Significance level (default: 0.05).
-- `prior`: Prior distribution. Default: `DiscretePriorClass()`. Alternatives include `Empirikos.Limma()`, `Empirikos.TrendedPrior()`, or a distribution from Distributions.jl. Note: Other fields are ignored if using these alternatives.
+- `prior`: Prior distribution. Default: `DiscretePriorClass()`. Alternatives include `Empirikos.Limma()`, `Empirikos.TrendedPrior()`, `Empirikos.BinnedPrior()`, or a distribution from Distributions.jl. Note: Other fields are ignored if using these alternatives.
 - `solver`: Optimization solver (default: `Hypatia.Optimizer`). Not used with alternative `prior` choices.
 - `discretize_marginal`: If true, discretizes marginal distribution (default: false). Not used with alternative `prior` choices.
 - `prior_grid_size`: Grid size for prior distribution (default: 300). Not used with alternative `prior` choices.
@@ -124,6 +146,21 @@ function _fit_ttest(test::EmpiricalPartiallyBayesTTest, prior::TrendedPrior, mu_
     )
 end
 
+function _fit_ttest(test::EmpiricalPartiallyBayesTTest, prior::BinnedPrior, mu_hat, Ss, Ms)
+    bins = _covariate_bins(prior, Ms, length(Ss))
+    fitted_prior = _fit_binned_prior(test, prior.base, Ss, bins)
+    pvalues = map(eachindex(mu_hat, Ss, bins)) do i
+        limma_pvalue(mu_hat[i], Ss[i], fitted_prior[bins[i]])
+    end
+
+    (
+        method = test,
+        prior = fitted_prior,
+        bin = bins,
+        _multiple_testing_result(test, pvalues)...,
+    )
+end
+
 function _multiple_testing_result(test, pvalues)
     adjp = adjust(pvalues, test.multiple_test)
     rj_idx = adjp .<= test.α
@@ -170,6 +207,29 @@ end
 
 function fit_prior(::EmpiricalPartiallyBayesTTest, prior::Distribution, Ss)
     prior
+end
+
+function _covariate_bins(prior::BinnedPrior, Ms, n)
+    isnothing(Ms) &&
+        throw(ArgumentError("BinnedPrior requires passing covariates to `fit(test, Zs, Ms)`."))
+    length(Ms) == n ||
+        throw(DimensionMismatch("`Ms` has length $(length(Ms)); expected $n."))
+
+    bins = prior.binning === identity ? collect(Ms) : prior.binning.(Ms)
+    any(ismissing, bins) &&
+        throw(ArgumentError("BinnedPrior does not support missing bin labels."))
+
+    bins
+end
+
+function _fit_binned_prior(test::EmpiricalPartiallyBayesTTest, prior, Ss, bins)
+    levels = unique(bins)
+    priors = map(levels) do level
+        idx = findall(bin -> isequal(bin, level), bins)
+        fit_prior(test, prior, Ss[idx])
+    end
+
+    FittedBinnedPrior(StatsDiscretizations.Dictionary(levels, priors))
 end
 
 function _rescale_variances(Ss, logscale)

@@ -119,6 +119,7 @@ export EBayesSample,
     GaussianScaleMixtureClass,
     NPMLE,
     TrendedPrior,
+    BinnedPrior,
     NaturalSplineVarianceTrend,
     nominal_alpha
 
