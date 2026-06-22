@@ -27,6 +27,10 @@ end
 #    include("test_dict_function.jl")
 #end
 
+@testset "Test truncated" begin
+    include("test_truncated.jl")
+end
+
 @testset "EBayes Intervals" begin
     include("test_intervals.jl")
 end
