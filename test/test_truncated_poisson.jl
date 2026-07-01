@@ -135,6 +135,7 @@ amari_cis = confint(amari, target, Zs)
 # Test actual distribution
 d = Empirikos.ZeroTruncatedPoisson(10.0)
 
+@test_throws DomainError Empirikos.ZeroTruncatedPoisson(-1.0)
 @test sum(pdf.(d,1:100)) ≈ 1
 @test pdf(d, 0) == 0
 

@@ -34,7 +34,7 @@ EmpirikosSplines2Ext = "Splines2"
 [compat]
 CSV = "0.8, 0.9, 0.10"
 DataStructures = "0.17,0.18"
-Distributions = "0.24.7, 0.25"
+Distributions = "0.25.129"
 JuMP = "^1"
 KernelDensity = "0.6"
 LinearAlgebra = "1.9"

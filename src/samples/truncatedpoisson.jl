@@ -7,7 +7,7 @@ end
 
 
 function ZeroTruncatedPoisson(λ::T; check_args=true) where {T <: Real}
-    check_args && Distributions.@check_args(Poisson, λ > zero(λ))
+    check_args && Distributions.@check_args(Poisson, (λ, λ > zero(λ)))
     return ZeroTruncatedPoisson{T}(λ)
 end
 
