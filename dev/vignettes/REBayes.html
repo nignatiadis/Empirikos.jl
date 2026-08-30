@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,14 +79,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-ac2ff42b207369576ef7a99fe259a7a6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-582336d9e95e2f93b8e738f0ecb3ace4.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-ac2ff42b207369576ef7a99fe259a7a6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-4b5517c44acb5eea1afb780d5954e0e0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-c60db5a6adad5efd4f728efa877d6a81.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-4b5517c44acb5eea1afb780d5954e0e0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -115,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -487,10 +490,10 @@ window.Quarto = {
 <div class="cell-output cell-output-stdout">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-green-fg ansi-bold">Precompiling</span> packages...
-   1925.5 ms<span class="ansi-green-fg">  ✓ </span>QuartoNotebookWorkerLaTeXStringsExt<span class="ansi-bright-black-fg"> (serial)</span>
+   1918.2 ms<span class="ansi-green-fg">  ✓ </span>QuartoNotebookWorkerLaTeXStringsExt<span class="ansi-bright-black-fg"> (serial)</span>
   1 dependency successfully precompiled in 2 seconds
 <span class="ansi-green-fg ansi-bold">Precompiling</span> packages...
-   2305.4 ms<span class="ansi-green-fg">  ✓ </span>QuartoNotebookWorkerPlotsExt<span class="ansi-bright-black-fg"> (serial)</span>
+   2335.7 ms<span class="ansi-green-fg">  ✓ </span>QuartoNotebookWorkerPlotsExt<span class="ansi-bright-black-fg"> (serial)</span>
   1 dependency successfully precompiled in 2 seconds
 </pre>
 </div>
@@ -533,6 +536,13 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>normal_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), normal_Zs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
+Hypatia v0.10.2
+
+Floating-point type: Float64.
+Problem with 300 variables, 0 equality constraints and 2 cones:
+300-dimensional nonnegative cone.
+2001-dimensional vector relative entropy cone.
+
  iter        p_obj        d_obj |  abs_gap    x_feas    z_feas |      tau       kap        mu | dir_res     prox  step     alpha
     0   3.2363e-02  -2.8081e+02 | 2.30e+03  2.05e+02  2.33e+00 | 1.00e+00  1.00e+00  1.00e+00 |
     1  -3.9920e-01  -2.8539e+02 | 2.19e+03  2.08e+02  2.37e+00 | 9.36e-01  1.02e+00  9.50e-01 | 3.7e-12  8.6e-02  co-a  5.00e-02
@@ -680,7 +690,7 @@ window.Quarto = {
   143  -6.2671e+00  -6.2671e+00 | 4.91e-08  1.28e-08  1.36e-10 | 3.80e-01  5.62e-11  2.13e-11 | 5.5e-10  1.2e-01  co-a  3.00e-01
 optimal solution found; terminating
 
-status is Optimal after 143 iterations and 20.196 seconds
+status is Optimal after 143 iterations and 20.806 seconds
 </code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="1">
@@ -811,6 +821,13 @@ Figure&nbsp;9.1: Gaussian mixture model analysis. Left: True mixture density. Mi
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tacks_npmle <span class="op">=</span> <span class="fu">fit</span>(<span class="fu">NPMLE</span>(<span class="fu">DiscretePriorClass</span>(), Hypatia.Optimizer), tack_Zs);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
+Hypatia v0.10.2
+
+Floating-point type: Float64.
+Problem with 300 variables, 0 equality constraints and 2 cones:
+300-dimensional nonnegative cone.
+19-dimensional vector relative entropy cone.
+
  iter        p_obj        d_obj |  abs_gap    x_feas    z_feas |      tau       kap        mu | dir_res     prox  step     alpha
     0   3.8484e-01  -5.0613e+00 | 3.19e+02  1.46e+00  1.01e+00 | 1.00e+00  1.00e+00  1.00e+00 |
     1  -4.4676e+00  -6.8414e+00 | 9.56e+01  8.72e-01  6.01e-01 | 5.03e-01  7.39e-01  3.00e-01 | 2.3e-15  6.2e-01  co-a  7.00e-01
@@ -848,7 +865,7 @@ Figure&nbsp;9.1: Gaussian mixture model analysis. Left: True mixture density. Mi
    33  -1.1406e+00  -1.1406e+00 | 2.72e-06  1.99e-09  1.29e-09 | 7.51e+00  1.13e-09  8.54e-09 | 1.5e-08  4.9e-01  co-a  7.00e-01
 optimal solution found; terminating
 
-status is Optimal after 33 iterations and 0.878 seconds
+status is Optimal after 33 iterations and 0.447 seconds
 </code></pre>
 </div>
 </div>
@@ -930,6 +947,13 @@ Figure&nbsp;9.2: Estimated prior distribution for the Tacks dataset showing the 
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                    norberg_Zs);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
+Hypatia v0.10.2
+
+Floating-point type: Float64.
+Problem with 300 variables, 0 equality constraints and 2 cones:
+300-dimensional nonnegative cone.
+145-dimensional vector relative entropy cone.
+
  iter        p_obj        d_obj |  abs_gap    x_feas    z_feas |      tau       kap        mu | dir_res     prox  step     alpha
     0   1.2751e-01  -2.3801e+01 | 4.45e+02  1.28e+01  6.84e-01 | 1.00e+00  1.00e+00  1.00e+00 |
     1  -4.8001e+00  -2.8895e+01 | 3.11e+02  1.32e+01  7.03e-01 | 6.81e-01  1.05e+00  7.00e-01 | 1.4e-14  3.0e-01  co-a  3.00e-01
@@ -987,7 +1011,7 @@ Figure&nbsp;9.2: Estimated prior distribution for the Tacks dataset showing the 
    53  -3.5670e+00  -3.5670e+00 | 2.55e-07  5.92e-09  2.94e-10 | 1.48e+00  3.89e-10  5.74e-10 | 2.2e-09  8.5e-01  co-a  9.00e-01
 optimal solution found; terminating
 
-status is Optimal after 53 iterations and 0.155 seconds
+status is Optimal after 53 iterations and 0.191 seconds
 </code></pre>
 </div>
 </div>
