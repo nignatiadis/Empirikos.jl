@@ -285,3 +285,113 @@ end
     @test discretized_fit.bin == discretizer.(Ms)
     @test discretized_fit.pvalue ≈ function_binned_fit.pvalue
 end
+
+@testset "Robust limma partially Bayes t-test" begin
+    # Reference values from limma 3.66.0:
+    # fitFDistRobustly(vars, df1=6, winsor.tail.p=c(0.05,0.1))
+    # Here the same clipping is represented directly as winsor_p = (0.05, 0.9).
+    fixtures = [
+        (
+            vars = [0.4, 0.6, 0.7, 0.9, 1.0, 1.2, 1.6, 2.0, 2.6, 3.4, 4.2, 5.0, 12.0, 20.0],
+            σ² = 1.7141132225349007,
+            ν = 3.0921988246340457,
+        ),
+        (
+            vars = exp.(range(log(0.3), log(3.0); length = 100)),
+            σ² = 1.0939333000608242,
+            ν = 34.119220646215418,
+        ),
+        (
+            vars = [exp.(range(log(0.3), log(3.0); length = 100)); 10.0; 20.0],
+            σ² = 1.0603175935832228,
+            ν = 11.200395251864199,
+        ),
+        (
+            vars = [exp.(range(log(0.2), log(5.0); length = 100)); 15.0; 30.0],
+            σ² = 0.9584622881775039,
+            ν = 3.9235999144308367,
+        ),
+    ]
+
+    for fixture in fixtures
+        robust_prior = Empirikos.fit_limma_robust(ScaledChiSquareSample.(fixture.vars, 6))
+
+        @test robust_prior isa Empirikos.InverseScaledChiSquare
+        @test robust_prior.σ² ≈ fixture.σ² rtol = 1e-10
+        @test robust_prior.ν ≈ fixture.ν rtol = 1e-10
+    end
+    @test_throws ArgumentError Empirikos.fit_limma_robust(
+        ScaledChiSquareSample.([1.0, 2.0, 3.0], [5, 6, 6]),
+    )
+
+    vars = first(fixtures).vars
+    robust_prior = Empirikos.fit_limma_robust(ScaledChiSquareSample.(vars, 6))
+    βs = fill(1.5, length(vars))
+    βs[end] = 8.0
+    ν = 6
+    Zs = NormalChiSquareSample.(βs, vars, ν)
+    robust_fit = fit(
+        Empirikos.EmpiricalPartiallyBayesTTest(
+            prior = Empirikos.Limma(method = Empirikos.WinsorizedLimma()),
+            solver = nothing,
+        ),
+        Zs,
+    )
+
+    @test robust_fit.prior isa Empirikos.InverseScaledChiSquare
+    @test robust_fit.prior.σ² ≈ robust_prior.σ²
+    @test robust_fit.prior.ν ≈ robust_prior.ν
+    @test robust_fit.pvalue ≈ Empirikos.limma_pvalue(
+        βs,
+        ScaledChiSquareSample.(Zs),
+        robust_fit.prior,
+    )
+end
+
+@testset "Quantile limma partially Bayes t-test" begin
+    vars = [exp.(range(log(0.3), log(3.0); length = 100)); 8.0; 12.0]
+    ν = 6
+    quantile_p = (0.2, 0.8)
+    scale_p = 0.5
+    Zs_var = ScaledChiSquareSample.(vars, ν)
+    quantile_prior = Empirikos.fit_limma_quantile(
+        Zs_var;
+        quantile_p = quantile_p,
+        scale_p = scale_p,
+    )
+
+    @test quantile_prior isa Empirikos.InverseScaledChiSquare
+    @test quantile(FDist(ν, quantile_prior.ν), quantile_p[2]) /
+          quantile(FDist(ν, quantile_prior.ν), quantile_p[1]) ≈
+          quantile(vars, quantile_p)[2] / quantile(vars, quantile_p)[1]
+    @test quantile_prior.σ² * quantile(FDist(ν, quantile_prior.ν), scale_p) ≈
+          quantile(vars, scale_p)
+    @test_throws ArgumentError Empirikos.fit_limma_quantile(
+        ScaledChiSquareSample.([1.0, 2.0, 3.0], [5, 6, 6]),
+    )
+
+    βs = fill(1.5, length(vars))
+    βs[end] = 8.0
+    Zs = NormalChiSquareSample.(βs, vars, ν)
+    quantile_fit = fit(
+        Empirikos.EmpiricalPartiallyBayesTTest(
+            prior = Empirikos.Limma(
+                method = Empirikos.QuantileLimma(
+                    quantile_p = quantile_p,
+                    scale_p = scale_p,
+                ),
+            ),
+            solver = nothing,
+        ),
+        Zs,
+    )
+
+    @test quantile_fit.prior isa Empirikos.InverseScaledChiSquare
+    @test quantile_fit.prior.σ² ≈ quantile_prior.σ²
+    @test quantile_fit.prior.ν ≈ quantile_prior.ν
+    @test quantile_fit.pvalue ≈ Empirikos.limma_pvalue(
+        βs,
+        ScaledChiSquareSample.(Zs),
+        quantile_fit.prior,
+    )
+end

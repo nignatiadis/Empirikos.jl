@@ -1,4 +1,41 @@
-struct Limma end
+abstract type LimmaMethod end
+
+struct MomentLimma <: LimmaMethod end
+
+"""
+    WinsorizedLimma(; winsor_p = (0.05, 0.9))
+
+Phipson-Smyth Winsorized method-of-moments estimator for limma's common
+scaled inverse-χ² variance prior. `winsor_p` gives the lower and upper
+clipping quantiles.
+"""
+Base.@kwdef struct WinsorizedLimma{T} <: LimmaMethod
+    winsor_p::T = (0.05, 0.9)
+end
+
+"""
+    QuantileLimma(; quantile_p = (0.2, 0.8), scale_p = 0.5)
+
+Quantile-ratio estimator for limma's common scaled inverse-χ² variance prior.
+The prior degrees of freedom are estimated by matching the ratio of two
+sample-variance quantiles to the corresponding F-quantile ratio; the scale is
+then estimated by matching the `scale_p` quantile.
+"""
+Base.@kwdef struct QuantileLimma{T,S} <: LimmaMethod
+    quantile_p::T = (0.2, 0.8)
+    scale_p::S = 0.5
+end
+
+"""
+    Limma(; method = MomentLimma())
+
+Estimator for the scaled inverse-χ² variance prior used by limma.
+"""
+struct Limma{M<:LimmaMethod}
+    method::M
+end
+
+Limma(; method = MomentLimma()) = Limma(method)
 
 """
     NaturalSplineVarianceTrend(; df = nothing, min_variance = 1e-12, intercept = true)
@@ -56,7 +93,13 @@ Performs empirical partially Bayes multiple testing.
 
 - `multiple_test`: Multiple testing procedure from MultipleTesting.jl (default: `BenjaminiHochberg()`).
 - `α`: Significance level (default: 0.05).
-- `prior`: Prior distribution. Default: `DiscretePriorClass()`. Alternatives include `Empirikos.Limma()`, `Empirikos.TrendedPrior()`, `Empirikos.BinnedPrior()`, or a distribution from Distributions.jl. Note: Other fields are ignored if using these alternatives.
+- `prior`: Prior distribution. Default: `DiscretePriorClass()`. Alternatives
+  include `Empirikos.Limma()`,
+  `Empirikos.Limma(method = Empirikos.WinsorizedLimma())`,
+  `Empirikos.Limma(method = Empirikos.QuantileLimma())`,
+  `Empirikos.TrendedPrior()`, `Empirikos.BinnedPrior()`, or a distribution
+  from Distributions.jl. Note: Other fields are ignored if using these
+  alternatives.
 - `solver`: Optimization solver (default: `Hypatia.Optimizer`). Not used with alternative `prior` choices.
 - `discretize_marginal`: If true, discretizes marginal distribution (default: false). Not used with alternative `prior` choices.
 - `prior_grid_size`: Grid size for prior distribution (default: 300). Not used with alternative `prior` choices.
@@ -201,9 +244,16 @@ function fit_prior(test::EmpiricalPartiallyBayesTTest, prior::DiscretePriorClass
 end
 
 
-function fit_prior(::EmpiricalPartiallyBayesTTest, prior::Limma, Ss)
-    Empirikos.fit_limma(Ss)
-end
+fit_prior(::EmpiricalPartiallyBayesTTest, prior::Limma, Ss) =
+    fit_prior(prior.method, Ss)
+
+fit_prior(::MomentLimma, Ss) = Empirikos.fit_limma(Ss)
+
+fit_prior(method::WinsorizedLimma, Ss) =
+    Empirikos.fit_limma_robust(Ss; winsor_p = method.winsor_p)
+
+fit_prior(method::QuantileLimma, Ss) =
+    Empirikos.fit_limma_quantile(Ss; quantile_p = method.quantile_p, scale_p = method.scale_p)
 
 function fit_prior(::EmpiricalPartiallyBayesTTest, prior::Distribution, Ss)
     prior

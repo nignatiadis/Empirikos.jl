@@ -24,6 +24,7 @@ using QuadGK
 using Random
 using RangeHelpers
 using RecipesBase
+using Roots
 using Setfield
 import SpecialFunctions: trigamma, digamma, polygamma, erfinv
 using Statistics
